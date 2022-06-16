@@ -1,5 +1,7 @@
 #Requires -Version 5.1
 #Requires -PSEdition Desktop
+using namespace System.Management.Automation
+using namespace System.Management.Automation.Language
 <#
 .SYNOPSIS
     --.
@@ -57,6 +59,35 @@ Author: Julian West
 .FUNCTIONALITY
     --
 #>
+if ($ENV:PROCESSOR_ARCHITEW6432 -eq 'AMD64')
+{
+   try
+   {
+      &"$ENV:WINDIR\SysNative\WindowsPowershell\v1.0\PowerShell.exe" -File $PSCOMMANDPATH
+   }
+   catch
+   {
+      Throw ('Failed to start {0}' -f $PSCOMMANDPATH)
+   }
+
+   exit
+}
+#endregion ARM64Handling
+
+#region Check
+#region Defaults
+$SCT = 'SilentlyContinue'
+#endregion Defaults
+
+# Clean-up
+$RegistryRoot = $null
+
+# Figure out if we have an existing PowerShell Registry Provider mapping
+$paramGetPSDrive = @{
+   ErrorAction   = $SCT
+   WarningAction = $SCT
+}
+#endregion Check
 
 
 
@@ -65,8 +96,7 @@ Author: Julian West
 
 
 
-
-
+exit 0
 
 #region LICENSE
 <#
