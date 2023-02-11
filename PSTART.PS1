@@ -49,11 +49,11 @@ Author: Julian West
    :-------------------------------------------------------------------------:
    `---._.-------------------------------------------------------------._.---'
 .LINK
-    https://something.com
+    https://julianwest.me
 .LINK
-    https://PS-Start/PS-CHANGELOG
+    https://github.com/J-DubApps/PS-MANAGE/CHANGELOG.TXT
 .LINK
-    https://PS-Start-GIT
+    https://github.com/J-DubApps/PS-MANAGE
 .COMPONENT
     --
 .FUNCTIONALITY
