@@ -14,11 +14,11 @@ using namespace System.Management.Automation.Language
 .INPUTS
     None. # This script does not accept piped input.  It uses Functions and Variables from the MOD-SHARED.ps1 script.
 .OUTPUTS
-    None. # This script does not generate any output beyond a runtime log under %userprofile%\ps-manage-%computername%.log
+    None. # This script does not generate any output beyond a runtime log under path set by $LogFile in MOD-SHARED.ps1 (usually %userprofile%\ps-manage-$env:COMPUTERNAME.log)
 .NOTES
 Author: Julian West
                BSD 3-Clause License;
-               - see License Region at-end of script for more information
+               - see License Region at-end of script for more licene infor
                 ________________________________________________
                /                                                \
               |    _________________________________________     |
@@ -76,9 +76,6 @@ if ($ENV:PROCESSOR_ARCHITEW6432 -eq 'AMD64')
 
 # Launch PS-Manage Main runtime script
 .\MAIN.ps1
-
-
-
 
 exit 0
 

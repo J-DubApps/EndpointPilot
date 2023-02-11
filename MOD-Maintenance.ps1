@@ -17,7 +17,7 @@
 #
 ###############################################################################################
 
-
+# Check to see if this script is being run directly, or if it is being dot-sourced into another script.
 if ($MyInvocation.InvocationName -ne '.') {
 
 	# We are running independently of MAIN.PS1, load the Shared MODule

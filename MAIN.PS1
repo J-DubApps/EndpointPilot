@@ -31,12 +31,45 @@
 #
 ###############################################################################################
 
+[CmdletBinding()]
+PARAM(
+	[parameter(ValueFromPipeline=$true,
+				ValueFromPipelineByPropertyName=$true,
+				Mandatory=$false)]
+	[switch]$TestSharedVarModule=$false
+)
+
+#region TEST_MODE_CHECK
+
+# $TestSharedVarModule = $true # Processes the MOD-SHARED.ps1 MODule file, and does nothing else.
+# Un-comment the above when wanting to force a Test of the MAIN.PS1 Runtime script, or run the script manually with Parameter Switch "-TestSharedVarModule"
+# Script does nothing execept ONLY processes MOD-SHARED.ps1 then exits.  Script will not perform any Endpoint Configuration run, nor will it
+# perform any other tasks or create a Scheduled Task or Registry Run entry.  This option allows you to create the Runtime Script, without Deployment Script doing anything else.
+# Intended for Sandbox testing on multiple PCs or environments prior to prod deployment.
+# Script will place the Runtime Script in the same directory it is run from ( $PSScriptRoot ).
+
+If($TestSharedVarModule -eq $true){
+	$RunMode = $false
+	$skipScheduledTaskCreation = $true
+	$SharedVarModuleCheck - $true
+	$triggerRuntimeScriptHere = $False
+}
+
+# Set Variables for Location for the Config / Runtime script-placement and script-names
+If($DeployRunTimeScriptOnly -ne $true){
+	$setRuntimeScriptFolder = Join-Path $Env:ProgramData -ChildPath "PS-MANAGE"
+}else{
+	$setRuntimeScriptFolder = $PSScriptRoot
+}
+#endregion TEST_MODE_CHECK
+
+
+
 #region ScriptBody
 
-# load shared variables and functions Element / Component Module -
+# load shared variables and functions from the Component MODule MOD-SHARED.ps1
 
 . .\MOD-SHARED.ps1
-
 
 WriteLog "Checking Network Path reachability..."
 

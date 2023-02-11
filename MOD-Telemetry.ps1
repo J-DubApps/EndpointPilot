@@ -18,7 +18,7 @@
 #
 ###############################################################################################
 
-
+# Check to see if this script is being run directly, or if it is being dot-sourced into another script.
 
 if ($MyInvocation.InvocationName -ne '.') {
 

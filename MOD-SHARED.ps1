@@ -14,16 +14,17 @@
 #
 #				Written by Julian West February 2023
 #
-#				Maintained by McKool Smith SysOps Group and Kraft Kennedy
 #
 ###############################################################################################
+
+# Check to see if this script is being run directly, or if it is being dot-sourced into another script.
 
 if ($MyInvocation.InvocationName -ne '.') {
   Write-Warning 'This script should be dot-sourced into another script, not run independently.'
   return
 }
 
-# rest of the script with shared variables and functions
+# rest of the script contains shared variables and functions for use in MAIN.PS1 and other scripts
 
 
 #region FUNCTIONS
