@@ -74,7 +74,7 @@ if ($ENV:PROCESSOR_ARCHITEW6432 -eq 'AMD64')
 }
 #endregion ARM64Handling
 
-
+# Launch PS-Manage Main runtime script
 .\MAIN.ps1
 
 
