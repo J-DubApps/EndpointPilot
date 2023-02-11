@@ -74,24 +74,8 @@ if ($ENV:PROCESSOR_ARCHITEW6432 -eq 'AMD64')
 }
 #endregion ARM64Handling
 
-#region Check
-#region Defaults
-$SCT = 'SilentlyContinue'
-#endregion Defaults
 
-# Clean-up
-$RegistryRoot = $null
-
-# Figure out if we have an existing PowerShell Registry Provider mapping
-$paramGetPSDrive = @{
-   ErrorAction   = $SCT
-   WarningAction = $SCT
-}
-#endregion Check
-
-
-
-
+.\MAIN.ps1
 
 
 
