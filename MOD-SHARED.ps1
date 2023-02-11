@@ -265,6 +265,7 @@ function InGroup {
 ##########################################################################
 ###
 
+#region Variables
 
 #Declare the Client Variables
 #Set Client name, Log File Location etc
@@ -274,15 +275,25 @@ $ClientName = "McKool Smith"
   $NetworkScriptPath = "\\McKoolSmith.Law\SysVol\McKoolSmith.Law\Policies\"
 $LogFile = "$env:userprofile\LOGON-$env:computername.log"
 $NetworkLogFile = "\\mckoolsmith.law\dfs\SOURCE\Tools\FlagFiles\Logon_Script_RunLogs\LOGON-$env:UserName-on-$env:computername.log"
+
+
+#region Check
+#region Defaults
+$SCT = 'SilentlyContinue'
 Get-ChildItem -Path $LogFile | Remove-Item -Force -ErrorAction Ignore | Out-Null
 $ErrorActionPreference = "Continue"
-
 #Set the Robocopy location
 $Robocopy = "C:\Windows\System32\Robocopy.exe"
+#endregion Defaults
 
 #Collect the Computer distinguished name
 $filter="(&(objectCategory=computer)(objectClass=computer)(cn=$env:COMPUTERNAME))"
 $objComputer=([adsisearcher]$filter).FindOne().Properties.distinguishedname
+
+
+#endregion variables
+
+#region ScriptBody_MOD-SHARED
 
 #Log Runtime start
 WriteLog "Logon Script Run Start"
@@ -291,10 +302,6 @@ WriteLog "Logon Script Run Start"
 Log-InformationalEvent("MS Logon Script started for " + $env:UserName)
 
 
-#region Check
-#region Defaults
-$SCT = 'SilentlyContinue'
-#endregion Defaults
 
 # Clean-up
 $RegistryRoot = $null
@@ -325,5 +332,4 @@ $strExcludedFiles =			"`"*.isn`"" + " " +
 
 #$wshell.Popup("Excluded Files: " + $strExcludedFiles,0,"Done",0x1)
 
-
-
+#endregion ScriptBody_MOD-SHARED
