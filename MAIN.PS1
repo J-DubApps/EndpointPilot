@@ -63,6 +63,10 @@ If($DeployRunTimeScriptOnly -ne $true){
 }
 #endregion TEST_MODE_CHECK
 
+#region SET_RUNTIME_SCRIPT_PATH
+$setRuntimeScriptPath = Join-Path $setRuntimeScriptFolder -ChildPath "./PSTART.PS1"
+$setPSRuntimeLauncherPath = Join-Path $setRuntimeScriptFolder -ChildPath "./PSTART.vbs"
+#endregion SET_RUNTIME_SCRIPT_PATH
 
 
 #region ScriptBody
