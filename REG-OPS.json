@@ -1,0 +1,29 @@
+[
+  {
+    "id": "1",
+    "name": "key1",
+    "path": "HKEY_CURRENT_USER\\Software\\key1",
+    "value": "value1",
+    "regtype": "string",
+    "write_once": "false",
+    "delete": false
+  },
+  {
+    "id": "2",
+    "name": "key2",
+    "path": "HKEY_LOCAL_MACHINE\\Software\\key2",
+    "value": "1",
+    "regtype": "dword",
+    "write_once": "true",
+    "delete": false
+  },
+  {
+    "id": "3",
+    "name": "key3",
+    "path": "HKEY_CURRENT_USER\\Software\\key3",
+    "value": "0",
+    "regtype": "dword",
+    "write_once": "false",
+    "delete": false
+  }
+]

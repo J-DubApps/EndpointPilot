@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "srcfilename": "example1.txt",
+    "dstfilename": "example1.txt",
+    "sourcePath": "C:example\folder1",
+    "destinationPath": "C:exampledestination1",
+    "overwrite": true,
+    "copyonce": false,
+    "comments": "place comment here"
+  },
+  {
+    "id": 2,
+    "srcfilename": "example2.txt",
+    "dstfilename": "example123.txt",
+    "sourcePath": "C:example\folder2",
+    "destinationPath": "C:exampledestination2",
+    "overwrite": false,
+    "copyonce": true,
+    "comments": "place comment here"
+  },
+  {
+    "id": 3,
+    "srcfilename": "example3.txt",
+    "dstfilename": "example3.txt",
+    "sourcePath": "C:example\folder3",
+    "destinationPath": "C:exampledestination3",
+    "overwrite": true,
+    "copyonce": false,
+    "comments": "place comment here"
+  }
+]
