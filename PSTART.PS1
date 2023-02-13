@@ -59,6 +59,8 @@ Author: Julian West
 .FUNCTIONALITY
     --
 #>
+
+#region ARM64Handling
 if ($ENV:PROCESSOR_ARCHITEW6432 -eq 'AMD64')
 {
    try
