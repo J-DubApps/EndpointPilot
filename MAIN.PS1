@@ -2,7 +2,7 @@
 #Requires -PSEdition Desktop
 ###############################################################################################
 #
-#				PS-Manage Logon / Endpoint Configuration Script
+#				PS-Manage Logon / User Profile Configuration Script
 #				MAIN.PS1 = MS-Logon-EC.ps1
 #
 # Description 	This Logon script

@@ -8,7 +8,7 @@
     "overwrite": true,
     "copyonce": false,
     "existCheckLocation": "C:\\example\\existcheckfile.txt",
-    "existCheck": "Yes",
+    "existCheck": false,
     "deleteFile": false,
     "_comment1": "This is File Copy",
     "_comment2": "If existCheckLocation *and* existCheck are not blank, then existCheck must either be yes (check if exist) or no (check if *not* exist)"
@@ -22,7 +22,7 @@
     "overwrite": false,
     "copyonce": true,
     "existCheckLocation": "",
-    "existCheck": "",
+    "existCheck": false,
     "deleteFile": false,
     "_comment1": "This is a CopyOnce Example, with no Existence Check performed.  File will copy once.",
     "_comment2": ""
@@ -36,7 +36,7 @@
     "overwrite": true,
     "copyonce": false,
     "existCheckLocation": "C:\\example\\existcheckfolder",
-    "existCheck": "No",
+    "existCheck": true,
     "deleteFile": false,
     "_comment1": "place comment here",
     "_comment2": ""

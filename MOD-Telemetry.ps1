@@ -2,7 +2,7 @@
 #Requires -PSEdition Desktop
 ###############################################################################################
 #
-#				PS-Manage Logon / Endpoint Configuration Script Shared Settings MODule file
+#				PS-Manage Logon / User Profile Configuration Script Shared Settings MODule file
 #				MOD-Telemetry.PS1
 #
 # Description 	This file is a shared component called by MAIN.PS1 portion of PS-Manage
