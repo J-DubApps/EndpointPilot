@@ -67,14 +67,14 @@ try {
     # Perform copy actions specified in the JSON file, for each file
     # Observe the '$copyonce' and '$overwrite' boolean actions
     # If $overwrite is 'true' then ONLY overwrite if the $sourceFile is newer than $destinationFile
-    if ($existCheckLocation -and $existCheck) {
+    if ($existCheckLocation) {
         $existCheckPath = Join-Path -Path $destinationPath -ChildPath $existCheckLocation
         if (Test-Path -Path $existCheckPath) {
-            if ($existCheck -eq "No") {
+            if ($existCheck -eq $false) {
                 return
             }
         } else {
-            if ($existCheck -eq "Yes") {
+            if ($existCheck -eq $true) {
                 return
             }
         }
