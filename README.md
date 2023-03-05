@@ -2,8 +2,6 @@
 
 <center>
 
-PS-MANAGE...
-
 # _"Better than a Logon Script"_
 
 </center>
