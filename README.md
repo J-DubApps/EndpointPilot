@@ -1,5 +1,7 @@
 # PS-MANAGE
 
+"Better than a Logon Script"
+
 PowerShell User Profile Configuration Script for Windows endpoints + optimization for Remote Work scenarios. 
 
 PS-MANAGE addresses the following Endpoint Configuration scenarios:
