@@ -6,7 +6,7 @@
 
 </center>
 
-PS-MANAGE is a PowerShell User Profile Configuration Script for Windows endpoints + optimization for Remote Work scenarios.
+PS-MANAGE is a PowerShell User Profile Configuration Script for Windows endpoints, with optimization for Remote Work scenarios.
 
 PS-MANAGE addresses the following Endpoint Configuration scenarios:
 
