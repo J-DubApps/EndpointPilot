@@ -2,7 +2,7 @@
 
 <center>
 
-# _"Better than a Logon Script"_
+# _"Better than a Logon Script..."_
 
 </center>
 
