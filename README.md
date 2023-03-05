@@ -10,9 +10,9 @@ PS-MANAGE is a PowerShell User Profile Configuration Script for Windows endpoint
 
 PS-MANAGE addresses the following use-case scenarios:
 
-1. When on-prem Logon by the Windows PC Endpoint are rare, and file or registry settings-placement need to occur.
+1. When on-prem Logons by Windows PC Endpoints are rare, and file or registry placements need to occur.
 2. Where timely File-placement, or Registry setting-placement, needs to occur quicker than GPP setting refresh period.
-3. Hybrid Domain-Joined PCs where either Intune Configuration Profiles/CSP or Active Directory GPP settings may not apply.
+3. Hybrid Domain-Joined PCs where either Intune Configuration Profiles/CSP or Active Directory GPP settings are not feasible.
 
 PS-MANAGE shares many facets with traditional Logon Scripts; however, it is _not_ a Logon Script. PS-MANAGE is a User Profile Configuration Script that is designed to run _from_ a location within the user's profile on the local PC, instead of from NETLOGON on a Domain Controller or from a GPO Logon Script.
 
