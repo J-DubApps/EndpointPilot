@@ -8,7 +8,7 @@
 
 PS-MANAGE is a PowerShell User Profile Configuration Script for Windows endpoints, with optimization for Remote Work scenarios.
 
-PS-MANAGE addresses the following Endpoint Configuration scenarios:
+PS-MANAGE addresses the following use-case scenarios:
 
 1. When on-prem Logon by the Windows PC Endpoint are rare, and file or registry settings-placement need to occur.
 2. Where timely File-placement, or Registry setting-placement, needs to occur quicker than GPP setting refresh period.
@@ -21,3 +21,9 @@ PS-MANAGE componetns are staged onto the local user's profile under the path %LO
 Pre-Requisites:
 
 Your users need rights to create Scheduled Tasks on their Windows PC Endpoints (this right is granted in GPO or Intune CSP).
+
+Roadmap:
+
+- [ ] Add support for PowerShell Core
+- [ ] Add support Windows PC Endpoint System Configuration Mgmt scenarios (currently PS-MANAGE only supports User Profile Config use-case)
+- [ ] Build System Agent to run future PS-MANAGE Endpoint Configuration Script features for management of the Windows PC Endpoint itself.
