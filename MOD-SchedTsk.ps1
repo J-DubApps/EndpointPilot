@@ -5,12 +5,13 @@
 #				PS-Manage Logon / User Profile Configuration Script Shared Settings MODule file
 #				MOD-SchedTsk.PS1
 #
-# Description 	This file is a shared component called by MAIN.PS1 portion of PS-Manage
+# Description
+#				This file is a module called by MAIN.PS1 portion of PS-Manage
 #				It places PSTART.ps1 into Scheduled Tasks (if user rights permit) with the
 #				appropriate triggers (network status change, etc).
 #
 #				This PS-Manage MODule file helps ensure that remote workers on VPN will still
-#				get routine Endpoint Configuration Script runs.
+#				get regular script runs.
 #
 #
 #				Written by Julian West February 2023
