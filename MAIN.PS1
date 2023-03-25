@@ -8,7 +8,7 @@
 # Description 	This Logon script
 #				It is triggered at logon and, optionally, by Windows Scheduled Task to run
 #				independent of a Logon event.
-
+#
 #				This logon script is VPN-aware, to ensure needed Logon Scripted tasks are
 #				performed regularly for Remote users who may not be working on-prem (LAN).
 #
@@ -33,10 +33,10 @@
 
 [CmdletBinding()]
 PARAM(
-	[parameter(ValueFromPipeline=$true,
-				ValueFromPipelineByPropertyName=$true,
-				Mandatory=$false)]
-	[switch]$TestSharedVarModule=$false
+	[parameter(ValueFromPipeline = $true,
+		ValueFromPipelineByPropertyName = $true,
+		Mandatory = $false)]
+	[switch]$TestSharedVarModule = $false
 )
 
 #region TEST_MODE_CHECK
@@ -48,7 +48,7 @@ PARAM(
 # Intended for Sandbox testing on multiple PCs or environments prior to prod deployment.
 # Script will place the Runtime Script in the same directory it is run from ( $PSScriptRoot ).
 
-If($TestSharedVarModule -eq $true){
+If ($TestSharedVarModule -eq $true) {
 	$RunMode = $false
 	$skipScheduledTaskCreation = $true
 	$SharedVarModuleCheck - $true
@@ -56,9 +56,10 @@ If($TestSharedVarModule -eq $true){
 }
 
 # Set Variables for Location for the Config / Runtime script-placement and script-names
-If($DeployRunTimeScriptOnly -ne $true){
+If ($DeployRunTimeScriptOnly -ne $true) {
 	$setRuntimeScriptFolder = Join-Path $Env:ProgramData -ChildPath "PS-MANAGE"
-}else{
+}
+else {
 	$setRuntimeScriptFolder = $PSScriptRoot
 }
 #endregion TEST_MODE_CHECK
@@ -84,7 +85,8 @@ If (Test-Path -Path $NetworkPathCheck.FullName) {
 
 	WriteLog "Network Test Path is reachable, continuing Logon Script run..."
 
-	} else {
+}
+else {
 
 	WriteLog "Network Test Path is NOT reachable, exiting Script!"
 
@@ -94,7 +96,7 @@ If (Test-Path -Path $NetworkPathCheck.FullName) {
 ## If we're on VPN + Network shares are reachable, continuing script-run...
 
 # Exit if not running Enterprise Edition
-	Check-OperatingSystem
+Check-OperatingSystem
 
 
 
@@ -132,11 +134,11 @@ gpupdate /target:user
 
 #Final logging entries & network log placement
 
-	Log-InformationalEvent("MS Logon Script run completed for " + $env:UserName)
-    Start-Sleep -Milliseconds 100 #Wait
-	WriteLog "Logon Script Complete"
+Log-InformationalEvent("MS Logon Script run completed for " + $env:UserName)
+Start-Sleep -Milliseconds 100 #Wait
+WriteLog "Logon Script Complete"
 
-	Copy-Item "$LogFile" -Destination $NetworkLogFile -Force -ErrorAction Ignore | Out-Null
+Copy-Item "$LogFile" -Destination $NetworkLogFile -Force -ErrorAction Ignore | Out-Null
 
 #endregion CLEANUP_AND_EXIT
 
