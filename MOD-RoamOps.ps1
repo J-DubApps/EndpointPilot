@@ -3,17 +3,17 @@
 ###############################################################################################
 #
 #				PS-Manage Logon / User Profile Configuration Script Shared Settings MODule file
-#				MOD-FileOps.PS1
+#				MOD-RoamOps.PS1
 #
 # Description
 #				This file is a module called by MAIN.PS1 portion of PS-Manage
 #				It places PSTART.ps1 into Scheduled Tasks (if user rights permit) with the
 #				appropriate triggers (network status change, etc).
 #
-#				This PS-Manage MODule file loads FileOps.json into an array of objects,
-#               where each object represents a file to be copied or deleted.
+#				This PS-Manage MODule file loads Roam-Ops.json into an array of objects,
+#               where each object represents a file to roamed / synchronized with a Network Share.
 #               The script then loops through each object in the array and extracts the file
-#               information, such as the source and destination file paths, and the overwrite and copyonce boolean values.
+#               information, such as the source and destination file paths, and perorms the copy based on each array object (file).
 #
 #
 #				Written by Julian West April 2023
@@ -39,9 +39,10 @@ else {
 
 
 <#
-The goal of this script is to provide a flexible way to copy files with different options, based on the instructions provided
-in the File-Ops.json file.
-It is a replacement for Microsoft Group Policy Preferences (GPP) File Copy operations.
+The goal of this script is to provide a flexible way to sync (or "roam") certain user files from %appdata% or %localappdata%, based on the instructions provided
+in the Roam-Ops.json file.
+
+It is a replacement for Microsoft Roaming Profiles feature, which requires maintenance and can impact logon/logoff performance.
 
 The object contains properties such as "srcfilename", "dstfilename", "sourcePath", "destinationPath", "overwrite", "copyonce", and "comments".
 These properties provide instructions to the PowerShell script on how to perform the file copy operation.
