@@ -11,7 +11,7 @@
 #				appropriate triggers (network status change, etc).
 #
 #				This PS-Manage MODule file loads Roam-Ops.json into an array of objects,
-#               where each object represents a file to roamed / synchronized with a Network Share.
+#               where each object represents a file to be roamed / synchronized with a Network Share.
 #               The script then loops through each object in the array and extracts the file
 #               information, such as the source and destination file paths, and perorms the copy based on each array object (file).
 #
@@ -43,6 +43,8 @@ The goal of this script is to provide a flexible way to sync (or "roam") certain
 in the Roam-Ops.json file.
 
 It is a replacement for Microsoft Roaming Profiles feature, which requires maintenance and can impact logon/logoff performance.
+
+Note: This should be used in-conjunction with a modern User Settings solution, such as UE-V or ESR.
 
 The object contains properties such as "srcfilename", "dstfilename", "sourcePath", "destinationPath", "overwrite", "copyonce", and "comments".
 These properties provide instructions to the PowerShell script on how to perform the file copy operation.
