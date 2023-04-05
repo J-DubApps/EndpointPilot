@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "srcfilename": "example1.txt",
+    "dstfilename": "example1.txt",
+    "sourcePath": "C:\\example\\folder1",
+    "destinationPath": "C:\\example\\destination1",
+    "overwrite": true,
+    "copyonce": false,
+    "existCheckLocation": "C:\\example\\existcheckfile.txt",
+    "existCheck": false,
+    "deleteFile": false,
+    "_comment1": "This is File Copy",
+    "_comment2": "If existCheckLocation *and* existCheck are not blank, then existCheck must either be yes (check if exist) or no (check if *not* exist)"
+  },
+  {
+    "id": 2,
+    "srcfilename": "example2.txt",
+    "dstfilename": "example123.txt",
+    "sourcePath": "C:\\example\\folder2",
+    "destinationPath": "C:\\example\\destination2",
+    "overwrite": false,
+    "copyonce": true,
+    "existCheckLocation": "",
+    "existCheck": false,
+    "deleteFile": false,
+    "_comment1": "This is a CopyOnce Example, with no Existence Check performed.  File will copy once.",
+    "_comment2": ""
+  },
+  {
+    "id": 3,
+    "srcfilename": "example3.txt",
+    "dstfilename": "example3.txt",
+    "sourcePath": "C:\\example\\folder3",
+    "destinationPath": "C:\\example\\destination3",
+    "overwrite": true,
+    "copyonce": false,
+    "existCheckLocation": "C:\\example\\existcheckfolder",
+    "existCheck": true,
+    "deleteFile": false,
+    "_comment1": "place comment here",
+    "_comment2": ""
+  },
+  {
+    "id": 4,
+    "srcfilename": "",
+    "dstfilename": "example4.txt",
+    "sourcePath": "",
+    "destinationPath": "C:\\example\\destination4",
+    "overwrite": false,
+    "copyonce": false,
+    "existCheckLocation": "",
+    "existCheck": "",
+    "deleteFile": true,
+    "_comment1": "place comment here",
+    "_comment2": "place comment here"
+  }
+]

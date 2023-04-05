@@ -401,6 +401,7 @@ Set-Alias -Name 'Get-Permissions' -Value 'Get-Permission'
 
 $ClientName = "McKool Smith"
 $HostName = $env:COMPUTERNAME
+$Refresh_Interval = 900 #Seconds
 $NetworkScriptPath = "\\McKoolSmith.Law\SysVol\McKoolSmith.Law\Policies\"
 $LogFile = "$env:userprofile\LOGON-$env:computername.log"
 $CopyLogFileToNetwork = $false #Set to $true to copy the log file to the network
