@@ -4,7 +4,7 @@ This script creates an example File Operations json file, with example/test data
 
 This script reads in PS-MANAGE's File Operations example/test JSON data as a string, and converts it to a PowerShell object using ConvertFrom-Json.
 
-Then the script converts the PowerShell object back to JSON using ConvertTo-Json, resulting in a default example/test JSON file written to "File-Ops.json" using Out-File. The -Depth parameter is set to 100 to ensure that all properties of the PowerShell object.
+Then the script converts the PowerShell object back to JSON using ConvertTo-Json, resulting in a default example/test JSON file written to "Roam-Ops.json" using Out-File. The -Depth parameter is set to 100 to ensure that all properties of the PowerShell object.
 
 As for the key-value pairs in this default example/test json file: it contains the "id", "srcfilename", "sourcepath", "dstfilename", "destinationpath" and "overwrite" and "commentx" elements for each entry.  It also includes file deletion and file existence check elements (for item-level targeting similar to GPP).
 
@@ -76,7 +76,7 @@ $jsonData = @'
 '@
 
 # Specify the file path for the output file
-$filePath = "File-Ops.json"
+$filePath = "Roam-Ops.json"
 
 # Check if the file already exists and prompt the user before overwriting it
 if (Test-Path $filePath) {
@@ -91,6 +91,6 @@ if (Test-Path $filePath) {
 $jsonObject = ConvertFrom-Json $jsonData
 
 # Convert the PowerShell object back to JSON with formatting
-ConvertTo-Json $jsonObject -Depth 100 | Out-File -Encoding UTF8 -FilePath "File-Ops.json"
+ConvertTo-Json $jsonObject -Depth 100 | Out-File -Encoding UTF8 -FilePath "Roam-Ops.json"
 
 Write-Host "File created: $filePath"
