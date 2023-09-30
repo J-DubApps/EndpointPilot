@@ -1,6 +1,6 @@
 # PS-MANAGE
 
-<center>
+<div align="center">
 
 # _"Better than a Logon Script..."_
 
@@ -14,7 +14,7 @@ PS-MANAGE addresses the following use-case scenarios:
 2. Where timely settings-placement needs to occur at a more reliable cadence than GPP setting refresh intervals.
 3. Hybrid Domain-Joined PCs where Intune Configuration Profiles/CSP or Active Directory GPP settings are not feasible.
 
-PS-MANAGE operates like a traditional Logon Script; however, PS-MANAGE is designed to run primarily *from* the user's local PC itself, instead of from a Domain Controller NETLOGON share or GPO Logon Script.
+PS-MANAGE operates like a traditional Logon Script; however, PS-MANAGE is designed to run primarily _from_ the user's local PC itself, instead of from a Domain Controller NETLOGON share or GPO Logon Script.
 
 PS-MANAGE components are staged onto a PC Endpoint under each user's profile at %LOCALAPPDATA%\PS-MANAGE (C:\Users\Username\AppData\Local\PS-MANAGE) and it executes as a Windows Scheduled Task at a configured "refresh" period.
 
