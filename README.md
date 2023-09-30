@@ -1,6 +1,6 @@
 # PS-MANAGE
 
-<div align="center">
+<center>
 
 # _"Better than a Logon Script..."_
 
