@@ -6,15 +6,15 @@ using namespace System.Management.Automation.Language
 .SYNOPSIS
     --.
 .DESCRIPTION
-    --.
+    Kicks off PS-MANAGE Script Run, calls MAIN.PS1.
 .PARAMETER
     --.
 .EXAMPLE
-    PSTART.ps1
+    PS-MANAGE.ps1
 .INPUTS
-    None. # This script does not accept piped input.  It uses Functions and Variables from the MOD-SHARED.ps1 script.
+    None. # This script does not accept piped input.  It uses Functions and Variables from the MGMT-SHARED.ps1 script.
 .OUTPUTS
-    None. # This script does not generate any output beyond a runtime log under path set by $LogFile in MOD-SHARED.ps1 (usually %userprofile%\ps-manage-$env:COMPUTERNAME.log)
+    None. # This script does not generate any output beyond a runtime log under path set by $LogFile in MGMT-SHARED.ps1 (usually %userprofile%\ps-manage-$env:COMPUTERNAME.log)
 .NOTES
 Author: Julian West
                BSD 3-Clause License;
