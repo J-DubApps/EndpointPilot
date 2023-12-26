@@ -3,7 +3,7 @@
 ###############################################################################################
 #
 #				PS-Manage Logon / User Profile Configuration Script
-#				MAIN.PS1 = MS-Logon-EC.ps1
+#				MAIN.PS1
 #
 # Description 	This Logon script
 #				It is triggered at logon and, optionally, by Windows Scheduled Task to run
@@ -23,9 +23,7 @@
 #	Date		Modified by		Description of modification
 #----------------------------------------------------------------------------------------------
 #
-#	04/01/2022	MS (JW)		Forked from MS-Logon.ps1 for firm VPN users.
-#   04/15/2022  MS (JW)     Added code to determine general GPS locale (for catching Hotspot abuse)
-#   04/16/2022  MS (JW)     Added code to attempt to determine ISP Info
+#	02/16/2023	Julian West		Established PS Manage Main Script MAIN.PS1
 #
 ############################################################################################
 #
@@ -41,9 +39,9 @@ PARAM(
 
 #region TEST_MODE_CHECK
 
-# $TestSharedVarModule = $true # Processes the MOD-SHARED.ps1 MODule file, and does nothing else.
+# $TestSharedVarModule = $true # Processes the MGMT-SHARED.ps1 MODule file, and does nothing else.
 # Un-comment the above when wanting to force a Test of the MAIN.PS1 Runtime script, or run the script manually with Parameter Switch "-TestSharedVarModule"
-# Script does nothing execept ONLY processes MOD-SHARED.ps1 then exits.  Script will not perform any Endpoint Configuration run, nor will it
+# Script does nothing execept ONLY processes MGMT-SHARED.ps1 then exits.  Script will not perform any Endpoint Configuration run, nor will it
 # perform any other tasks or create a Scheduled Task or Registry Run entry.  This option allows you to create the Runtime Script, without Deployment Script doing anything else.
 # Intended for Sandbox testing on multiple PCs or environments prior to prod deployment.
 # Script will place the Runtime Script in the same directory it is run from ( $PSScriptRoot ).
@@ -107,30 +105,30 @@ Check-OperatingSystem
 
 #Call Script Element / Component Modules -
 
-.\MOD-Telemetry.ps1
-# .\Module-FileOps.ps1 -param1 value1 -param2 value2
+.\MGMT-Telemetry.ps1
+# .\MGMT-Telemetry.ps1 -param1 value1 -param2 value2
 
-.\MOD-FileOps.ps1
-# .\Module-FileOps.ps1 -param1 value1 -param2 value2
+.\MGMT-FileOps.ps1
+# .\MGMT-FileOps.ps1 -param1 value1 -param2 value2
 
-.\MOD-RegOps.ps1
-# .\Module-FileOps.ps1 -param1 value1 -param2 value2
+.\MGMT-RegOps.ps1
+# .\MGMT-RegOps.ps1 -param1 value1 -param2 value2
 
-.\MOD-DSC.ps1
-# .\Module-FileOps.ps1 -param1 value1 -param2 value2
+.\MGMT-DSC.ps1
+# .\MGMT-DSC.ps1 -param1 value1 -param2 value2
 
 
-.\MOD-HostFile.ps1
-# .\Module-FileOps.ps1 -param1 value1 -param2 value2
+.\MGMT-HostFile.ps1
+# .\MGMT-HostFile.ps1 -param1 value1 -param2 value2
 
-.\MOD-SchedTsk.ps1
-# .\Module-FileOps.ps1 -param1 value1 -param2 value2
+.\MGMT-SchedTsk.ps1
+# .\MGMT-SchedTsk.ps1 -param1 value1 -param2 value2
 
 
 #region CLEANUP_AND_EXIT
 
-.\MOD-Maintenance.ps1
-# .\Module-FileOps.ps1 -param1 value1 -param2 value2
+.\MGMT-Maint.ps1
+# .\MGMT-Maint.ps1 -param1 value1 -param2 value2
 
 #For VPN users, refresh the GPO once for User settings
 WriteLog "Updating User GPO Settings"
@@ -138,7 +136,7 @@ gpupdate /target:user
 
 #Final logging entries & network log placement
 
-Log-InformationalEvent("MS Logon Script run completed for " + $env:UserName)
+Log-InformationalEvent("PS Manage script run completed for " + $env:UserName)
 Start-Sleep -Milliseconds 100 #Wait
 WriteLog "Logon Script Complete"
 
