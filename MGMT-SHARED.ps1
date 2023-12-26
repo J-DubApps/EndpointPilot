@@ -247,8 +247,6 @@ $RoamFiles = $false #Set to $true if you wish to leverage roaming/syncing certai
 # Set the network location, below, if above var is set to $true.  Create that shared folder if it doesn't exist, and make sure the user has write & folder creation rights to it.
 $NetworkRoamFolder = "\\servername\SHARE\RoamingFiles"
 
-Set-Alias -Name 'Get-Permissions' -Value 'Get-Permission'
-
 #region Check
 #region Defaults
 $SCT = 'SilentlyContinue'
