@@ -78,7 +78,7 @@ Import-Module MGMT-Functions.psm1
 
 # load shared variables and non independent functions from the MGMT-SHARED.ps1 file
 
-. .\MOD-SHARED.ps1
+. .\MGMT-SHARED.ps1
 
 WriteLog "Checking Network Path reachability..."
 
