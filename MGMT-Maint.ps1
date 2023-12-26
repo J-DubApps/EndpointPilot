@@ -20,9 +20,10 @@
 # Check to see if this script is being run directly, or if it is being dot-sourced into another script.
 if ($MyInvocation.InvocationName -ne '.') {
 
-	# We are running independently of MAIN.PS1, load the Shared MODule
-	# and coninue the rest of the script with your shared variables and functions
-	. .\MOD-SHARED.ps1
+	# We are running independently of MAIN.PS1, load Shared Modules & Shaed Variable Files
+ 	# and coninue the rest of the script with your shared variables and functions
+    	Import-Module MGMT-Functions.psm1
+    	. .\MGMT-SHARED.ps1
 
 } else {
 
