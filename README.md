@@ -16,6 +16,10 @@ PS-MANAGE addresses the following use-case scenarios:
 
 PS-MANAGE operates like a traditional Logon Script; however, PS-MANAGE is designed to run primarily _from_ the user's local PC itself, instead of from a Domain Controller NETLOGON share or GPO Logon Script.
 
+PS-MANAGE Configuration and operations are JSON-based.  The JSON config files can be managed either by a companion .NET app, or text editor.
+
+PS-MANAGE script operations are split into Task-specific "MGMT" sub-scripts, all called by MAIN.PS1.  
+
 PS-MANAGE components are staged onto a PC Endpoint under each user's profile at %LOCALAPPDATA%\PS-MANAGE (C:\Users\Username\AppData\Local\PS-MANAGE) and it executes as a Windows Scheduled Task at a configured "refresh" period.
 
 Pre-Requisites:
@@ -25,5 +29,5 @@ Your users need rights to create Scheduled Tasks on their Windows PC Endpoints (
 Roadmap:
 
 - [ ] Add support for PowerShell Core
-- [ ] Add support Windows PC Endpoint System Configuration Mgmt scenarios (currently PS-MANAGE only supports User Profile Config use-case)
+- [ ] Add support Windows PC Endpoint System Configuration Mgmt scenarios (currently PS-MANAGE only supports User Mode configuration use-case, not SYSTEM or Admin mode use cases)
 - [ ] Devlop a System Agent to run future PS-MANAGE Endpoint Configuration Script features.
