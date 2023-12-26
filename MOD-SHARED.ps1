@@ -2,10 +2,10 @@
 #Requires -PSEdition Desktop
 ###############################################################################################
 #
-#				PS-Manage Logon / User Profile Configuration Script Shared Settings MODule file
-#				MOD-SHARED.PS1
+#			PS-Manage Logon / User Profile Configuration Script Shared Settings MODule file
+#			MOD-SHARED.PS1
 #
-#               Description 	
+#           Description 	
 #               This file is a shared component called by MAIN.PS1 portion of PS-Manage
 #				It is triggered at logon and, optionally, by Windows Scheduled Tasks to run
 #				independent of a Logon event.
