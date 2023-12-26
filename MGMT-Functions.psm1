@@ -1,3 +1,7 @@
+# Script Module file for PS-MANAGE
+#
+# Cmdlet aliases
+#
 
 function InGroup {
     ##########################################################################
