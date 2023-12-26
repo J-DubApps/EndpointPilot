@@ -27,7 +27,7 @@ if ($MyInvocation.InvocationName -ne '.') {
 
 } else {
 
-    # We are being called by MAIN.PS1, nothing to load 
+    # We are being called by MAIN.PS1, nothing to load  
 }
 
 
