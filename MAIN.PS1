@@ -14,7 +14,6 @@
 #
 #				Written by Julian West February 2023
 #
-#				Maintained by McKool Smith SysOps Group and Kraft Kennedy
 #
 ###############################################################################################
 #	Change Control Log (add dates and changes here)
