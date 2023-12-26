@@ -2,17 +2,17 @@
 #Requires -PSEdition Desktop
 ###############################################################################################
 #
-#				PS-Manage Logon / User Profile Configuration Script
-#				MAIN.PS1
+#			PS-MANAGE User Profile Configuration Script
+#			MAIN.PS1
 #
-# Description 	This Logon script
-#				It is triggered at logon and, optionally, by Windows Scheduled Task to run
-#				independent of a Logon event.
+# 	Description 	
+#	This management script is triggered at logon and, optionally, by Windows Scheduled Task to run
+#	independent of a Logon event.
 #
-#				This logon script is VPN-aware, to ensure needed Logon Scripted tasks are
-#				performed regularly for Remote users who may not be working on-prem (LAN).
+#	This can run as a logon script, and is VPN-aware to ensure needed Logon Scripted tasks are
+#	performed regularly for Remote users who may not be working on-prem (LAN).
 #
-#				Written by Julian West February 2023
+#	Written by Julian West February 2023
 #
 #
 ###############################################################################################
