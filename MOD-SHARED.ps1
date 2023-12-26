@@ -5,15 +5,15 @@
 #			PS-Manage Logon / User Profile Configuration Script Shared Settings MODule file
 #			MOD-SHARED.PS1
 #
-#               Description 	
-#               This file is a shared component called by MAIN.PS1 portion of PS-Manage
-#				It is triggered at logon and, optionally, by Windows Scheduled Tasks to run
-#				independent of a Logon event.
+#        Description 	
+#        This file is a shared component called by MAIN.PS1 portion of PS-Manage
+#        It is triggered at logon and, optionally, by Windows Scheduled Tasks to run
+#        independent of a Logon event.
 #
-#				This logon script is VPN-aware, to ensure needed Logon Scripted tasks are
-#				performed regularly for Remote users who may not be working on-prem (LAN).
+#        This logon script is VPN-aware, to ensure needed Logon Scripted tasks are
+#        performed regularly for Remote users who may not be working on-prem (LAN).
 #
-#				Written by Julian West February 2023
+#        Written by Julian West February 2023
 #
 #
 ###############################################################################################
