@@ -2,8 +2,8 @@
 #Requires -PSEdition Desktop
 ###############################################################################################
 #
-#			PS-Manage Logon / User Profile Configuration Script Shared Settings MODule file
-#			MOD-SHARED.PS1
+#		PS-Manage Logon / User Profile Mgmt Script Shared Settings MODule file
+#		MOD-SHARED.PS1
 #
 #        Description 	
 #        This file is a shared component called by MAIN.PS1 portion of PS-Manage
