@@ -9,7 +9,12 @@
 #	This management script is triggered at logon and, optionally, by Windows Scheduled Task to run
 #	independent of a Logon event.
 #
-#	This can run as a logon script, and is VPN-aware to ensure needed Logon Scripted tasks are
+#	MAIN.PS1 calls PS-MANAGE components, incl MGMT-Functions module, and "MGMT" Task Scripts	
+#
+#	MAIN.PS1 is designed to be called by PS-MANAGE.PS1 for production runs, and can be called 
+#	independently for TEST non-prod runs.
+#
+#	This solution is VPN-aware to ensure needed Scripted tasks are
 #	performed regularly for Remote users who may not be working on-prem (LAN).
 #
 #	Written by Julian West February 2023
@@ -38,7 +43,7 @@ PARAM(
 
 #region TEST_MODE_CHECK
 
-# $TestSharedVarModule = $true # Processes the MGMT-SHARED.ps1 MODule file, and does nothing else.
+# $TestSharedVarModule = $true # Processes the MGMT-SHARED.ps1 script file, and does nothing else.
 # Un-comment the above when wanting to force a Test of the MAIN.PS1 Runtime script, or run the script manually with Parameter Switch "-TestSharedVarModule"
 # Script does nothing execept ONLY processes MGMT-SHARED.ps1 then exits.  Script will not perform any Endpoint Configuration run, nor will it
 # perform any other tasks or create a Scheduled Task or Registry Run entry.  This option allows you to create the Runtime Script, without Deployment Script doing anything else.
