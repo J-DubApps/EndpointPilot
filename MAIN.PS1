@@ -118,6 +118,9 @@ Check-OperatingSystem
 .\MGMT-RegOps.ps1
 # .\MGMT-RegOps.ps1 -param1 value1 -param2 value2
 
+.\MGMT-DiveOps.ps1
+# .\MGMT-DriveOps.ps1 -param1 value1 -param2 value2
+
 .\MGMT-DSC.ps1
 # .\MGMT-DSC.ps1 -param1 value1 -param2 value2
 
