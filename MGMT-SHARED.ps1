@@ -238,7 +238,7 @@ this is /even more data\
 $ClientName = "McKool Smith"
 $HostName = $env:COMPUTERNAME
 $Refresh_Interval = 900 #Seconds
-$NetworkScriptPath = "\\McKoolSmith.Law\SysVol\McKoolSmith.Law\Policies\"
+$NetworkScriptPath = "\\servername\SHARE\PS-MANAGE\"
 $LogFile = "$env:userprofile\LOGON-$env:computername.log"
 $CopyLogFileToNetwork = $false #Set to $true to copy the log file to the network
 # Set the network location, below, if above var is set to $true.  Create that shared folder if it doesn't exist, and make sure the user has write access to it.
