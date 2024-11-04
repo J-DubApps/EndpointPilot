@@ -10,7 +10,7 @@ PS-MANAGE is a PowerShell User Profile Configuration Tool for Windows endpoints,
 
 PS-MANAGE addresses the following use-case scenarios:
 
-1. Full or part-time on-prem staff who infrequently log into their PC Endpoint on-prem at the office (Remote Work staff, flexwork, etc).
+1. Staff who infrequently log into their PC Endpoint on-prem at the office (Remote Work staff, flexwork, etc).
 2. Where timely settings-placement needs to occur at a shorter cadence than GPP setting refresh intervals.
 3. Hybrid Domain-Joined PCs where Intune Configuration Profiles/CSP or Active Directory GPP settings are not always feasible.
 
