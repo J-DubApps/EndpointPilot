@@ -6,7 +6,7 @@
 
 </center>
 
-PS-MANAGE is a PowerShell User Profile Configuration Tool for Windows endpoints, with optimization for Remote Work scenarios.
+PS-MANAGE is a PowerShell User Profile Configuration Tool for Windows endpoints, with optimization for Remote Work scenarios. It works like a logon script, but runs as a Scheduled Task.
 
 PS-MANAGE addresses the following use-case scenarios:
 
@@ -33,4 +33,4 @@ Roadmap:
 
 - [ ] Add support for PowerShell Core
 - [ ] Add support Windows PC Endpoint System Configuration Mgmt scenarios (currently PS-MANAGE only supports User Mode configuration use-case, not SYSTEM or Admin mode use cases)
-- [ ] Devlop a System Agent to run future PS-MANAGE Endpoint Configuration Script features with elevated rights.  Securely.
+- [ ] Devlop a System Agent to run some PS-MANAGE features with elevated rights.  Securely.
