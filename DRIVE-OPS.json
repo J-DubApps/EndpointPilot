@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "driveLetter": "F:",
+    "drivePath": "\\server\share",
+    "delete": false,
+    "hidden": false,
+    "_comment1": "This is File Copy",
+    "_comment2": "If existCheckLocation *and* existCheck are not blank, then existCheck must either be yes (check if exist) or no (check if *not* exist)"
+  },
+  {
+    "id": 2,
+    "driveLetter": "F:",
+    "drivePath": "\\server\share",
+    "delete": false,
+    "hidden": false,
+    "_comment1": "This is File Copy",
+    "_comment2": "If existCheckLocation *and* existCheck are not blank, then existCheck must either be yes (check if exist) or no (check if *not* exist)"
+  },
+  {
+    "id": 3,
+    "driveLetter": "F:",
+    "drivePath": "\\server\share",
+    "delete": false,
+    "hidden": false,
+    "_comment1": "place comment here",
+    "_comment2": ""
+  },
+  {
+    "id": 4,
+    "driveLetter": "F:",
+    "drivePath": "\\server\share",
+    "delete": false,
+    "hidden": false,
+    "_comment1": "place comment here",
+    "_comment2": "place comment here"
+  }
+]
