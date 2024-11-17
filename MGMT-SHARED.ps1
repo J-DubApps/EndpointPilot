@@ -220,6 +220,11 @@ this is /even more data\
     [regex]::Matches($Text, $pattern).Value
 }
 
+# Function to expand variables in a string
+function Expand-ConfigString {
+    param([string]$string)
+    return $ExecutionContext.InvokeCommand.ExpandString($string)
+}
 
 #endregion FUNCTIONS
 ##
@@ -235,17 +240,34 @@ this is /even more data\
 #Declare the Client Variables
 #Set Client name, Log File Location etc
 
-$ClientName = "McKool Smith"
 $HostName = $env:COMPUTERNAME
-$Refresh_Interval = 900 #Seconds
-$NetworkScriptPath = "\\servername\SHARE\PS-MANAGE\"
 $LogFile = "$env:userprofile\LOGON-$env:computername.log"
-$CopyLogFileToNetwork = $false #Set to $true to copy the log file to the network
+
+# Load the configuration from CONFIG.json
+$configPath = "CONFIG.json"
+$config = Get-Content -Path $configPath | ConvertFrom-Json
+
+# Assign variables from config json
+$ClientName = $config.ClientName
+$Refresh_Interval = $config.Refresh_Interval    #Seconds
+$NetworkScriptRootPath = $config.NetworkScriptRootPath
+$CopyLogFileToNetwork = $config.CopyLogFileToNetwork    #Set to $true to copy the log file to the network
 # Set the network location, below, if above var is set to $true.  Create that shared folder if it doesn't exist, and make sure the user has write access to it.
-$NetworkLogFile = "\\servername\SHARE\Tools\FlagFiles\Logon_Script_RunLogs\LOGON-$env:UserName-on-$env:computername.log"
-$RoamFiles = $false #Set to $true if you wish to leverage roaming/syncing certain files (files to sync/roam are specified in ROAM-OPS.json)
+$NetworkLogFile = $config.NetworkLogFile
+$RoamFiles = $config.RoamFiles #Set to $true if you wish to leverage roaming/syncing certain files (files to sync/roam are specified in ROAM-OPS.json)
 # Set the network location, below, if above var is set to $true.  Create that shared folder if it doesn't exist, and make sure the user has write & folder creation rights to it.
-$NetworkRoamFolder = "\\servername\SHARE\RoamingFiles"
+$NetworkRoamFolder = $config.NetworkRoamFolder & "\LOGON-$env:UserName-on-$env:computername.log"
+
+
+# $ClientName = "McKool Smith"
+# $Refresh_Interval = 900 #Seconds
+# $NetworkScriptRootPath = "\\servername\SHARE\PS-MANAGE\"
+# $CopyLogFileToNetwork = $false #Set to $true to copy the log file to the network
+# Set the network location, below, if above var is set to $true.  Create that shared folder if it doesn't exist, and make sure the user has write access to it.
+# $NetworkLogFile = "\\servername\SHARE\Tools\FlagFiles\Logon_Script_RunLogs\LOGON-$env:UserName-on-$env:computername.log"
+# $RoamFiles = $false #Set to $true if you wish to leverage roaming/syncing certain files (files to sync/roam are specified in ROAM-OPS.json)
+# Set the network location, below, if above var is set to $true.  Create that shared folder if it doesn't exist, and make sure the user has write & folder creation rights to it.
+# $NetworkRoamFolder = "\\servername\SHARE\RoamingFiles"
 
 #region Check
 #region Defaults
