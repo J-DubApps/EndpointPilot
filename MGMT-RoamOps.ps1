@@ -2,21 +2,21 @@
 #Requires -PSEdition Desktop
 ###############################################################################################
 #
-#				PS-Manage Logon / User Profile Configuration Script Shared Settings MODule file
-#				MOD-RoamOps.PS1
+#		PS-Manage Logon / User Profile Configuration Script Shared Settings MODule file
+#		Mgmt-RoamOps.PS1
 #
-# Description
-#				This file is a module called by MAIN.PS1 portion of PS-Manage
-#				It places PSTART.ps1 into Scheduled Tasks (if user rights permit) with the
-#				appropriate triggers (network status change, etc).
+#	Description
+#	This file is a module called by MAIN.PS1 portion of PS-Manage
+#	It places PSTART.ps1 into Scheduled Tasks (if user rights permit) with the
+#	appropriate triggers (network status change, etc).
 #
-#				This PS-Manage MODule file loads Roam-Ops.json into an array of objects,
-#               where each object represents a file to be roamed / synchronized with a Network Share.
-#               The script then loops through each object in the array and extracts the file
-#               information, such as the source and destination file paths, and perorms the copy based on each array object (file).
+#	This PS-Manage MODule file loads Roam-Ops.json into an array of objects,
+#	where each object represents a file to be roamed / synchronized with a Network Share.
+#	The script then loops through each object in the array and extracts the file
+#	information, such as the source and destination file paths, and perorms the copy based on each array object (file).
 #
 #
-#				Written by Julian West April 2023
+#				Written by Julian West April 2025
 #
 #
 ###############################################################################################
