@@ -35,4 +35,8 @@ $json = @(
         delete = $false
     }
 )
-$json | ConvertTo-Json | Out-File .\regops.json
+
+# Specify the file path for the output file
+$filePath = "Reg-Ops.json"
+
+$json | ConvertTo-Json | Out-File .\$filePath
