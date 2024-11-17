@@ -41,6 +41,15 @@ $file = "Reg-Ops.json"
 
 # $jsonData | ConvertTo-Json | Out-File .\$filePath
 
+# Check if the file already exists
+if (Test-Path $file) {
+    Write-Host "WARNING: This will erase any existing contents within the existing file '$file'."
+    $response = Read-Host "Do you wish to continue (y/N)?"
+    if ($response -ne 'y' -and $response -ne 'Y') {
+        Write-Host "Operation canceled. The file was not overwritten."
+        exit
+    }
+}
 
 # Convert the JSON data to a PowerShell object
 $jsonObject = ConvertFrom-Json $jsonData
