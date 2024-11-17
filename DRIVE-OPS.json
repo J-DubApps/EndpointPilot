@@ -1,6 +1,6 @@
 [
   {
-    "id": 1,
+    "id": 001,
     "driveLetter": "F:",
     "drivePath": "\\server\share",
     "delete": false,
@@ -9,7 +9,7 @@
     "_comment2": "If existCheckLocation *and* existCheck are not blank, then existCheck must either be yes (check if exist) or no (check if *not* exist)"
   },
   {
-    "id": 2,
+    "id": 002,
     "driveLetter": "F:",
     "drivePath": "\\server\share",
     "delete": false,
@@ -18,7 +18,7 @@
     "_comment2": "If existCheckLocation *and* existCheck are not blank, then existCheck must either be yes (check if exist) or no (check if *not* exist)"
   },
   {
-    "id": 3,
+    "id": 003,
     "driveLetter": "F:",
     "drivePath": "\\server\share",
     "delete": false,
@@ -27,7 +27,7 @@
     "_comment2": ""
   },
   {
-    "id": 4,
+    "id": 004,
     "driveLetter": "F:",
     "drivePath": "\\server\share",
     "delete": false,
