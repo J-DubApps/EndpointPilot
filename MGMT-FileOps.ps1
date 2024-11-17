@@ -6,9 +6,9 @@
 #			MOD-FileOps.PS1
 #
 #  Description
-#				This file is a module called by MAIN.PS1 portion of PS-Manage
-#				It places PSTART.ps1 into Scheduled Tasks (if user rights permit) with the
-#				appropriate triggers (network status change, etc).
+#    This file is a module called by MAIN.PS1 portion of PS-Manage
+#    It places PSTART.ps1 into Scheduled Tasks (if user rights permit) with the
+#    appropriate triggers (network status change, etc).
 #
 #				This PS-Manage MODule file loads FileOps.json into an array of objects,
 #       where each object represents a file to be copied or deleted.
