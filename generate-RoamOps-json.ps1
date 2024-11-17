@@ -76,11 +76,11 @@ $jsonData = @'
 '@
 
 # Specify the file path for the output file
-$filePath = "Roam-Ops.json"
+$file = "Roam-Ops.json"
 
 # Check if the file already exists and prompt the user before overwriting it
-if (Test-Path $filePath) {
-    $overwrite = Read-Host "The file $filePath already exists. Do you want to overwrite it? (Y/N)"
+if (Test-Path $file) {
+    $overwrite = Read-Host "The file $file already exists. Do you want to overwrite it? (Y/N)"
     if ($overwrite -ne "Y") {
         Write-Host "File creation canceled."
         exit
@@ -91,6 +91,6 @@ if (Test-Path $filePath) {
 $jsonObject = ConvertFrom-Json $jsonData
 
 # Convert the PowerShell object back to JSON with formatting
-ConvertTo-Json $jsonObject -Depth 100 | Out-File -Encoding UTF8 -FilePath "Roam-Ops.json"
+ConvertTo-Json $jsonObject -Depth 100 | Out-File -Encoding UTF8 -FilePath $file
 
-Write-Host "File created: $filePath"
+Write-Host "File created: $file"
