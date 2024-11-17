@@ -11,7 +11,7 @@ As you can see, the script generates three entries, you can adjust the number of
 
 $jsonData = @(
     @{
-        id = "1"
+        id = "001"
         name = "key1"
         path = "HKEY_CURRENT_USER\Software\key1"
         value = "value1"
@@ -19,7 +19,7 @@ $jsonData = @(
         delete = $false
     },
     @{
-        id = "2"
+        id = "002"
         name = "key2"
         path = "HKEY_LOCAL_MACHINE\Software\key2"
         value = "1"
@@ -27,7 +27,7 @@ $jsonData = @(
         delete = $false
     },
     @{
-        id = "3"
+        id = "003"
         name = "key3"
         path = "HKEY_CURRENT_USER\Software\key3"
         value = "0"
