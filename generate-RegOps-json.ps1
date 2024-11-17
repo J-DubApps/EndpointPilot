@@ -9,7 +9,7 @@ As you can see, the script generates three entries, you can adjust the number of
 #>
 
 
-$json = @(
+$jsonData = @(
     @{
         id = "1"
         name = "key1"
@@ -37,6 +37,16 @@ $json = @(
 )
 
 # Specify the file path for the output file
-$filePath = "Reg-Ops.json"
+$file = "Reg-Ops.json"
 
-$json | ConvertTo-Json | Out-File .\$filePath
+# $jsonData | ConvertTo-Json | Out-File .\$filePath
+
+
+# Convert the JSON data to a PowerShell object
+$jsonObject = ConvertFrom-Json $jsonData
+
+# Convert the PowerShell object back to JSON with formatting
+ConvertTo-Json $jsonObject -Depth 100 | Out-File -Encoding UTF8 -FilePath $file
+
+Write-Host "File created: $file"
+
