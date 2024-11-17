@@ -1,1 +1,9 @@
-
+{
+  "ClientName": "McKool Smith",
+  "Refresh_Interval": 900,
+  "NetworkScriptRootPath": "\\\\servername\\SHARE\\PS-MANAGE\\",
+  "CopyLogFileToNetwork": false,
+  "RoamFiles": false,
+  "NetworkLogFile": "\\\\servername\\SHARE\\Tools\\FlagFiles\\Logon_Script_RunLogs",
+  "NetworkRoamFolder": "\\\\servername\\SHARE\\RoamingFiles"
+}
