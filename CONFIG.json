@@ -5,5 +5,10 @@
   "CopyLogFileToNetwork": false,
   "RoamFiles": false,
   "NetworkLogFile": "\\\\servername\\SHARE\\Tools\\FlagFiles\\Logon_Script_RunLogs",
-  "NetworkRoamFolder": "\\\\servername\\SHARE\\RoamingFiles"
+  "NetworkRoamFolder": "\\\\servername\\SHARE\\RoamingFiles",
+  "SkipFileOps": false,
+  "SkipDriveOps": false,
+  "SkipRegOps": false,
+  "SkipRoamOps": false
+  
 }
