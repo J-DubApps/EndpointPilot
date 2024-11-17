@@ -17,7 +17,7 @@ As you can see, the script generates four entries, you can adjust the number of 
 $jsonData = @'
 [
     {
-        "id": 1,
+        "id": 001,
         "srcfilename": "example1.txt",
         "dstfilename": "example1.txt",
         "sourcePath": "C:\\example\\folder1",
@@ -31,7 +31,7 @@ $jsonData = @'
         "_comment2": "If existCheckLocation *and* existCheck are not blank, then existCheck must either be yes (check if exist) or no (check if *not* exist)"
     },
     {
-        "id": 2,
+        "id": 002,
         "srcfilename": "example2.txt",
         "dstfilename": "example123.txt",
         "sourcePath": "C:\\example\\folder2",
@@ -45,7 +45,7 @@ $jsonData = @'
         "_comment2": ""
     },
     {
-        "id": 3,
+        "id": 003,
         "srcfilename": "example3.txt",
         "dstfilename": "example3.txt",
         "sourcePath": "C:\\example\\folder3",
@@ -59,7 +59,7 @@ $jsonData = @'
         "_comment2": ""
     },
     {
-        "id": 4,
+        "id": 004,
         "srcfilename": "",
         "dstfilename": "example4.txt",
         "sourcePath": "",
