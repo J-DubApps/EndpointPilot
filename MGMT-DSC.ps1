@@ -2,18 +2,18 @@
 #Requires -PSEdition Desktop
 ###############################################################################################
 #
-#				PS-Manage Logon / User Profile Configuration Script Shared Settings MODule file
-#				MOD-DSC.PS1
+#		PS-Manage Logon / User Profile Configuration Script Shared Settings MODule file
+#		MOD-DSC.PS1
 #
-# Description 	This file is a shared component called by MAIN.PS1 portion of PS-Manage
-#				It performs DSC, Desired State Configuration, routines required to
-#				place the Endpoint or Apps into a specific standardized Configuration Baseline.
+# 	Description 	This file is a shared component called by MAIN.PS1 portion of PS-Manage
+#			It performs DSC, Desired State Configuration, routines required to
+#			place the Endpoint or Apps into a specific standardized Configuration Baseline.
 #
-#				This MODule should *not* perform standard Registry Modifications, or File Copies
-#				as those should be performed by the MOD-FileOps.ps1 and MOD-RegOps.ps1 MODules
-#				along with their requisite JSON files.
+#			This MODule should *not* perform standard Registry Modifications, or File Copies
+#			as those should be performed by the MOD-FileOps.ps1 and MOD-RegOps.ps1 MODules
+#			along with their requisite JSON files.
 #
-#				Written by Julian West February 2023
+#			Written by Julian West February 2025
 #
 #
 ###############################################################################################
