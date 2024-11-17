@@ -10,10 +10,10 @@
 #    It places PSTART.ps1 into Scheduled Tasks (if user rights permit) with the
 #    appropriate triggers (network status change, etc).
 #
-#				This PS-Manage MODule file loads FileOps.json into an array of objects,
-#       where each object represents a file to be copied or deleted.
-#       The script then loops through each object in the array and extracts the file
-#       information, such as the source and destination file paths, and the overwrite and copyonce boolean values.
+#    This PS-Manage MODule file loads FileOps.json into an array of objects,
+#    where each object represents a file to be copied or deleted.
+#    The script then loops through each object in the array and extracts the file
+#    information, such as the source and destination file paths, and the overwrite and copyonce boolean values.
 #
 #
 #				Written by Julian West April 2025
