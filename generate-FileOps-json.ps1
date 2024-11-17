@@ -79,18 +79,29 @@ $jsonData = @'
 $filePath = "File-Ops.json"
 
 # Check if the file already exists and prompt the user before overwriting it
+#if (Test-Path $filePath) {
+#    $overwrite = Read-Host "The file $filePath already exists. Do you want to overwrite it? (Y/N)"
+#    if ($overwrite -ne "Y") {
+#        Write-Host "File creation canceled."
+#        exit
+#    }
+#}
+
+# Check if the file already exists
 if (Test-Path $filePath) {
-    $overwrite = Read-Host "The file $filePath already exists. Do you want to overwrite it? (Y/N)"
-    if ($overwrite -ne "Y") {
-        Write-Host "File creation canceled."
+    Write-Host "WARNING: This will erase any existing contents within the existing file '$filePath'."
+    $response = Read-Host "Do you wish to continue (y/N)?"
+    if ($response -ne 'y' -and $response -ne 'Y') {
+        Write-Host "Operation canceled. The file was not overwritten."
         exit
     }
 }
+
 
 # Convert the JSON data to a PowerShell object
 $jsonObject = ConvertFrom-Json $jsonData
 
 # Convert the PowerShell object back to JSON with formatting
-ConvertTo-Json $jsonObject -Depth 100 | Out-File -Encoding UTF8 -FilePath "File-Ops.json"
+ConvertTo-Json $jsonObject -Depth 100 | Out-File -Encoding UTF8 -FilePath $filePath
 
 Write-Host "File created: $filePath"
