@@ -3,33 +3,37 @@
     "id": 001,
     "driveLetter": "F:",
     "drivePath": "\\server\share",
+    "reconnect": false,
     "delete": false,
     "hidden": false,
-    "_comment1": "This is File Copy",
-    "_comment2": "If existCheckLocation *and* existCheck are not blank, then existCheck must either be yes (check if exist) or no (check if *not* exist)"
+    "_comment1": "This is drive mapping",
+    "_comment2": "place comment here"
   },
   {
     "id": 002,
     "driveLetter": "F:",
     "drivePath": "\\server\share",
+    "reconnect": false,
     "delete": false,
     "hidden": false,
-    "_comment1": "This is File Copy",
-    "_comment2": "If existCheckLocation *and* existCheck are not blank, then existCheck must either be yes (check if exist) or no (check if *not* exist)"
+    "_comment1": "This is a drive mapping",
+    "_comment2": "place comment here"
   },
   {
     "id": 003,
     "driveLetter": "F:",
     "drivePath": "\\server\share",
+    "reconnect": false,
     "delete": false,
     "hidden": false,
     "_comment1": "place comment here",
-    "_comment2": ""
+    "_comment2": "place comment here"
   },
   {
     "id": 004,
     "driveLetter": "F:",
     "drivePath": "\\server\share",
+    "reconnect": true,
     "delete": false,
     "hidden": false,
     "_comment1": "place comment here",
