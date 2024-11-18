@@ -6,7 +6,8 @@ using namespace System.Management.Automation.Language
 .SYNOPSIS
     --.
 .DESCRIPTION
-    Kicks off PS-MANAGE Script Run, calls MAIN.PS1.
+    Kicks off PS-MANAGE Script Run, calls MAIN.PS1. This solution is meant to run at logon via classic AD or GPO,
+    or, optionally, runs by Windows Scheduled Task to run independent of a Logon event.
 .PARAMETER
     --.
 .EXAMPLE
