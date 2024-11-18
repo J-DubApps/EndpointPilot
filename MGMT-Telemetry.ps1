@@ -2,8 +2,8 @@
 #Requires -PSEdition Desktop
 ###############################################################################################
 #
-#				PS-Manage Logon / User Profile Configuration Script Shared Settings MODule file
-#				MOD-Telemetry.PS1
+#    PS-Manage Logon / User Profile Configuration Script Shared Settings MODule file
+#    MGMT-Telemetry.PS1
 #
 # Description 	This file is a shared component called by MAIN.PS1 portion of PS-Manage
 #				This script component MODule determines user general location, Internet Provider
