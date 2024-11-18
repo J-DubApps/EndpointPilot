@@ -11,37 +11,45 @@ As you can see, the script generates three entries, you can adjust the number of
 
 $jsonData = @(
     @{
-        id = "001"
-        name = "key1"
-        path = "HKEY_CURRENT_USER\Software\key1"
-        value = "value1"
-        regtype = "string"
-        delete = $false,
-        "_comment1": "This is a registry entry",
-        "_comment2": "Secondary Comment"
+        id              = "001"
+        name            = "key1"
+        path            = "HKEY_CURRENT_USER\\Software\\key1"
+        value           = "value1"
+        regtype         = "string"
+        write_once      = "false"
+        delete          = $false
+        targeting_type  = "none"
+        target          = "all"
+        _comment1       = "This is a registry entry"
+        _comment2       = "Secondary Comment"
     },
     @{
-        id = "002"
-        name = "key2"
-        path = "HKEY_LOCAL_MACHINE\Software\key2"
-        value = "1"
-        regtype = "dword"
-        delete = $false,
-        "_comment1": "This is a registry entry",
-        "_comment2": "Secondary Comment"
+        id              = "002"
+        name            = "key2"
+        path            = "HKEY_LOCAL_MACHINE\\Software\\key2"
+        value           = "1"
+        regtype         = "dword"
+        write_once      = "true"
+        delete          = $false
+        targeting_type  = "none"
+        target          = "all"
+        _comment1       = "This is a registry entry"
+        _comment2       = "Secondary Comment"
     },
     @{
-        id = "003"
-        name = "key3"
-        path = "HKEY_CURRENT_USER\Software\key3"
-        value = "0"
-        regtype = "dword"
-        delete = $false,
-        "_comment1": "This is a registry entry",
-        "_comment2": "Secondary Comment"
+        id              = "003"
+        name            = "key3"
+        path            = "HKEY_CURRENT_USER\\Software\\key3"
+        value           = "0"
+        regtype         = "dword"
+        write_once      = "false"
+        delete          = $false
+        targeting_type  = "none"
+        target          = "all"
+        _comment1       = "This is a registry entry"
+        _comment2       = "Secondary Comment"
     }
 )
-
 # Specify the file path for the output file
 $file = "Reg-Ops.json"
 
