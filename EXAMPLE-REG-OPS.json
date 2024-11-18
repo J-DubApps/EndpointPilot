@@ -7,6 +7,8 @@
     "regtype": "string",
     "write_once": "false",
     "delete": false,
+    "targeting_type": "none",
+    "target": "all",
     "_comment1": "This is a registry entry",
     "_comment2": "Secondary Comment"
   },
@@ -18,6 +20,8 @@
     "regtype": "dword",
     "write_once": "true",
     "delete": false,
+    "targeting_type": "none",
+    "target": "all",
     "_comment1": "This is a registry entry",
     "_comment2": "Secondary Comment"
   },
@@ -29,6 +33,8 @@
     "regtype": "dword",
     "write_once": "false",
     "delete": false,
+    "targeting_type": "none",
+    "target": "all",
     "_comment1": "This is a registry entry",
     "_comment2": "Secondary Comment"
   }
