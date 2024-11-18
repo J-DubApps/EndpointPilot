@@ -16,7 +16,9 @@ $jsonData = @(
         path = "HKEY_CURRENT_USER\Software\key1"
         value = "value1"
         regtype = "string"
-        delete = $false
+        delete = $false,
+        "_comment1": "This is a registry entry",
+        "_comment2": "Secondary Comment"
     },
     @{
         id = "002"
@@ -24,7 +26,9 @@ $jsonData = @(
         path = "HKEY_LOCAL_MACHINE\Software\key2"
         value = "1"
         regtype = "dword"
-        delete = $false
+        delete = $false,
+        "_comment1": "This is a registry entry",
+        "_comment2": "Secondary Comment"
     },
     @{
         id = "003"
@@ -32,7 +36,9 @@ $jsonData = @(
         path = "HKEY_CURRENT_USER\Software\key3"
         value = "0"
         regtype = "dword"
-        delete = $false
+        delete = $false,
+        "_comment1": "This is a registry entry",
+        "_comment2": "Secondary Comment"
     }
 )
 
