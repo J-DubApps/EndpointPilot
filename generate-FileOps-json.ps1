@@ -27,6 +27,8 @@ $jsonData = @'
         "existCheckLocation": "C:\\example\\existcheckfile.txt",
         "existCheck": false,
         "deleteFile": false,
+        "targeting_type": "none",
+        "target": "all",
         "_comment1": "This is File Copy",
         "_comment2": "If existCheckLocation *and* existCheck are not blank, then existCheck must either be yes (check if exist) or no (check if *not* exist)"
     },
@@ -41,6 +43,8 @@ $jsonData = @'
         "existCheckLocation": "",
         "existCheck": false,
         "deleteFile": false,
+        "targeting_type": "none",
+        "target": "all",
         "_comment1": "This is a CopyOnce Example, with no Existence Check performed.  File will copy once.",
         "_comment2": ""
     },
@@ -55,6 +59,8 @@ $jsonData = @'
         "existCheckLocation": "C:\\example\\existcheckfolder",
         "existCheck": true,
         "deleteFile": false,
+        "targeting_type": "none",
+        "target": "all",
         "_comment1": "place comment here",
         "_comment2": ""
     },
@@ -69,6 +75,8 @@ $jsonData = @'
         "existCheckLocation": "",
         "existCheck": "",
         "deleteFile": true,
+        "targeting_type": "none",
+        "target": "all",
         "_comment1": "place comment here",
         "_comment2": "place comment here"
     }
