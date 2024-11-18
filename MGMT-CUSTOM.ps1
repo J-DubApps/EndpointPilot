@@ -3,15 +3,15 @@
 ###############################################################################################
 #
 #		PS-Manage Logon / User Profile Configuration Script Shared Settings MODule file
-#		MOD-DSC.PS1
+#		MOD-CUSTOM.PS1
 #
 # 	Description 	This file is a shared component called by MAIN.PS1 portion of PS-Manage
-#			It performs DSC, Desired State Configuration, routines required to
-#			place the Endpoint or Apps into a specific standardized Configuration Baseline.
+#			It is intended for PS Scripters to created added custom scripting, to accomplish
+#			extra things not covered by PS-Manage.
 #
-#			This MODule should *not* perform standard Registry Modifications, or File Copies
-#			as those should be performed by the MOD-FileOps.ps1 and MOD-RegOps.ps1 MODules
-#			along with their requisite JSON files.
+#			Please remember Registry and File mgmt operations tasks are already performed 
+#			by the MOD-FileOps.ps1 and MOD-RegOps.ps1 modules along with their requisite 
+#			JSON files.
 #
 #			Written by Julian West February 2025
 #
