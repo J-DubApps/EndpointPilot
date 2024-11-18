@@ -6,8 +6,8 @@
 #			MAIN.PS1
 #
 # 	Description 	
-#	This management script is triggered at logon and, optionally, by Windows Scheduled Task to run
-#	independent of a Logon event.
+#	This management script is triggered by PS-MANAGE.PS1. This solution runs at logon via classic AD or GPO,
+#	or, optionally, runs by Windows Scheduled Task to run independent of a Logon event.
 #
 #	MAIN.PS1 calls PS-MANAGE components, incl MGMT-Functions module, and "MGMT" Task Scripts	
 #
