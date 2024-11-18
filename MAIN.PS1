@@ -159,7 +159,12 @@ Log-InformationalEvent("PS Manage script run completed for " + $env:UserName)
 Start-Sleep -Milliseconds 100 #Wait
 WriteLog "Logon Script Complete"
 
-Copy-Item "$LogFile" -Destination $NetworkLogFile -Force -ErrorAction Ignore | Out-Null
+If ($CopyLogFileToNetwork -eq $true) {
+	$NetworkLogFile = Join-Path $NetworkScriptPath -ChildPath "$LogFileName"
+	Copy-Item "$LogFile" -Destination $NetworkLogFile -Force -ErrorAction Ignore | Out-Null
+}
+
+# Copy-Item "$LogFile" -Destination $NetworkLogFile -Force -ErrorAction Ignore | Out-Null
 
 #endregion CLEANUP_AND_EXIT
 
