@@ -6,7 +6,9 @@
     "value": "value1",
     "regtype": "string",
     "write_once": "false",
-    "delete": false
+    "delete": false,
+    "_comment1": "This is a registry entry",
+    "_comment2": "Secondary Comment"
   },
   {
     "id": "002",
@@ -15,7 +17,9 @@
     "value": "1",
     "regtype": "dword",
     "write_once": "true",
-    "delete": false
+    "delete": false,
+    "_comment1": "This is a registry entry",
+    "_comment2": "Secondary Comment"
   },
   {
     "id": "003",
@@ -24,6 +28,8 @@
     "value": "0",
     "regtype": "dword",
     "write_once": "false",
-    "delete": false
+    "delete": false,
+    "_comment1": "This is a registry entry",
+    "_comment2": "Secondary Comment"
   }
 ]
