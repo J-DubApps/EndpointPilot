@@ -50,6 +50,20 @@ PARAM(
 # Intended for Sandbox testing on multiple PCs or environments prior to prod deployment.
 # Script will place the Runtime Script in the same directory it is run from ( $PSScriptRoot ).
 
+if($Env:USERPROFILE.EndsWith("system32\config\systemprofile")){
+
+    $runningAsSystem = $True
+
+    # Write-Output "Running as SYSTEM"
+
+}else{
+
+    $runningAsSystem = $False
+
+    # Write-Output "Running as $($env:USERNAME)"
+
+}
+
 If ($TestSharedVarModule -eq $true) {
 	$RunMode = $false
 	$skipScheduledTaskCreation = $true
