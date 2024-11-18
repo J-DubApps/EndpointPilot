@@ -137,7 +137,7 @@ If ($SkipRoamOps -ne $true) {
 # .\MGMT-CUSTOM.ps1 -param1 value1 -param2 value2
 
 
-.\MGMT-HostFile.ps1
+# .\MGMT-HostFile.ps1
 # .\MGMT-HostFile.ps1 -param1 value1 -param2 value2
 
 .\MGMT-SchedTsk.ps1
