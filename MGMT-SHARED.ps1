@@ -257,6 +257,10 @@ $NetworkLogFile = $config.NetworkLogFile
 $RoamFiles = $config.RoamFiles #Set to $true if you wish to leverage roaming/syncing certain files (files to sync/roam are specified in ROAM-OPS.json)
 # Set the network location, below, if above var is set to $true.  Create that shared folder if it doesn't exist, and make sure the user has write & folder creation rights to it.
 $NetworkRoamFolder = $config.NetworkRoamFolder & "\LOGON-$env:UserName-on-$env:computername.log"
+$SkipFileOps = $config.SkipFileOps
+$SkipDriveOps = $config.SkipDriveOps
+$SkipRegOps = $config.SkipRegOps
+$SkipRoamOps = $config.SkipRoamOps
 
 
 # $ClientName = "McKool Smith"
