@@ -6,14 +6,14 @@
 #    MGMT-Telemetry.PS1
 #
 # Description 	This file is a shared component called by MAIN.PS1 portion of PS-Manage
-#				This script component MODule determines user general location, Internet Provider
-#				and VPN connection status.
+#            This script component MODule determines user general location, Internet Provider
+#            and VPN connection status.
 #
-#				This MODule is required to help PS-Manage operate in a VPN-aware footing, t
-#				to ensure needed Scripted tasks are performed regularly for Remote workers
-#				who may not be working on-prem (LAN).
+#            This MODule is required to help PS-Manage operate in a VPN-aware footing, t
+#            to ensure needed Scripted tasks are performed regularly for Remote workers
+#            who may not be working on-prem (LAN).
 #
-#				Written by Julian West February 2023
+#            Written by Julian West February 2025
 #
 #
 ###############################################################################################
