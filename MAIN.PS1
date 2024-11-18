@@ -50,6 +50,10 @@ PARAM(
 # Intended for Sandbox testing on multiple PCs or environments prior to prod deployment.
 # Script will place the Runtime Script in the same directory it is run from ( $PSScriptRoot ).
 
+#Uncomment for debug logs:
+
+#Start-Transcript -Path (Join-Path $Env:temp -ChildPath "debug.log") -Append -Confirm:$False
+
 if($Env:USERPROFILE.EndsWith("system32\config\systemprofile")){
 
     $runningAsSystem = $True
@@ -185,3 +189,5 @@ If ($CopyLogFileToNetwork -eq $true) {
 #endregion ScriptBody
 
 #Exit Script
+
+Exit
