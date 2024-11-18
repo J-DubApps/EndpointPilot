@@ -133,8 +133,8 @@ If($SkipRoamOps -ne $true) {
 }
 
 
-.\MGMT-DSC.ps1
-# .\MGMT-DSC.ps1 -param1 value1 -param2 value2
+.\MGMT-CUSTOM.ps1
+# .\MGMT-CUSTOM.ps1 -param1 value1 -param2 value2
 
 
 .\MGMT-HostFile.ps1
