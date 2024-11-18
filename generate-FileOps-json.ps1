@@ -13,75 +13,73 @@ As you can see, the script generates four entries, you can adjust the number of 
 #>
 
 
-# Define the JSON data as a PowerShell object
-$jsonData = @'
-[
-    {
-        "id": 001,
-        "srcfilename": "example1.txt",
-        "dstfilename": "example1.txt",
-        "sourcePath": "C:\\example\\folder1",
-        "destinationPath": "C:\\example\\destination1",
-        "overwrite": true,
-        "copyonce": false,
-        "existCheckLocation": "C:\\example\\existcheckfile.txt",
-        "existCheck": false,
-        "deleteFile": false,
-        "targeting_type": "none",
-        "target": "all",
-        "_comment1": "This is File Copy",
-        "_comment2": "If existCheckLocation *and* existCheck are not blank, then existCheck must either be yes (check if exist) or no (check if *not* exist)"
+# Define the JSON data array, as a PowerShell object
+$jsonData = @(
+    @{
+        id                  = 001
+        srcfilename         = "example1.txt"
+        dstfilename         = "example1.txt"
+        sourcePath          = "C:\example\folder1"
+        destinationPath     = "C:\example\destination1"
+        overwrite           = $true
+        copyonce            = $false
+        existCheckLocation  = "C:\example\existcheckfile.txt"
+        existCheck          = $false
+        deleteFile          = $false
+        targeting_type      = "none"
+        target              = "all"
+        _comment1           = "This is File Copy"
+        _comment2           = "If existCheckLocation *and* existCheck are not blank, then existCheck must either be yes (check if exist) or no (check if *not* exist)"
     },
-    {
-        "id": 002,
-        "srcfilename": "example2.txt",
-        "dstfilename": "example123.txt",
-        "sourcePath": "C:\\example\\folder2",
-        "destinationPath": "C:\\example\\destination2",
-        "overwrite": false,
-        "copyonce": true,
-        "existCheckLocation": "",
-        "existCheck": false,
-        "deleteFile": false,
-        "targeting_type": "none",
-        "target": "all",
-        "_comment1": "This is a CopyOnce Example, with no Existence Check performed.  File will copy once.",
-        "_comment2": ""
+    @{
+        id                  = 002
+        srcfilename         = "example2.txt"
+        dstfilename         = "example123.txt"
+        sourcePath          = "C:\example\folder2"
+        destinationPath     = "C:\example\destination2"
+        overwrite           = $false
+        copyonce            = $true
+        existCheckLocation  = ""
+        existCheck          = $false
+        deleteFile          = $false
+        targeting_type      = "none"
+        target              = "all"
+        _comment1           = "This is a CopyOnce Example, with no Existence Check performed. File will copy once."
+        _comment2           = ""
     },
-    {
-        "id": 003,
-        "srcfilename": "example3.txt",
-        "dstfilename": "example3.txt",
-        "sourcePath": "C:\\example\\folder3",
-        "destinationPath": "C:\\example\\destination3",
-        "overwrite": true,
-        "copyonce": false,
-        "existCheckLocation": "C:\\example\\existcheckfolder",
-        "existCheck": true,
-        "deleteFile": false,
-        "targeting_type": "none",
-        "target": "all",
-        "_comment1": "place comment here",
-        "_comment2": ""
+    @{
+        id                  = 003
+        srcfilename         = "example3.txt"
+        dstfilename         = "example3.txt"
+        sourcePath          = "C:\example\folder3"
+        destinationPath     = "C:\example\destination3"
+        overwrite           = $true
+        copyonce            = $false
+        existCheckLocation  = "C:\example\existcheckfolder"
+        existCheck          = $true
+        deleteFile          = $false
+        targeting_type      = "none"
+        target              = "all"
+        _comment1           = "place comment here"
+        _comment2           = ""
     },
-    {
-        "id": 004,
-        "srcfilename": "",
-        "dstfilename": "example4.txt",
-        "sourcePath": "",
-        "destinationPath": "C:\\example\\destination4",
-        "overwrite": false,
-        "copyonce": false,
-        "existCheckLocation": "",
-        "existCheck": "",
-        "deleteFile": true,
-        "targeting_type": "none",
-        "target": "all",
-        "_comment1": "place comment here",
-        "_comment2": "place comment here"
+    @{
+        id                  = 004
+        srcfilename         = ""
+        dstfilename         = "example4.txt"
+        sourcePath          = ""
+        destinationPath     = "C:\example\destination4"
+        overwrite           = $false
+        copyonce            = $false
+        existCheckLocation  = ""
+        existCheck          = ""
+        deleteFile          = $true
+        targeting_type      = "none"
+        target              = "all"
+        _comment1           = "place comment here"
+        _comment2           = "place comment here"
     }
-]
-'@
+)
 
 # Specify the file path for the output file
 $file = "File-Ops.json"
