@@ -112,14 +112,26 @@ Check-OperatingSystem
 .\MGMT-Telemetry.ps1
 # .\MGMT-Telemetry.ps1 -param1 value1 -param2 value2
 
-.\MGMT-FileOps.ps1
-# .\MGMT-FileOps.ps1 -param1 value1 -param2 value2
+If($SkipFileOps -ne $true) {
+	.\MGMT-FileOps.ps1
+	# .\MGMT-FileOps.ps1 -param1 value1 -param2 value2
+}
 
-.\MGMT-RegOps.ps1
-# .\MGMT-RegOps.ps1 -param1 value1 -param2 value2
+If($SkipRegOps -ne $true) {
+	.\MGMT-RegOps.ps1
+	# .\MGMT-RegOps.ps1 -param1 value1 -param2 value2
+}
 
-.\MGMT-DriveOps.ps1
-# .\MGMT-DriveOps.ps1 -param1 value1 -param2 value2
+If($SkipDriveOps -ne $true) {
+	.\MGMT-DriveOps.ps1
+	# .\MGMT-DriveOps.ps1 -param1 value1 -param2 value2
+}
+
+If($SkipRoamOps -ne $true) {
+	.\MGMT-RoamOps.ps1
+	# .\MGMT-DriveOps.ps1 -param1 value1 -param2 value2
+}
+
 
 .\MGMT-DSC.ps1
 # .\MGMT-DSC.ps1 -param1 value1 -param2 value2
