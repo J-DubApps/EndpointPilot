@@ -1,5 +1,5 @@
 {
-  "ClientName": "McKool Smith",
+  "OrgName": "McKool Smith",
   "Refresh_Interval": 900,
   "NetworkScriptRootPath": "\\\\servername\\SHARE\\PS-MANAGE\\",
   "CopyLogFileToNetwork": false,
