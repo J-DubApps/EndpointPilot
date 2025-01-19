@@ -56,7 +56,7 @@
     "overwrite": false,
     "copyonce": false,
     "existCheckLocation": "",
-    "existCheck": "",
+    "existCheck": false,
     "deleteFile": true,
     "targeting_type": "none",
     "target": "all",
