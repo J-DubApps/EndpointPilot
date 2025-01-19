@@ -2,7 +2,7 @@
   {
     "id": 001,
     "driveLetter": "F:",
-    "drivePath": "\\server\share",
+    "drivePath": "\\server\\share",
     "reconnect": false,
     "delete": false,
     "hidden": false,
@@ -14,7 +14,7 @@
   {
     "id": 002,
     "driveLetter": "F:",
-    "drivePath": "\\server\share",
+    "drivePath": "\\server\\share",
     "reconnect": false,
     "delete": false,
     "hidden": false,
@@ -26,7 +26,7 @@
   {
     "id": 003,
     "driveLetter": "F:",
-    "drivePath": "\\server\share",
+    "drivePath": "\\server\\share",
     "reconnect": false,
     "delete": false,
     "hidden": false,
@@ -38,7 +38,7 @@
   {
     "id": 004,
     "driveLetter": "F:",
-    "drivePath": "\\server\share",
+    "drivePath": "\\server\\share",
     "reconnect": true,
     "delete": false,
     "hidden": false,
