@@ -2,6 +2,8 @@
 
 ## _"Better than a Logon Script..."_
 
+<img src="https://github.com/J-DubApps/EndpointPilot/blob/main/endpointpilot-logo.jpg" width="250" height="250" />
+
 
 
 **EndpointPilot** is a PowerShell-based User Profile Configuration Tool for Windows endpoints operating in an AD or Intune-managed context, with optimization for Remote Work scenarios. It works like a logon script, but is designed to be run locally at various intervals via a Scheduled Task.
