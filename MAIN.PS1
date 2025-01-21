@@ -2,7 +2,7 @@
 #Requires -PSEdition Desktop
 ###############################################################################################
 #
-#			EndpointPilot User Profile Configuration Script
+#			EndpointPilot User Profile Configuration Tool
 #			MAIN.PS1
 #
 # 	Description 	
@@ -77,7 +77,7 @@ If ($TestSharedVarModule -eq $true) {
 
 # Set Variables for Location for the Config / Runtime script-placement and script-names
 If ($DeployRunTimeScriptOnly -ne $true) {
-	$setRuntimeScriptFolder = Join-Path $Env:ProgramData -ChildPath "PS-MANAGE"
+	$setRuntimeScriptFolder = Join-Path $Env:ProgramData -ChildPath "EndpointPilot"
 }
 else {
 	$setRuntimeScriptFolder = $PSScriptRoot
@@ -120,7 +120,7 @@ else {
 ## If we're on VPN + Network shares are reachable, continuing script-run...
 
 # Exit if not running Enterprise Edition
-Check-OperatingSystem
+Test-OperatingSystem
 
 
 
@@ -151,7 +151,7 @@ If ($SkipRoamOps -ne $true) {
 }
 
 
-.\MGMT-CUSTOM.ps1
+.\MGMT-USER-CUSTOM.ps1
 # .\MGMT-CUSTOM.ps1 -param1 value1 -param2 value2
 
 
@@ -168,14 +168,22 @@ If ($SkipRoamOps -ne $true) {
 # .\MGMT-Maint.ps1 -param1 value1 -param2 value2
 
 #For VPN users, refresh the GPO once for User settings
-WriteLog "Updating User GPO Settings"
-gpupdate /target:user
+WriteLog "Updating GPO Settings"
+
+If $runningAsSystem -eq $True {
+	gpupdate /target:computer
+}
+else {
+	gpupdate /target:user
+}
+
+# gpupdate /target:user
 
 #Final logging entries & network log placement
 
-Log-InformationalEvent("PS Manage script run completed for " + $env:UserName)
+Log-InformationalEvent("EndpointPilot run completed for " + $env:UserName)
 Start-Sleep -Milliseconds 100 #Wait
-WriteLog "Logon Script Complete"
+WriteLog "EndPointPilot Run Complete"
 
 If ($CopyLogFileToNetwork -eq $true) {
 	$NetworkLogFile = Join-Path $NetworkScriptPath -ChildPath "$LogFileName"

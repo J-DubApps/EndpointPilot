@@ -2,19 +2,19 @@
 #Requires -PSEdition Desktop
 ###############################################################################################
 #
-#				PS-Manage Logon / User Profile Configuration Script Shared Settings MODule file
-#				MOD-SchedTsk.PS1
+#				EndpointPilot Configuration tool shared helper script
+#				MGMT-SchedTsk.PS1
 #
 # Description
 #				This file is a module called by MAIN.PS1 portion of PS-Manage
-#				It places PSTART.ps1 into Scheduled Tasks (if user rights permit) with the
+#				It places ENDPOINT-PILOT.ps1 into Scheduled Tasks (if user rights permit) with the
 #				appropriate triggers (network status change, etc).
 #
-#				This PS-Manage MODule file helps ensure that remote workers on VPN will still
-#				get regular script runs.
+#				This EndpointPilot helper script ensures that remote workers can still
+#				get regular script runs, outside of the usual logon/restart process.
 #
 #
-#				Written by Julian West February 2023
+#				Written by Julian West February 2025
 #
 #
 ###############################################################################################

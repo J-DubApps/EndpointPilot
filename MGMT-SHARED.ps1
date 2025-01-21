@@ -2,18 +2,17 @@
 #Requires -PSEdition Desktop
 ###############################################################################################
 #
-#    PS-Manage Logon / User Profile Mgmt Script Shared Settings Script
+#    EndpointPilot User Profile Mgmt Tool
 #    MGMT-SHARED.PS1
 #
 #        Description 	
 #        This file is a shared component called by MAIN.PS1
-#        It is triggered at logon and, optionally, by Windows Scheduled Tasks to run
-#        independent of a Logon event.
+#        It is triggered at by a Windows Scheduled Task to run independent of a Logon event.
 #
-#        This logon script is VPN-aware, to ensure needed Logon Scripted tasks are
+#        This solution is VPN-aware, to ensure needed Logon Scripted tasks are
 #        performed regularly for Remote users who may not be working on-prem (LAN).
 #
-#        Written by Julian West February 2023
+#        Written by Julian West February 2025
 #
 #
 ###############################################################################################
@@ -29,7 +28,7 @@ if ($MyInvocation.InvocationName -ne '.') {
 
 
 #region FUNCTIONS
-Function Check-ClientEnvironment() {
+Function Test-ClientEnvironment() {
     ##########################################################################
     ##	Checks if the machine is connected to the client domain
     ##	and if so if it is connected to a PC or to a Citrix machine
@@ -46,7 +45,7 @@ Function Check-ClientEnvironment() {
     #	}
 }
 
-Function Check-OperatingSystem() {
+Function Test-OperatingSystem() {
     ##########################################################################
     ##	Checks what version of Windows the machine is running
     ##	and quits if it is on an unsupported platform
@@ -65,7 +64,7 @@ Function Check-OperatingSystem() {
         #$OSName
     }
     Else {
-        Log-WarningEvent("The current operating system, " + $OS + ", is not supported. Exiting the script now.")
+        Write-WarningEvent("The current operating system, " + $OS + ", is not supported. Exiting the script now.")
         #$OS
         #$OSName
         Exit
@@ -73,7 +72,7 @@ Function Check-OperatingSystem() {
 }
 
 
-Function Cp-Directory($Path, $NewPath) {
+Function Copy-Directory($Path, $NewPath) {
     ##########################################################################
     ##	Copies a directory/folder to a new location
     ##########################################################################
@@ -85,7 +84,7 @@ Function Cp-Directory($Path, $NewPath) {
     }
 }
 
-Function Cp-File($Path, $NewPath) {
+Function Copy-File($Path, $NewPath) {
     ##########################################################################
     ##	Copies a file or a set of files to a new location
     ##########################################################################
@@ -98,7 +97,7 @@ Function Cp-File($Path, $NewPath) {
     }
 }
 
-Function Mv-Files($Path, $NewPath) {
+Function Move-Files($Path, $NewPath) {
     ##########################################################################
     ##	Moves a file or a set of files to a new location
     ##########################################################################
@@ -120,7 +119,7 @@ Function Import-RegKey($RegFile) {
     }
 }
 
-Function Log-InformationalEvent($Message) {
+Function Write-InformationalEvent($Message) {
     #########################################################################
     #	Writes an informational event to the event log
     #########################################################################
@@ -128,7 +127,7 @@ Function Log-InformationalEvent($Message) {
     Write-EventLog -LogName Application -Source Winlogon -Message $QualifiedMessage -EventId 1001 -EntryType Information
 }
 
-Function Log-WarningEvent($Message) {
+Function Write-WarningEvent($Message) {
     #########################################################################
     # Writes a warning event to the event log
     #########################################################################
@@ -295,7 +294,7 @@ $objComputer = ([adsisearcher]$filter).FindOne().Properties.distinguishedname
 WriteLog "Logon Script Run Start"
 
 #Create Event Viewer entry for the start of the script
-Log-InformationalEvent("MS Logon Script started for " + $env:UserName)
+Write-InformationalEvent("MS Logon Script started for " + $env:UserName)
 
 
 

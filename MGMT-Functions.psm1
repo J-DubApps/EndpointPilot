@@ -1,4 +1,4 @@
-# Script Module file for PS-MANAGE
+# Script Module file for EndpointPilot
 #
 # Cmdlet aliases
 #

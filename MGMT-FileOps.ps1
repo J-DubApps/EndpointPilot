@@ -2,21 +2,21 @@
 #Requires -PSEdition Desktop
 ###############################################################################################
 #
-#	    PS-Manage Logon / User Profile Configuration Script Shared Settings MODule file
+#	    EndpointPilot Configuration tool shared helper script
 #			MOD-FileOps.PS1
 #
 #  Description
-#    This file is a module called by MAIN.PS1 portion of PS-Manage
-#    It places PSTART.ps1 into Scheduled Tasks (if user rights permit) with the
+#    This file is a module called by MAIN.PS1 portion of EndpointPilot
+#    It places ENDPOINT-PILOT.ps1 into Scheduled Tasks (if user rights permit) with the
 #    appropriate triggers (network status change, etc).
 #
-#    This PS-Manage MODule file loads FileOps.json into an array of objects,
-#    where each object represents a file to be copied or deleted.
-#    The script then loops through each object in the array and extracts the file
-#    information, such as the source and destination file paths, and the overwrite and copyonce boolean values.
+#    This EndpointPilot helper script loads File-Ops.json data into an array of objects,
+#    where each object represents information about copying/deleting files (and Targeting options).
+#    The script then loops through each separate dataset to perform the required tasks designated in
+#    File-Ops.json.
 #
 #
-#				Written by Julian West April 2025
+#				Written by Julian West February 2025
 #
 #
 ###############################################################################################

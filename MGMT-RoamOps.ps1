@@ -1,25 +1,25 @@
 #Requires -Version 5.1
 #Requires -PSEdition Desktop
-###############################################################################################
+<#
+##############################################################################################
 #
-#		PS-Manage Logon / User Profile Configuration Script Shared Settings MODule file
-#		Mgmt-RoamOps.PS1
+#		EndpointPilot User Profile Configuration Tool Settings Helper Script 
+#       Mgmt-RoamOps.PS1
 #
 #	Description
-#	This file is a module called by MAIN.PS1 portion of PS-Manage
-#	It places PSTART.ps1 into Scheduled Tasks (if user rights permit) with the
+#	This file is a module called by MAIN.PS1 portion of EndpointPilot
+#	It places ENDPOINT-PILOT.ps1 into Scheduled Tasks (if user rights permit) with the
 #	appropriate triggers (network status change, etc).
 #
-#	This PS-Manage MODule file loads Roam-Ops.json into an array of objects,
-#	where each object represents a file to be roamed / synchronized with a Network Share.
-#	The script then loops through each object in the array and extracts the file
-#	information, such as the source and destination file paths, and perorms the copy based on each array object (file).
+#	This EndpointPilot helper script cycles through standard user profile data, to copy-sync (roam) 
+#   to a specified Network Share location. Mgmt-RoamOps.ps1 behavior is set in Config.json.
 #
 #
-#				Written by Julian West April 2025
+#				Written by Julian West February 2025
 #
 #
 ###############################################################################################
+#>
 
 # Check to see if this script is being run directly, or if it is being dot-sourced into another script.
 

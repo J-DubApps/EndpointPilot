@@ -2,14 +2,14 @@
 #Requires -PSEdition Desktop
 ###############################################################################################
 #
-#    PS-Manage Logon / User Profile Configuration Script Shared Settings MODule file
+#    EndpointPilot Logon / User Profile Configuration Script Shared Settings helper script
 #    MGMT-Telemetry.PS1
 #
-# Description 	This file is a shared component called by MAIN.PS1 portion of PS-Manage
-#            This script component MODule determines user general location, Internet Provider
+# Description 	This file is a shared component called by MAIN.PS1 portion of EndpointPilot
+#            This helper script determines user general location, Internet Provider
 #            and VPN connection status.
 #
-#            This MODule is required to help PS-Manage operate in a VPN-aware footing, t
+#            This helper script is required to help EndpointPilot operate in a VPN-aware footing,
 #            to ensure needed Scripted tasks are performed regularly for Remote workers
 #            who may not be working on-prem (LAN).
 #
