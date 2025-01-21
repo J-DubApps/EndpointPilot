@@ -1,22 +1,26 @@
 #Requires -Version 5.1
 #Requires -PSEdition Desktop
+<#
 ###############################################################################################
 #
-#		PS-Manage Logon / User Profile Configuration Script Shared Settings MODule file
-#		MOD-CUSTOM.PS1
+#		EndpointPilot Configuration tool shared helper script
+#		MGMT-USER-CUSTOM.PS1
 #
-# 	Description 	This file is a shared component called by MAIN.PS1 portion of PS-Manage
-#			It is intended for PS Scripters to created added custom scripting, to accomplish
-#			extra things not covered by PS-Manage.
+# 	Description 	This file is a shared helper script called by MAIN.PS1 portion of EndpointPilot.
+#			It is a spot for Sysadmins to add their own PS Scripting code for custom runs, to accomplish
+#			extra things not handled by EndpointPilot and its JSON directive files.
 #
-#			Please remember Registry and File mgmt operations tasks are already performed 
-#			by the MOD-FileOps.ps1 and MOD-RegOps.ps1 modules along with their requisite 
-#			JSON files.
+#			Please remember Registry and File operations are already performed 
+#			by the MGMT-FileOps.ps1 and MGMT-RegOps.ps1 child/helper scripts, to avoid duplication of effort.
+#
+#			This script runs in user-mode, so you cannot perform system-wide operations here,
+#			only user-specific ones.
 #
 #			Written by Julian West February 2025
 #
 #
 ###############################################################################################
+#>
 
 
 # Check to see if this script is being run directly, or if it is being dot-sourced into another script.
