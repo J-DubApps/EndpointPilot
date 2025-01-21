@@ -36,6 +36,6 @@ Roadmap:
 - [ ] Devlop a System Agent to run some EndpointPilot features with elevated rights.  Securely.
 
 <br />
- <div style="text-align: center;">
+<p align="center">
     <img src="https://github.com/J-DubApps/EndpointPilot/blob/main/EndpointPilot.jpg" width="400" height="400" />
-</div>
+</p>
