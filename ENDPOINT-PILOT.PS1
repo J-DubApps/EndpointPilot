@@ -6,14 +6,14 @@ using namespace System.Management.Automation.Language
 .SYNOPSIS
     --.
 .DESCRIPTION
-    Kicks off PS-MANAGE Script Run, calls MAIN.PS1. This solution is meant to run at logon via classic AD or GPO,
-    or, optionally, runs by Windows Scheduled Task to run independent of a Logon event.
+    Kicks off EndpointPilot Script Run, which calls MAIN.PS1. This solution is meant to run by Windows Scheduled Task,
+    or can be run via classic AD or GPO. 
 .PARAMETER
     --.
 .EXAMPLE
-    PS-MANAGE.ps1
+    ENDPOINT-PILOT.ps1
 .INPUTS
-    None. # This script does not accept piped input.  It uses Functions and Variables from the MGMT-SHARED.ps1 script.
+    None. # This script does not accept piped input.  It uses Functions and Variables from the MGMT-SHARED.ps1 script and JSON files.
 .OUTPUTS
     None. # This script does not generate any output beyond a runtime log under path set by $LogFile in MGMT-SHARED.ps1 (usually %userprofile%\ps-manage-$env:COMPUTERNAME.log)
 .NOTES
@@ -52,9 +52,9 @@ Author: Julian West
 .LINK
     https://julianwest.me
 .LINK
-    https://github.com/J-DubApps/PS-MANAGE/CHANGELOG.TXT
+    https://github.com/J-DubApps/EndpointPilot/CHANGELOG.TXT
 .LINK
-    https://github.com/J-DubApps/PS-MANAGE
+    https://github.com/J-DubApps/EndpointPilot
 .COMPONENT
     --
 .FUNCTIONALITY
@@ -77,7 +77,7 @@ if ($ENV:PROCESSOR_ARCHITEW6432 -eq 'AMD64')
 }
 #endregion ARM64Handling
 
-# Launch PS-Manage Main runtime script
+# Launch EP Main runtime script
 .\MAIN.ps1
 
 exit 0
@@ -86,7 +86,7 @@ exit 0
 <#
       BSD 3-Clause License
 
-      Copyright (c) 2022, Julian West
+      Copyright (c) 2025, Julian West
       All rights reserved.
 
       Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

@@ -2,22 +2,22 @@
 #Requires -PSEdition Desktop
 ###############################################################################################
 #
-#			PS-MANAGE User Profile Configuration Script
+#			EndpointPilot User Profile Configuration Script
 #			MAIN.PS1
 #
 # 	Description 	
-#	This management script is triggered by PS-MANAGE.PS1. This solution runs at logon via classic AD or GPO,
+#	This management script is triggered by ENDPOINT-PILOT.PS1. This solution runs at logon via classic AD or GPO,
 #	or, optionally, runs by Windows Scheduled Task to run independent of a Logon event.
 #
-#	MAIN.PS1 calls PS-MANAGE components, incl MGMT-Functions module, and "MGMT" Task Scripts	
+#	MAIN.PS1 calls EP components, incl MGMT-Functions module, and "MGMT" Task Scripts	
 #
-#	MAIN.PS1 is designed to be called by PS-MANAGE.PS1 for production runs, and can be called 
+#	MAIN.PS1 is designed to be called by ENDPOINT-PILOT.PS1 for production runs, and can be called 
 #	independently for TEST non-prod runs.
 #
 #	This solution is VPN-aware to ensure needed Scripted tasks are
 #	performed regularly for Remote users who may not be working on-prem (LAN).
 #
-#	Written by Julian West February 2023
+#	Written by Julian West February 2025
 #
 #
 ###############################################################################################
