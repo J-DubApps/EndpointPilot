@@ -35,5 +35,7 @@ Roadmap:
 - [ ] Add support System Configuration Mgmt scenarios (currently EndpointPilot only supports *User Mode* profile config use-cases, no SYSTEM or Admin mode use-cases are currently supported)
 - [ ] Devlop a System Agent to run some EndpointPilot features with elevated rights.  Securely.
 
-
-<img src="https://github.com/J-DubApps/EndpointPilot/blob/main/EndpointPilot.jpg" width="400" height="400" />
+<br />
+ <div style="text-align: center;">
+    <img src="https://github.com/J-DubApps/EndpointPilot/blob/main/EndpointPilot.jpg" width="400" height="400" />
+</div>
