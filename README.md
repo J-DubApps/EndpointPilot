@@ -37,5 +37,5 @@ Roadmap:
 
 <br />
 <p align="center">
-    <img src="https://github.com/J-DubApps/EndpointPilot/blob/main/EndpointPilot.jpg" width="400" height="400" />
+    <img src="https://github.com/J-DubApps/EndpointPilot/blob/main/EndpointPilot.jpg" width="500" height="500" />
 </p>
