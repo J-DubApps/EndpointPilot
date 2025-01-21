@@ -1,10 +1,10 @@
-# PS-MANAGE
+# EndpointPilot
 
 ## _"Better than a Logon Script..."_
 
 
 
-**PS-MANAGE** is a PowerShell User Profile Configuration Tool for Windows workstation endpoints operating on an AD (or Intune managed), with optimization for Remote Work scenarios. It works like a logon script, but is designed to be called locally as a Scheduled Task for repeated runs.
+**EndpointPilot** is a PowerShell User Profile Configuration Tool for Windows endpoints operating on an AD (or Intune managed scenario), with optimization for Remote Work scenarios. It works like a logon script, but is designed to be called locally as a Scheduled Task for repeated runs.
 
 ### PS-MANAGE addresses the following use-case scenarios:
 
