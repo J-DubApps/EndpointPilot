@@ -2,7 +2,7 @@
 
 ## _"Better than a Logon Script..."_
 
-<img src="https://github.com/J-DubApps/EndpointPilot/blob/main/endpointpilot-logo.jpg" width="250" height="250" />
+<img src="https://github.com/J-DubApps/EndpointPilot/blob/main/endpointpilot-logo.jpg" width="200" height="200" />
 
 
 
@@ -34,3 +34,6 @@ Roadmap:
 - [ ] Add support for PowerShell Core (*currently locked to PS 5.1*)
 - [ ] Add support System Configuration Mgmt scenarios (currently EndpointPilot only supports *User Mode* profile config use-cases, no SYSTEM or Admin mode use-cases are currently supported)
 - [ ] Devlop a System Agent to run some EndpointPilot features with elevated rights.  Securely.
+
+
+<img src="https://github.com/J-DubApps/EndpointPilot/blob/main/EndpointPilot.jpg" width="400" height="400" />
