@@ -29,6 +29,11 @@ EndpointPilot can be set to execute as a Windows Scheduled Task at configured "r
 Your users need to be granted rights to at *least* **create** Scheduled Tasks on their Windows PC Endpoints (this right is granted in GPO or Intune CSP).  
 If your IT security policies forbid Scheduled Task creation privilege, see EndpointPilot-Deploy.PDF for alternate deployment methods.
 
+
+### Licensing: 
+
+See [**here**](https://github.com/J-DubApps/EndpointPilot?tab=BSD-3-Clause-1-ov-file#) for BSD-3 License info.
+
  <a id="roadmap"></a>
 
 #### Roadmap:
