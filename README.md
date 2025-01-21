@@ -31,7 +31,7 @@ If your IT security policies forbid Scheduled Task creation privilege, see Endpo
 
 Roadmap:
 
-- [ ] Add support for PowerShell Core (*currently locked to PS 5.1*)
+- [ ] Add support for PowerShell Core (*currently locked to 5.1*)
 - [ ] Add support System Configuration Mgmt scenarios (currently EndpointPilot only supports *User Mode* profile config use-cases, no SYSTEM or Admin mode use-cases are currently supported)
 - [ ] Devlop a System Agent to run some EndpointPilot features with elevated rights.  Securely.
 
