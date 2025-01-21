@@ -26,7 +26,7 @@ EndpointPilot components are staged onto a PC endpoint under each user's profile
 
 Pre-Requisites:
 
-Your users need to be granted rights to at least create Scheduled Tasks on their Windows PC Endpoints (this right is granted in GPO or Intune CSP).  
+Your users need to be granted rights to at *least* **create** Scheduled Tasks on their Windows PC Endpoints (this right is granted in GPO or Intune CSP).  
 If your IT security policies forbid Scheduled Task creation privilege, see EndpointPilot-Deploy.PDF for alternate deployment methods.
 
 Roadmap:
