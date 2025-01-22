@@ -2,7 +2,7 @@
 
 ## _"Better than a Logon Script..."_
 
-<img src="https://github.com/J-DubApps/EndpointPilot/blob/main/endpointpilot-logo.jpg" width="200" height="200" />
+<img src="https://github.com/J-DubApps/EndpointPilot/blob/main/images/endpointpilot-logo.jpg" width="200" height="200" />
 
 
 
@@ -44,5 +44,5 @@ See [**here**](https://github.com/J-DubApps/EndpointPilot?tab=BSD-3-Clause-1-ov-
 
 <br />
 <p align="center">
-    <img src="https://github.com/J-DubApps/EndpointPilot/blob/main/EndpointPilot.jpg" width="500" height="500" />
+    <img src="https://github.com/J-DubApps/EndpointPilot/blob/main/images/EndpointPilot.jpg" width="500" height="500" />
 </p>
