@@ -39,8 +39,8 @@ See [**here**](https://github.com/J-DubApps/EndpointPilot?tab=BSD-3-Clause-1-ov-
 #### Roadmap:
 
 - [ ] Add support for PowerShell Core (*currently the helper/child scripts are locked to 5.1*).
-- [ ] Explore non user-mode endpoint Config Mgmt scenarios for "MGMT" helper scripts (currently EndpointPilot only supports *User Mode* profile config use-cases, no SYSTEM or Admin mode use-cases are currently supported).
-- [ ] If non-user mode operation is feasible, devlop a securely-written System Agent option to offer elevated rights config options (via ).  Securely.
+- [ ] Explore System-mode endpoint Config Mgmt scenarios for "MGMT" helper scripts (currently EndpointPilot *only* supports *User-mode* profile config use-cases, no SYSTEM or Admin mode operations are currently supported).
+- [ ] If System-mode operation scenarios prove feasible, explore developing a securely-written System Agent option to offer elevated rights config options.
 
 <br />
 <p align="center">
