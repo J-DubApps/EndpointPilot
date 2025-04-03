@@ -141,11 +141,22 @@ $env:HostIP = (
 
 WriteLog "Primary IP Address is $env:HostIP"
 
-$HostExtIP = (Invoke-WebRequest -uri "https://api.ipify.org/").Content
+try {
+    $HostExtIP = (Invoke-WebRequest -uri "https://api.ipify.org/" -UseBasicParsing -TimeoutSec 10).Content
+} catch {
+    WriteLog "ERROR getting external IP from api.ipify.org: $_"
+    $HostExtIP = "Error"
+}
 
 WriteLog "External IP Address is $HostExtIP"
 
-$HostISP = Invoke-RestMethod -Uri "http://ipinfo.io" | foreach { $_.org }
+try {
+    # Note: ipinfo.io might require an API key for reliable/high-volume use.
+    $HostISP = (Invoke-RestMethod -Uri "http://ipinfo.io/org" -TimeoutSec 10).Trim()
+} catch {
+    WriteLog "ERROR getting ISP info from ipinfo.io: $_"
+    $HostISP = "Error"
+}
 
 WriteLog "Possible Internet Provider is $HostISP"
 
@@ -177,7 +188,7 @@ while (($GeoWatcher.Status -ne 'Ready') -and ($GeoWatcher.Permission -ne 'Denied
 }
 
 if ($GeoWatcher.Permission -eq 'Denied') {
-    Write-Error 'Access Denied for Location Information'
+    WriteLog 'WARN: Access Denied for Location Information. Geolocation skipped.' # Changed from Write-Error
 }
 else {
     $ISPGeoLocation = $GeoWatcher.Position.Location | Select Latitude, Longitude #Select the relevent results.

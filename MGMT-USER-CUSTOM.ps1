@@ -52,14 +52,14 @@ if ($MyInvocation.InvocationName -ne '.') {
 	$resMA = New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Office\16.0\Common\Identity" -Name DisableADALatopWAMOverride -Value 0 -PropertyType DWORD -Force -ErrorAction SilentlyContinue
 	$resMA = New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Office\16.0\Common\Identity" -Name DisableAADWAM -Value 0 -PropertyType DWORD -Force -ErrorAction SilentlyContinue
 
-        Write-Output "Verifying/Setting Modern Auth registry key"
+        WriteLog "Verifying/Setting Modern Auth registry key" # Changed from Write-Output
 		WriteLog "Verifying/Setting Modern Auth registry key"
-		Write-Output "registry key verified"
+		WriteLog "registry key verified" # Changed from Write-Output
 		WriteLog "registry key verified"
     }catch{
-        Write-Error "Failed to add Modern Auth registry keys, skipping to allow GPO to do this..." -ErrorAction Continue
+        WriteLog "WARN: Failed to add Modern Auth registry keys, skipping to allow GPO to do this..." # Changed from Write-Error
 		WriteLog "Failed to add Modern Auth registry keys, skipping to allow GPO to do this..."
-        Write-Error $_ -ErrorAction Continue
+        WriteLog "ERROR setting Modern Auth keys: $_" # Changed from Write-Error, log full exception
     }
 
 #}else{

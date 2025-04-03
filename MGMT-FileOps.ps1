@@ -84,7 +84,7 @@ $json | ForEach-Object {
         }
     }
     catch {
-        Write-Host "Error: $_"
+        WriteLog "ERROR processing file operation (delete check): $_" # Log full exception details
     }
 
     # Perform copy actions specified in the JSON file, for each file
@@ -141,6 +141,6 @@ $json | ForEach-Object {
         }
     }
     catch {
-        Write-Host "Error: $_"
+        WriteLog "ERROR processing file operation (copy): $_" # Log full exception details
     }
 }

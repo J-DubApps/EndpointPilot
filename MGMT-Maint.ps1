@@ -34,6 +34,7 @@ if ($MyInvocation.InvocationName -ne '.') {
 }
 
 
+WriteLog "Starting duplicate desktop shortcut cleanup..."
 ###Clean up duplicate Desktop Shortcuts
 
 $DesktopPath = Join-Path -Path ([Environment]::GetFolderPath("Desktop")) -ChildPath "*"
@@ -47,5 +48,20 @@ $DuplicateNames = @(
 	"*Insider*"
 )
 
-Get-ChildItem -Path $DesktopPath -Filter *.lnk -Include $DuplicateNames | Where {$_.Name -like "*-*.lnk"} | Remove-Item -Force
-Get-ChildItem -Path $DesktopPath -Filter *.url -Include $DuplicateNames | Where {$_.Name -like "*-*.url"} | Remove-Item -Force
+try {
+    Get-ChildItem -Path $DesktopPath -Filter *.lnk -Include $DuplicateNames | Where-Object {$_.Name -like "*-*.lnk"} | ForEach-Object {
+        WriteLog "Removing duplicate shortcut: $($_.FullName)"
+        Remove-Item -Path $_.FullName -Force -ErrorAction Stop
+    }
+} catch {
+    WriteLog "ERROR cleaning up duplicate .lnk shortcuts: $_"
+}
+
+try {
+    Get-ChildItem -Path $DesktopPath -Filter *.url -Include $DuplicateNames | Where-Object {$_.Name -like "*-*.url"} | ForEach-Object {
+        WriteLog "Removing duplicate shortcut: $($_.FullName)"
+        Remove-Item -Path $_.FullName -Force -ErrorAction Stop
+    }
+} catch {
+    WriteLog "ERROR cleaning up duplicate .url shortcuts: $_"
+}

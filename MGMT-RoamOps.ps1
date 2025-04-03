@@ -55,7 +55,7 @@ If $overwrite is true, the script checks if the source file is newer than the de
 
 
 # Read JSON file
-$json = Get-Content -Raw -Path ".\file-ops.json" | ConvertFrom-Json
+$json = Get-Content -Raw -Path ".\ROAM-OPS.json" | ConvertFrom-Json # Corrected JSON filename
 
 # Loop through each entry in the json file
 $json | ForEach-Object {
@@ -86,7 +86,7 @@ $json | ForEach-Object {
         }
     }
     catch {
-        Write-Host "Error: $_"
+        WriteLog "ERROR processing roam operation (delete check): $_" # Log full exception details
     }
 
     # Perform copy actions specified in the JSON file, for each file
@@ -143,6 +143,6 @@ $json | ForEach-Object {
         }
     }
     catch {
-        Write-Host "Error: $_"
+        WriteLog "ERROR processing roam operation (copy): $_" # Log full exception details
     }
 }

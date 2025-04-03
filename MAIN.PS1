@@ -132,7 +132,7 @@ try {
     # .\MGMT-Telemetry.ps1 -param1 value1 -param2 value2
 }
 catch {
-    WriteLog "ERROR executing MGMT-Telemetry.ps1: $($_.Exception.Message)"
+    WriteLog "ERROR executing MGMT-Telemetry.ps1: $_" # Log full exception details
 }
 
 If ($SkipFileOps -ne $true) {
@@ -141,7 +141,7 @@ If ($SkipFileOps -ne $true) {
 	       # .\MGMT-FileOps.ps1 -param1 value1 -param2 value2
 	   }
 	   catch {
-	       WriteLog "ERROR executing MGMT-FileOps.ps1: $($_.Exception.Message)"
+	       WriteLog "ERROR executing MGMT-FileOps.ps1: $_" # Log full exception details
 	   }
 }
 
@@ -151,7 +151,7 @@ If ($SkipRegOps -ne $true) {
 	       # .\MGMT-RegOps.ps1 -param1 value1 -param2 value2
 	   }
 	   catch {
-	       WriteLog "ERROR executing MGMT-RegOps.ps1: $($_.Exception.Message)"
+	       WriteLog "ERROR executing MGMT-RegOps.ps1: $_" # Log full exception details
 	   }
 }
 
@@ -161,7 +161,7 @@ If ($SkipDriveOps -ne $true) {
 	       # .\MGMT-DriveOps.ps1 -param1 value1 -param2 value2
 	   }
 	   catch {
-	       WriteLog "ERROR executing MGMT-DriveOps.ps1: $($_.Exception.Message)"
+	       WriteLog "ERROR executing MGMT-DriveOps.ps1: $_" # Log full exception details
 	   }
 }
 
@@ -171,7 +171,7 @@ If ($SkipRoamOps -ne $true) {
 	       # .\MGMT-RoamOps.ps1 -param1 value1 -param2 value2 # Corrected comment
 	   }
 	   catch {
-	       WriteLog "ERROR executing MGMT-RoamOps.ps1: $($_.Exception.Message)"
+	       WriteLog "ERROR executing MGMT-RoamOps.ps1: $_" # Log full exception details
 	   }
 }
 
@@ -181,7 +181,7 @@ try {
     # .\MGMT-USER-CUSTOM.ps1 -param1 value1 -param2 value2 # Corrected comment
 }
 catch {
-    WriteLog "ERROR executing MGMT-USER-CUSTOM.ps1: $($_.Exception.Message)"
+    WriteLog "ERROR executing MGMT-USER-CUSTOM.ps1: $_" # Log full exception details
 }
 
 
@@ -193,7 +193,7 @@ try {
     # .\MGMT-SchedTsk.ps1 -param1 value1 -param2 value2
 }
 catch {
-    WriteLog "ERROR executing MGMT-SchedTsk.ps1: $($_.Exception.Message)"
+    WriteLog "ERROR executing MGMT-SchedTsk.ps1: $_" # Log full exception details
 }
 
 
@@ -204,7 +204,7 @@ try {
     # .\MGMT-Maint.ps1 -param1 value1 -param2 value2
 }
 catch {
-    WriteLog "ERROR executing MGMT-Maint.ps1: $($_.Exception.Message)"
+    WriteLog "ERROR executing MGMT-Maint.ps1: $_" # Log full exception details
 }
 
 #For VPN users, refresh the GPO once for User settings
