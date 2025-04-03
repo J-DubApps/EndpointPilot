@@ -127,50 +127,90 @@ Test-OperatingSystem
 
 #Call Script Element / Component Modules -
 
-.\MGMT-Telemetry.ps1
-# .\MGMT-Telemetry.ps1 -param1 value1 -param2 value2
+try {
+    .\MGMT-Telemetry.ps1
+    # .\MGMT-Telemetry.ps1 -param1 value1 -param2 value2
+}
+catch {
+    WriteLog "ERROR executing MGMT-Telemetry.ps1: $($_.Exception.Message)"
+}
 
 If ($SkipFileOps -ne $true) {
-	.\MGMT-FileOps.ps1
-	# .\MGMT-FileOps.ps1 -param1 value1 -param2 value2
+	   try {
+	       .\MGMT-FileOps.ps1
+	       # .\MGMT-FileOps.ps1 -param1 value1 -param2 value2
+	   }
+	   catch {
+	       WriteLog "ERROR executing MGMT-FileOps.ps1: $($_.Exception.Message)"
+	   }
 }
 
 If ($SkipRegOps -ne $true) {
-	.\MGMT-RegOps.ps1
-	# .\MGMT-RegOps.ps1 -param1 value1 -param2 value2
+	   try {
+	       .\MGMT-RegOps.ps1
+	       # .\MGMT-RegOps.ps1 -param1 value1 -param2 value2
+	   }
+	   catch {
+	       WriteLog "ERROR executing MGMT-RegOps.ps1: $($_.Exception.Message)"
+	   }
 }
 
 If ($SkipDriveOps -ne $true) {
-	.\MGMT-DriveOps.ps1
-	# .\MGMT-DriveOps.ps1 -param1 value1 -param2 value2
+	   try {
+	       .\MGMT-DriveOps.ps1
+	       # .\MGMT-DriveOps.ps1 -param1 value1 -param2 value2
+	   }
+	   catch {
+	       WriteLog "ERROR executing MGMT-DriveOps.ps1: $($_.Exception.Message)"
+	   }
 }
 
 If ($SkipRoamOps -ne $true) {
-	.\MGMT-RoamOps.ps1
-	# .\MGMT-DriveOps.ps1 -param1 value1 -param2 value2
+	   try {
+	       .\MGMT-RoamOps.ps1
+	       # .\MGMT-RoamOps.ps1 -param1 value1 -param2 value2 # Corrected comment
+	   }
+	   catch {
+	       WriteLog "ERROR executing MGMT-RoamOps.ps1: $($_.Exception.Message)"
+	   }
 }
 
 
-.\MGMT-USER-CUSTOM.ps1
-# .\MGMT-CUSTOM.ps1 -param1 value1 -param2 value2
+try {
+    .\MGMT-USER-CUSTOM.ps1
+    # .\MGMT-USER-CUSTOM.ps1 -param1 value1 -param2 value2 # Corrected comment
+}
+catch {
+    WriteLog "ERROR executing MGMT-USER-CUSTOM.ps1: $($_.Exception.Message)"
+}
 
 
 # .\MGMT-HostFile.ps1
 # .\MGMT-HostFile.ps1 -param1 value1 -param2 value2
 
-.\MGMT-SchedTsk.ps1
-# .\MGMT-SchedTsk.ps1 -param1 value1 -param2 value2
+try {
+    .\MGMT-SchedTsk.ps1
+    # .\MGMT-SchedTsk.ps1 -param1 value1 -param2 value2
+}
+catch {
+    WriteLog "ERROR executing MGMT-SchedTsk.ps1: $($_.Exception.Message)"
+}
 
 
 #region CLEANUP_AND_EXIT
 
-.\MGMT-Maint.ps1
-# .\MGMT-Maint.ps1 -param1 value1 -param2 value2
+try {
+    .\MGMT-Maint.ps1
+    # .\MGMT-Maint.ps1 -param1 value1 -param2 value2
+}
+catch {
+    WriteLog "ERROR executing MGMT-Maint.ps1: $($_.Exception.Message)"
+}
 
 #For VPN users, refresh the GPO once for User settings
 WriteLog "Updating GPO Settings"
 
-If $runningAsSystem -eq $True {
+If ($runningAsSystem -eq $True) {
 	gpupdate /target:computer
 }
 else {
