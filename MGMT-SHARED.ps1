@@ -1,5 +1,3 @@
-#Requires -Version 5.1
-#Requires -PSEdition Desktop
 ###############################################################################################
 #
 #    EndpointPilot User Profile Mgmt Tool
@@ -234,6 +232,66 @@ function Expand-ConfigString {
 ##########################################################################
 ###
 
+# region PowerShell Version and Edition
+# Retrieve the current PowerShell version information -- if we're allowed to run under PowerShell Core (top comments left enabled)
+# then we want to know if we're running under PowerShell Core or Windows PowerShell 5.1
+$psVer = $PSVersionTable.PSVersion
+$psEd = $PSVersionTable.PSEdition
+
+# Display version information for debugging purposes
+# Write-Output "Detected PowerShell Version: $psVer"
+# Write-Output "Detected PowerShell Edition: $psEd"
+# Write-Output "-------------------------------"
+
+# Determine the PowerShell version and edition
+if ($psEd -eq 'Desktop' -and $psVer.Major -eq 5 -and $psVer.Minor -eq 1) {
+    # Write-Output "You are running Windows PowerShell 5.1 (Desktop Edition)."
+    $psClassicDesktop = $true
+} elseif ($psEd -eq 'Core' -and $psVers.Major -ge 7) {
+    # Write-Output "You are running PowerShell Core (version 7.x or newer)."
+    $psClassicDesktop = $false
+} else {
+    # Write-Output "You are running an unrecognized version of PowerShell: $psVer, Edition: $psEd"
+}
+#endregion PowerShell Version and Edition
+
+# region OS Architecture
+# Determine the OS Architecture (x64, x86, or Arm64)
+# This code works in both Windows PowerShell 5.1 (Desktop) and PowerShell Core
+
+# If running under WOW64 (32-bit process on a 64-bit OS), $env:PROCESSOR_ARCHITEW6432 will be defined.
+if ($env:PROCESSOR_ARCHITEW6432) {
+    $arch = $env:PROCESSOR_ARCHITEW6432
+} else {
+    $arch = $env:PROCESSOR_ARCHITECTURE
+}
+
+# Map the raw architecture value to a friendly output.
+switch ($arch) {
+    "AMD64" { $archFriendly = "x64" }
+    "x86"   { $archFriendly = "x86 (32-bit)" }
+    "ARM64" { $archFriendly = "Arm64" }
+    default { $archFriendly = "Unknown Architecture ($arch)" }
+}
+# endregion OS Architecture
+# Write-Output "Detected Operating System Architecture: $archFriendly"
+
+#region 32bitHandling - if launched from 32bit PowerShell 5.1 on a 64-bit OS
+If ($psClassicDesktop -eq $true) {
+    if (([IntPtr]::Size -eq 4) -and ($env:PROCESSOR_ARCHITECTURE -eq 'AMD64')) {
+        # If running in 32-bit PowerShell on a 64-bit OS, launch the 64-bit version of PowerShell
+        try {
+            &"$ENV:WINDIR\SysNative\WindowsPowershell\v1.0\PowerShell.exe" -File $PSCOMMANDPATH
+        } catch {
+            Throw ('Failed to start {0}' -f $PSCOMMANDPATH)
+        }
+        exit
+    } elseif (([IntPtr]::Size -eq 8) -and ($env:PROCESSOR_ARCHITECTURE -eq 'x86')) {
+        exit # we are not going to support 32bit PowerShell on 32bit OS
+    }
+}
+#endregion 32bitHandling
+
 #region Variables
 
 #Declare the Client Variables
@@ -264,10 +322,10 @@ $SkipRoamOps = $config.SkipRoamOps
 
 # $ClientName = "McKool Smith"
 # $Refresh_Interval = 900 #Seconds
-# $NetworkScriptRootPath = "\\servername\SHARE\PS-MANAGE\"
+# $NetworkScriptRootPath = "\\servername\SHARE\PS-Epilot\"
 # $CopyLogFileToNetwork = $false #Set to $true to copy the log file to the network
 # Set the network location, below, if above var is set to $true.  Create that shared folder if it doesn't exist, and make sure the user has write access to it.
-# $NetworkLogFile = "\\servername\SHARE\Tools\FlagFiles\Logon_Script_RunLogs\LOGON-$env:UserName-on-$env:computername.log"
+# $NetworkLogFile = "\\servername\SHARE\Tools\FlagFiles\EPilot_Script_RunLogs\EPilot-$env:UserName-on-$env:computername.log"
 # $RoamFiles = $false #Set to $true if you wish to leverage roaming/syncing certain files (files to sync/roam are specified in ROAM-OPS.json)
 # Set the network location, below, if above var is set to $true.  Create that shared folder if it doesn't exist, and make sure the user has write & folder creation rights to it.
 # $NetworkRoamFolder = "\\servername\SHARE\RoamingFiles"

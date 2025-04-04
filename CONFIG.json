@@ -1,10 +1,10 @@
 {
   "OrgName": "McKool Smith",
   "Refresh_Interval": 900,
-  "NetworkScriptRootPath": "\\\\servername\\SHARE\\PS-MANAGE\\",
+  "NetworkScriptRootPath": "\\\\servername\\SHARE\\PS-EPilot\\",
   "CopyLogFileToNetwork": false,
   "RoamFiles": false,
-  "NetworkLogFile": "\\\\servername\\SHARE\\Tools\\FlagFiles\\Logon_Script_RunLogs",
+  "NetworkLogFile": "\\\\servername\\SHARE\\Tools\\FlagFiles\\EPilot_Script_RunLogs",
   "NetworkRoamFolder": "\\\\servername\\SHARE\\RoamingFiles",
   "SkipFileOps": false,
   "SkipDriveOps": false,

@@ -65,6 +65,7 @@ Author: Julian West
     --
 #>
 
+# region PowerShell Version and Edition
 # Retrieve the current PowerShell version information -- if we're allowed to run under PowerShell Core (top comments left enabled)
 # then we want to know if we're running under PowerShell Core or Windows PowerShell 5.1
 $psVer = $PSVersionTable.PSVersion
@@ -85,7 +86,9 @@ if ($psEd -eq 'Desktop' -and $psVer.Major -eq 5 -and $psVer.Minor -eq 1) {
 } else {
     # Write-Output "You are running an unrecognized version of PowerShell: $psVer, Edition: $psEd"
 }
+#endregion PowerShell Version and Edition
 
+# region OS Architecture
 # Determine the OS Architecture (x64, x86, or Arm64)
 # This code works in both Windows PowerShell 5.1 (Desktop) and PowerShell Core
 
@@ -103,10 +106,11 @@ switch ($arch) {
     "ARM64" { $archFriendly = "Arm64" }
     default { $archFriendly = "Unknown Architecture ($arch)" }
 }
+# endregion OS Architecture
 # Write-Output "Detected Operating System Architecture: $archFriendly"
 
+#region 32bitHandling - if launched from 32bit PowerShell 5.1 on a 64-bit OS
 If ($psClassicDesktop -eq $true) {
-    #region 32bitHandling - if launched from 32bit PowerShell 5.1 on a 64-bit OS
     if (([IntPtr]::Size -eq 4) -and ($env:PROCESSOR_ARCHITECTURE -eq 'AMD64')) {
         # If running in 32-bit PowerShell on a 64-bit OS, launch the 64-bit version of PowerShell
         try {
@@ -118,8 +122,8 @@ If ($psClassicDesktop -eq $true) {
     } elseif (([IntPtr]::Size -eq 8) -and ($env:PROCESSOR_ARCHITECTURE -eq 'x86')) {
         exit # we are not going to support 32bit PowerShell on 32bit OS
     }
-#endregion 32bitHandling
 }
+#endregion 32bitHandling
 
 # Launch EP Main runtime script
 .\MAIN.ps1

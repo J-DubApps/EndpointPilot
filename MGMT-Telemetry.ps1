@@ -1,5 +1,3 @@
-#Requires -Version 5.1
-#Requires -PSEdition Desktop
 ###############################################################################################
 #
 #    EndpointPilot Logon / User Profile Configuration Script Shared Settings helper script
