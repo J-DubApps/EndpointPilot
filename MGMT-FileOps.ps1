@@ -1,5 +1,3 @@
-#Requires -Version 5.1
-#Requires -PSEdition Desktop
 ###############################################################################################
 #
 #	    EndpointPilot Configuration tool shared helper script
