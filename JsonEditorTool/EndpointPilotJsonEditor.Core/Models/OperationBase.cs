@@ -12,7 +12,7 @@ namespace EndpointPilotJsonEditor.Core.Models
         /// Unique identifier for the operation
         /// </summary>
         [JsonProperty("id")]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         /// <summary>
         /// Type of targeting to apply (none, group, computer, user)
