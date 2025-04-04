@@ -61,21 +61,60 @@ Author: Julian West
     --
 #>
 
-#region ARM64Handling
-if ($ENV:PROCESSOR_ARCHITEW6432 -eq 'AMD64')
-{
-   try
-   {
-      &"$ENV:WINDIR\SysNative\WindowsPowershell\v1.0\PowerShell.exe" -File $PSCOMMANDPATH
-   }
-   catch
-   {
-      Throw ('Failed to start {0}' -f $PSCOMMANDPATH)
-   }
+# Retrieve the current PowerShell version information
+$psVer = $PSVersionTable.PSVersion
+$psEd = $PSVersionTable.PSEdition
 
-   exit
+# Display version information for debugging purposes
+# Write-Output "Detected PowerShell Version: $psVer"
+# Write-Output "Detected PowerShell Edition: $psEd"
+# Write-Output "-------------------------------"
+
+# Determine the PowerShell version and edition
+if ($psEd -eq 'Desktop' -and $psVer.Major -eq 5 -and $psVer.Minor -eq 1) {
+    # Write-Output "You are running Windows PowerShell 5.1 (Desktop Edition)."
+    $psClassicDesktop = $true
+} elseif ($psEd -eq 'Core' -and $psVers.Major -ge 7) {
+    # Write-Output "You are running PowerShell Core (version 7.x or newer)."
+    $psClassicDesktop = $false
+} else {
+    # Write-Output "You are running an unrecognized version of PowerShell: $psVer, Edition: $psEd"
 }
-#endregion ARM64Handling
+
+# Determine the OS Architecture (x64, x86, or Arm64)
+# This code works in both Windows PowerShell 5.1 (Desktop) and PowerShell Core
+
+# If running under WOW64 (32-bit process on a 64-bit OS), $env:PROCESSOR_ARCHITEW6432 will be defined.
+if ($env:PROCESSOR_ARCHITEW6432) {
+    $arch = $env:PROCESSOR_ARCHITEW6432
+} else {
+    $arch = $env:PROCESSOR_ARCHITECTURE
+}
+
+# Map the raw architecture value to a friendly output.
+switch ($arch) {
+    "AMD64" { $archFriendly = "x64" }
+    "x86"   { $archFriendly = "x86 (32-bit)" }
+    "ARM64" { $archFriendly = "Arm64" }
+    default { $archFriendly = "Unknown Architecture ($arch)" }
+}
+# Write-Output "Detected Operating System Architecture: $archFriendly"
+
+If ($psClassicDesktop -eq $true) {
+    #region 32bitHandling - if launched from 32bit PowerShell 5.1 on a 64-bit OS
+    if (([IntPtr]::Size -eq 4) -and ($env:PROCESSOR_ARCHITECTURE -eq 'AMD64')) {
+        # If running in 32-bit PowerShell on a 64-bit OS, launch the 64-bit version of PowerShell
+        try {
+            &"$ENV:WINDIR\SysNative\WindowsPowershell\v1.0\PowerShell.exe" -File $PSCOMMANDPATH
+        } catch {
+            Throw ('Failed to start {0}' -f $PSCOMMANDPATH)
+        }
+        exit
+    } elseif (([IntPtr]::Size -eq 8) -and ($env:PROCESSOR_ARCHITECTURE -eq 'x86')) {
+        exit # we are not going to support 32bit PowerShell on 32bit OS
+    }
+#endregion 32bitHandling
+}
 
 # Launch EP Main runtime script
 .\MAIN.ps1
