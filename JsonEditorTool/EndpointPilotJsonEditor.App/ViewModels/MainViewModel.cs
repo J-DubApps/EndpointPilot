@@ -88,6 +88,11 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         public ICommand BrowseWorkingDirectoryCommand { get; }
 
         /// <summary>
+        /// Event raised when the user wants to browse for a directory
+        /// </summary>
+        public event Action BrowseDirectoryRequested;
+
+        /// <summary>
         /// Initializes a new instance of the MainViewModel class
         /// </summary>
         public MainViewModel()
@@ -189,8 +194,8 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         /// </summary>
         private void BrowseWorkingDirectory()
         {
-            // This will be implemented in the code-behind
-            // as it requires platform-specific UI interaction
+            // Raise the event to let the view handle the directory browsing
+            BrowseDirectoryRequested?.Invoke();
         }
 
         /// <summary>
