@@ -96,7 +96,6 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 }
             }
         }
-        }
 
         /// <summary>
         /// Gets or sets the registry value
