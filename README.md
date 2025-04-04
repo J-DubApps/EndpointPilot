@@ -2,7 +2,7 @@
 
 ## _"Better than a Logon Script..."_
 
-<img src="https://github.com/J-DubApps/EndpointPilot/blob/main/images/endpointpilot-logo.jpg" width="200" height="200" />
+<img src="https://github.com/J-DubApps/EndpointPilot/blob/main/images/Endpoint-Pilot-logo.png" width="300" height="300" />
 
 
 
