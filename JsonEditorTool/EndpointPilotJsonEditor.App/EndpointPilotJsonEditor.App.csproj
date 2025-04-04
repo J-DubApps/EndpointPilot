@@ -14,4 +14,8 @@
     <PackageReference Include="Newtonsoft.Json.Schema" Version="4.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EndpointPilotJsonEditor.Core\EndpointPilotJsonEditor.Core.csproj" />
+  </ItemGroup>
+
 </Project>

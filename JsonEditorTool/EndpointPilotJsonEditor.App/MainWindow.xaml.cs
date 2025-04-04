@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Forms;
+using Microsoft.Win32;
 using EndpointPilotJsonEditor.App.ViewModels;
 
 namespace EndpointPilotJsonEditor.App
@@ -31,15 +31,20 @@ namespace EndpointPilotJsonEditor.App
         /// </summary>
         private void BrowseWorkingDirectory()
         {
-            var dialog = new FolderBrowserDialog
+            var dialog = new OpenFileDialog
             {
-                Description = "Select the directory containing EndpointPilot JSON files",
-                ShowNewFolderButton = false
+                Title = "Select the directory containing EndpointPilot JSON files",
+                CheckFileExists = false,
+                CheckPathExists = true,
+                FileName = "Select Folder",
+                ValidateNames = false
             };
 
-            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (dialog.ShowDialog() == true)
             {
-                _viewModel.WorkingDirectory = dialog.SelectedPath;
+                // Get the directory path from the selected file path
+                string directoryPath = System.IO.Path.GetDirectoryName(dialog.FileName);
+                _viewModel.WorkingDirectory = directoryPath;
             }
         }
     }
