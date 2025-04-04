@@ -1,7 +1,11 @@
-#Requires -Version 5.1
-#Requires -PSEdition Desktop
-using namespace System.Management.Automation
-using namespace System.Management.Automation.Language
+# --- OPTIONAL STRICT REQUIREMENTS ---
+# Un-comment the 4 lines below if you want to lock this script to run ONLY in PowerShell Desktop (5.1).
+# By default, they are commented out, so the script can detect / offer future optional PowerShell 7.x (Core) features.
+#
+# #Requires -Version 5.1
+# #Requires -PSEdition Desktop
+# using namespace System.Management.Automation
+# using namespace System.Management.Automation.Language
 <#
 .SYNOPSIS
     --.
@@ -61,7 +65,8 @@ Author: Julian West
     --
 #>
 
-# Retrieve the current PowerShell version information
+# Retrieve the current PowerShell version information -- if we're allowed to run under PowerShell Core (top comments left enabled)
+# then we want to know if we're running under PowerShell Core or Windows PowerShell 5.1
 $psVer = $PSVersionTable.PSVersion
 $psEd = $PSVersionTable.PSEdition
 
