@@ -79,6 +79,20 @@
             "related": ".xml"
           }
         }
+      },
+      "EndpointPilotJsonEditor.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.3",
+          "Newtonsoft.Json.Schema": "4.0.1"
+        },
+        "compile": {
+          "bin/placeholder/EndpointPilotJsonEditor.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/EndpointPilotJsonEditor.Core.dll": {}
+        }
       }
     }
   },
@@ -223,10 +237,16 @@
         "newtonsoft.json.schema.nuspec",
         "packageIcon.png"
       ]
+    },
+    "EndpointPilotJsonEditor.Core/1.0.0": {
+      "type": "project",
+      "path": "../EndpointPilotJsonEditor.Core/EndpointPilotJsonEditor.Core.csproj",
+      "msbuildProject": "../EndpointPilotJsonEditor.Core/EndpointPilotJsonEditor.Core.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net9.0-windows7.0": [
+      "EndpointPilotJsonEditor.Core >= 1.0.0",
       "MaterialDesignThemes >= 5.2.1",
       "Newtonsoft.Json >= 13.0.3",
       "Newtonsoft.Json.Schema >= 4.0.1"
@@ -264,7 +284,11 @@
       "frameworks": {
         "net9.0-windows7.0": {
           "targetAlias": "net9.0-windows",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\westj\\GitHub\\EndpointPilot\\JsonEditorTool\\EndpointPilotJsonEditor.Core\\EndpointPilotJsonEditor.Core.csproj": {
+              "projectPath": "C:\\Users\\westj\\GitHub\\EndpointPilot\\JsonEditorTool\\EndpointPilotJsonEditor.Core\\EndpointPilotJsonEditor.Core.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
