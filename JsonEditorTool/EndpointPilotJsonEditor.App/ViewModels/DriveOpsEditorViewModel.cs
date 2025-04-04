@@ -1,0 +1,372 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using EndpointPilotJsonEditor.Core.Models;
+using EndpointPilotJsonEditor.Core.Services;
+
+namespace EndpointPilotJsonEditor.App.ViewModels
+{
+    /// <summary>
+    /// ViewModel for editing DRIVE-OPS.json
+    /// </summary>
+    public class DriveOpsEditorViewModel : OperationEditorViewModelBase<DriveOperation>
+    {
+        private string _driveLetter;
+        private string _drivePath;
+        private bool _reconnect;
+        private bool _delete;
+        private bool _hidden;
+        private string _targetingType;
+        private string _target;
+        private string _comment1;
+        private string _comment2;
+
+        /// <summary>
+        /// Gets or sets the drive letter
+        /// </summary>
+        public string DriveLetter
+        {
+            get => _driveLetter;
+            set
+            {
+                if (SetProperty(ref _driveLetter, value) && SelectedOperation != null)
+                {
+                    SelectedOperation.DriveLetter = value;
+                    OnPropertyChanged(nameof(SelectedOperation));
+                    IsModified = true;
+                    ValidateAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the drive path
+        /// </summary>
+        public string DrivePath
+        {
+            get => _drivePath;
+            set
+            {
+                if (SetProperty(ref _drivePath, value) && SelectedOperation != null)
+                {
+                    SelectedOperation.DrivePath = value;
+                    OnPropertyChanged(nameof(SelectedOperation));
+                    IsModified = true;
+                    ValidateAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets whether to reconnect the drive
+        /// </summary>
+        public bool Reconnect
+        {
+            get => _reconnect;
+            set
+            {
+                if (SetProperty(ref _reconnect, value) && SelectedOperation != null)
+                {
+                    SelectedOperation.Reconnect = value;
+                    OnPropertyChanged(nameof(SelectedOperation));
+                    IsModified = true;
+                    ValidateAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets whether to delete the drive mapping
+        /// </summary>
+        public bool Delete
+        {
+            get => _delete;
+            set
+            {
+                if (SetProperty(ref _delete, value) && SelectedOperation != null)
+                {
+                    SelectedOperation.Delete = value;
+                    OnPropertyChanged(nameof(SelectedOperation));
+                    IsModified = true;
+                    ValidateAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets whether to hide the drive
+        /// </summary>
+        public bool Hidden
+        {
+            get => _hidden;
+            set
+            {
+                if (SetProperty(ref _hidden, value) && SelectedOperation != null)
+                {
+                    SelectedOperation.Hidden = value;
+                    OnPropertyChanged(nameof(SelectedOperation));
+                    IsModified = true;
+                    ValidateAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the targeting type
+        /// </summary>
+        public string TargetingType
+        {
+            get => _targetingType;
+            set
+            {
+                if (SetProperty(ref _targetingType, value) && SelectedOperation != null)
+                {
+                    SelectedOperation.TargetingType = value;
+                    OnPropertyChanged(nameof(SelectedOperation));
+                    IsModified = true;
+                    ValidateAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the target
+        /// </summary>
+        public string Target
+        {
+            get => _target;
+            set
+            {
+                if (SetProperty(ref _target, value) && SelectedOperation != null)
+                {
+                    SelectedOperation.Target = value;
+                    OnPropertyChanged(nameof(SelectedOperation));
+                    IsModified = true;
+                    ValidateAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the first comment
+        /// </summary>
+        public string Comment1
+        {
+            get => _comment1;
+            set
+            {
+                if (SetProperty(ref _comment1, value) && SelectedOperation != null)
+                {
+                    SelectedOperation.Comment1 = value;
+                    OnPropertyChanged(nameof(SelectedOperation));
+                    IsModified = true;
+                    ValidateAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the second comment
+        /// </summary>
+        public string Comment2
+        {
+            get => _comment2;
+            set
+            {
+                if (SetProperty(ref _comment2, value) && SelectedOperation != null)
+                {
+                    SelectedOperation.Comment2 = value;
+                    OnPropertyChanged(nameof(SelectedOperation));
+                    IsModified = true;
+                    ValidateAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the available drive letters
+        /// </summary>
+        public string[] DriveLetters => DriveOperation.AvailableDriveLetters;
+
+        /// <summary>
+        /// Gets the available targeting types
+        /// </summary>
+        public string[] TargetingTypes => new[] { "none", "group", "computer", "user" };
+
+        /// <summary>
+        /// Initializes a new instance of the DriveOpsEditorViewModel class
+        /// </summary>
+        /// <param name="operations">The drive operations</param>
+        /// <param name="jsonFileService">The JSON file service</param>
+        /// <param name="schemaValidationService">The schema validation service</param>
+        public DriveOpsEditorViewModel(IEnumerable<DriveOperation> operations, JsonFileService jsonFileService, SchemaValidationService schemaValidationService)
+            : base(operations, jsonFileService, schemaValidationService)
+        {
+            // Set the selected operation if there are any operations
+            if (Operations.Any())
+            {
+                SelectedOperation = Operations.First();
+            }
+        }
+
+        /// <summary>
+        /// Updates the property values when the selected operation changes
+        /// </summary>
+        protected override void OnPropertyChanged(string propertyName = null)
+        {
+            base.OnPropertyChanged(propertyName);
+
+            if (propertyName == nameof(SelectedOperation) && SelectedOperation != null)
+            {
+                _driveLetter = SelectedOperation.DriveLetter;
+                _drivePath = SelectedOperation.DrivePath;
+                _reconnect = SelectedOperation.Reconnect;
+                _delete = SelectedOperation.Delete;
+                _hidden = SelectedOperation.Hidden;
+                _targetingType = SelectedOperation.TargetingType;
+                _target = SelectedOperation.Target;
+                _comment1 = SelectedOperation.Comment1;
+                _comment2 = SelectedOperation.Comment2;
+
+                base.OnPropertyChanged(nameof(DriveLetter));
+                base.OnPropertyChanged(nameof(DrivePath));
+                base.OnPropertyChanged(nameof(Reconnect));
+                base.OnPropertyChanged(nameof(Delete));
+                base.OnPropertyChanged(nameof(Hidden));
+                base.OnPropertyChanged(nameof(TargetingType));
+                base.OnPropertyChanged(nameof(Target));
+                base.OnPropertyChanged(nameof(Comment1));
+                base.OnPropertyChanged(nameof(Comment2));
+            }
+        }
+
+        /// <summary>
+        /// Adds a new drive operation
+        /// </summary>
+        protected override void AddOperation()
+        {
+            var newId = Operations.Any() ? Operations.Max(o => int.Parse(o.Id)) + 1 : 1;
+            var newOperation = new DriveOperation
+            {
+                Id = newId.ToString("D3"),
+                DriveLetter = "F:",
+                DrivePath = "\\\\server\\share",
+                TargetingType = "none",
+                Target = "all",
+                Comment1 = "New drive mapping"
+            };
+
+            Operations.Add(newOperation);
+            SelectedOperation = newOperation;
+            IsModified = true;
+            ValidateAsync();
+        }
+
+        /// <summary>
+        /// Duplicates the selected operation
+        /// </summary>
+        protected override void DuplicateOperation()
+        {
+            if (SelectedOperation != null)
+            {
+                var newId = Operations.Max(o => int.Parse(o.Id)) + 1;
+                var newOperation = new DriveOperation
+                {
+                    Id = newId.ToString("D3"),
+                    DriveLetter = SelectedOperation.DriveLetter,
+                    DrivePath = SelectedOperation.DrivePath,
+                    Reconnect = SelectedOperation.Reconnect,
+                    Delete = SelectedOperation.Delete,
+                    Hidden = SelectedOperation.Hidden,
+                    TargetingType = SelectedOperation.TargetingType,
+                    Target = SelectedOperation.Target,
+                    Comment1 = SelectedOperation.Comment1,
+                    Comment2 = SelectedOperation.Comment2
+                };
+
+                Operations.Add(newOperation);
+                SelectedOperation = newOperation;
+                IsModified = true;
+                ValidateAsync();
+            }
+        }
+
+        /// <summary>
+        /// Validates the operations
+        /// </summary>
+        protected override async Task ValidateAsync()
+        {
+            try
+            {
+                var result = await _schemaValidationService.ValidateDriveOperationsAsync(Operations.ToList());
+                IsValid = result.IsValid;
+
+                if (result.IsValid)
+                {
+                    OnStatusChanged("Drive operations are valid", false);
+                }
+                else
+                {
+                    var errorMessage = string.Join(Environment.NewLine, result.ErrorMessages);
+                    OnStatusChanged($"Drive operations are invalid: {errorMessage}", true);
+                }
+            }
+            catch (Exception ex)
+            {
+                IsValid = false;
+                OnStatusChanged($"Validation error: {ex.Message}", true);
+            }
+        }
+
+        /// <summary>
+        /// Saves the operations
+        /// </summary>
+        protected override async Task SaveAsync()
+        {
+            try
+            {
+                await _jsonFileService.WriteDriveOperationsAsync(Operations.ToList());
+                IsModified = false;
+                OnStatusChanged("Drive operations saved successfully", false);
+            }
+            catch (Exception ex)
+            {
+                OnStatusChanged($"Error saving drive operations: {ex.Message}", true);
+            }
+        }
+
+        /// <summary>
+        /// Reloads the operations
+        /// </summary>
+        protected override async Task ReloadAsync()
+        {
+            try
+            {
+                var operations = await _jsonFileService.ReadDriveOperationsAsync();
+                Operations.Clear();
+                foreach (var operation in operations)
+                {
+                    Operations.Add(operation);
+                }
+
+                if (Operations.Any())
+                {
+                    SelectedOperation = Operations.First();
+                }
+                else
+                {
+                    SelectedOperation = null;
+                }
+
+                IsModified = false;
+                ValidateAsync();
+                OnStatusChanged("Drive operations reloaded successfully", false);
+            }
+            catch (Exception ex)
+            {
+                OnStatusChanged($"Error reloading drive operations: {ex.Message}", true);
+            }
+        }
+    }
+}

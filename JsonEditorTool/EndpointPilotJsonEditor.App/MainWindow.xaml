@@ -4,9 +4,89 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EndpointPilotJsonEditor.App"
+        xmlns:viewmodels="clr-namespace:EndpointPilotJsonEditor.App.ViewModels"
+        xmlns:converters="clr-namespace:EndpointPilotJsonEditor.App.Converters"
+        xmlns:views="clr-namespace:EndpointPilotJsonEditor.App.Views"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="EndpointPilot JSON Editor" Height="600" Width="900"
+        WindowStartupLocation="CenterScreen">
+    
+    <Window.Resources>
+        <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+        <Style x:Key="NavButtonStyle" TargetType="Button">
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Padding" Value="10,5" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Background" Value="#F0F0F0" />
+            <Setter Property="BorderBrush" Value="#CCCCCC" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="3">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Margin="{TemplateBinding Padding}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#E0E0E0" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#D0D0D0" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    
     <Grid>
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <!-- Top Toolbar -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Background="#F5F5F5" Padding="10">
+            <TextBlock Text="Working Directory:" VerticalAlignment="Center" Margin="0,0,5,0" />
+            <TextBox Text="{Binding WorkingDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                     Width="300" Margin="0,0,5,0" />
+            <Button Content="Browse..." Command="{Binding BrowseWorkingDirectoryCommand}" Padding="5,2" />
+        </StackPanel>
+        
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            
+            <!-- Navigation Sidebar -->
+            <Border Grid.Column="0" Background="#F0F0F0" BorderBrush="#CCCCCC" BorderThickness="0,0,1,0">
+                <StackPanel Margin="10">
+                    <TextBlock Text="Configuration Files" FontWeight="Bold" Margin="5" />
+                    <Button Content="CONFIG.json" Command="{Binding OpenConfigEditorCommand}" Style="{StaticResource NavButtonStyle}" />
+                    <Button Content="FILE-OPS.json" Command="{Binding OpenFileOpsEditorCommand}" Style="{StaticResource NavButtonStyle}" />
+                    <Button Content="REG-OPS.json" Command="{Binding OpenRegOpsEditorCommand}" Style="{StaticResource NavButtonStyle}" />
+                    <Button Content="DRIVE-OPS.json" Command="{Binding OpenDriveOpsEditorCommand}" Style="{StaticResource NavButtonStyle}" />
+                </StackPanel>
+            </Border>
+            
+            <!-- Editor Content -->
+            <ContentPresenter Grid.Column="1" Content="{Binding CurrentEditor}" />
+        </Grid>
+        
+        <!-- Status Bar -->
+        <Border Grid.Row="2" Background="#F5F5F5" BorderBrush="#CCCCCC" BorderThickness="0,1,0,0">
+            <TextBlock Text="{Binding StatusMessage}" Padding="10,5" 
+                       Foreground="{Binding IsStatusError, Converter={StaticResource BoolToColorConverter}}" />
+        </Border>
     </Grid>
 </Window>
