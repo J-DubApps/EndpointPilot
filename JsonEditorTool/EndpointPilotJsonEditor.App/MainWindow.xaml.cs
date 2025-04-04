@@ -20,10 +20,8 @@ namespace EndpointPilotJsonEditor.App
             InitializeComponent();
 
             _viewModel = new MainViewModel();
+            _viewModel.BrowseDirectoryRequested += BrowseWorkingDirectory;
             DataContext = _viewModel;
-
-            // Hook up the browse working directory command
-            _viewModel.BrowseWorkingDirectoryCommand = new RelayCommand(_ => BrowseWorkingDirectory());
         }
 
         /// <summary>
