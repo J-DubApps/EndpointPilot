@@ -59,6 +59,8 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     ValidateAsync();
                 }
             }
+        }
+
         /// <summary>
         /// Gets or sets the selected registry hive
         /// </summary>
@@ -94,7 +96,6 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 }
             }
         }
-
         }
 
         /// <summary>
