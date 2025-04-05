@@ -13,6 +13,7 @@ DRIVE-OPS.json.bak
 *.vsidx
 # Folders to ignore
 /JsonEditorTool/.vs/
+/JsonEditorTool/.vs
 /JsonEditorTool/EndpointPilotJsonEditor.App/bin/Debug/
 /JsonEditorTool/EndpointPilotJsonEditor.Core/bin/Debug/
 /JsonEditorTool/EndpointPilotJsonEditor.App/obj/Debug/
