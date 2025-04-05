@@ -1,26 +1,26 @@
 {
   "runtimeTarget": {
-    "name": ".NETCoreApp,Version=v9.0/win-arm64",
+    "name": ".NETCoreApp,Version=v9.0/win-x64",
     "signature": ""
   },
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v9.0": {},
-    ".NETCoreApp,Version=v9.0/win-arm64": {
+    ".NETCoreApp,Version=v9.0/win-x64": {
       "EndpointPilotJsonEditor.App/1.0.0": {
         "dependencies": {
           "EndpointPilotJsonEditor.Core": "1.0.0",
           "MaterialDesignThemes": "5.2.1",
           "Newtonsoft.Json": "13.0.3",
           "Newtonsoft.Json.Schema": "4.0.1",
-          "runtimepack.Microsoft.NETCore.App.Runtime.win-arm64": "9.0.3",
-          "runtimepack.Microsoft.WindowsDesktop.App.Runtime.win-arm64": "9.0.3"
+          "runtimepack.Microsoft.NETCore.App.Runtime.win-x64": "9.0.3",
+          "runtimepack.Microsoft.WindowsDesktop.App.Runtime.win-x64": "9.0.3"
         },
         "runtime": {
           "EndpointPilotJsonEditor.App.dll": {}
         }
       },
-      "runtimepack.Microsoft.NETCore.App.Runtime.win-arm64/9.0.3": {
+      "runtimepack.Microsoft.NETCore.App.Runtime.win-x64/9.0.3": {
         "runtime": {
           "Microsoft.CSharp.dll": {
             "assemblyVersion": "9.0.0.0",
@@ -696,7 +696,7 @@
           }
         },
         "native": {
-          "Microsoft.DiaSymReader.Native.arm64.dll": {
+          "Microsoft.DiaSymReader.Native.amd64.dll": {
             "fileVersion": "14.42.34436.0"
           },
           "System.IO.Compression.Native.dll": {
@@ -729,7 +729,7 @@
           "mscordaccore.dll": {
             "fileVersion": "9.0.325.11113"
           },
-          "mscordaccore_arm64_arm64_9.0.325.11113.dll": {
+          "mscordaccore_amd64_amd64_9.0.325.11113.dll": {
             "fileVersion": "9.0.325.11113"
           },
           "mscordbi.dll": {
@@ -743,7 +743,7 @@
           }
         }
       },
-      "runtimepack.Microsoft.WindowsDesktop.App.Runtime.win-arm64/9.0.3": {
+      "runtimepack.Microsoft.WindowsDesktop.App.Runtime.win-x64/9.0.3": {
         "runtime": {
           "Accessibility.dll": {
             "assemblyVersion": "4.0.0.0",
@@ -927,6 +927,9 @@
           }
         },
         "native": {
+          "D3DCompiler_47_cor3.dll": {
+            "fileVersion": "10.0.22621.3233"
+          },
           "PenImc_cor3.dll": {
             "fileVersion": "9.0.325.11304"
           },
@@ -1008,12 +1011,12 @@
       "serviceable": false,
       "sha512": ""
     },
-    "runtimepack.Microsoft.NETCore.App.Runtime.win-arm64/9.0.3": {
+    "runtimepack.Microsoft.NETCore.App.Runtime.win-x64/9.0.3": {
       "type": "runtimepack",
       "serviceable": false,
       "sha512": ""
     },
-    "runtimepack.Microsoft.WindowsDesktop.App.Runtime.win-arm64/9.0.3": {
+    "runtimepack.Microsoft.WindowsDesktop.App.Runtime.win-x64/9.0.3": {
       "type": "runtimepack",
       "serviceable": false,
       "sha512": ""
@@ -1060,7 +1063,7 @@
     }
   },
   "runtimes": {
-    "win-arm64": [
+    "win-x64": [
       "win",
       "any",
       "base"

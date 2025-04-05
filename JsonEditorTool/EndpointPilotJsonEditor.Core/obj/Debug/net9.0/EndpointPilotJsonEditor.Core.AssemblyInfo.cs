@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EndpointPilotJsonEditor.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+00d062693a171092a837faf7172297b3e0527356")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7964f3c9055ed5c87ee59458a9d549bbb3323ec8")]
 [assembly: System.Reflection.AssemblyProductAttribute("EndpointPilotJsonEditor.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EndpointPilotJsonEditor.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

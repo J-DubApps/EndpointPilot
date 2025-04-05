@@ -21,6 +21,8 @@ DRIVE-OPS.json.bak
 /JsonEditorTool/EndpointPilotJsonEditor.Core/bin/Release/
 /JsonEditorTool/EndpointPilotJsonEditor.App/obj/Release/
 /JsonEditorTool/EndpointPilotJsonEditor.Core/obj/Release/
-# Allow .dll and .exe files in JsonEditorTool/Compiled-Win11-x64
+# Allow .dll and .exe files in JsonEditorTool/publish folders
 !JsonEditorTool/publish/*.dll
 !JsonEditorTool/publish/*.exe
+!JsonEditorTool/publish-arm64/*.dll
+!JsonEditorTool/publish-arm64/*.exe
