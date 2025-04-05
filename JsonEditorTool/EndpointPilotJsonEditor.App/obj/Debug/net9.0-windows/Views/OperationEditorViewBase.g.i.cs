@@ -85,7 +85,8 @@ namespace EndpointPilotJsonEditor.App.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/EndpointPilotJsonEditor.App;component/views/operationeditorviewbase.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/EndpointPilotJsonEditor.App;V1.0.0.0;component/views/operationeditorviewbase.xam" +
+                    "l", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Views\OperationEditorViewBase.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

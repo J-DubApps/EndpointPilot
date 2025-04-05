@@ -13,11 +13,16 @@ DRIVE-OPS.json.bak
 *.pdb
 *.vsidx
 # Folders to ignore
-JsonEditorTool/.vs/
+/JsonEditorTool/.vs/
+/JsonEditorTool/publish/
 /JsonEditorTool/EndpointPilotJsonEditor.App/bin/Debug/
 /JsonEditorTool/EndpointPilotJsonEditor.Core/bin/Debug/
 /JsonEditorTool/EndpointPilotJsonEditor.App/obj/Debug/
 /JsonEditorTool/EndpointPilotJsonEditor.Core/obj/Debug/
+/JsonEditorTool/EndpointPilotJsonEditor.App/bin/Release/
+/JsonEditorTool/EndpointPilotJsonEditor.Core/bin/Release/
+/JsonEditorTool/EndpointPilotJsonEditor.App/obj/Release/
+/JsonEditorTool/EndpointPilotJsonEditor.Core/obj/Release/
 # Allow .dll and .exe files in JsonEditorTool/Compiled-Win11-x64
-!JsonEditorTool/Compiled-Win11-x64/*.dll
-!JsonEditorTool/Compiled-Win11-x64/*.exe
+!JsonEditorTool/publish/*.dll
+!JsonEditorTool/publish/*.exe

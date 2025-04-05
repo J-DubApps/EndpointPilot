@@ -1,11 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "MnXdHAvAmXg=",
+  "dgSpecHash": "BTov8mfrgoM=",
   "success": true,
   "projectFilePath": "C:\\Users\\westj\\GitHub\\EndpointPilot\\JsonEditorTool\\EndpointPilotJsonEditor.Core\\EndpointPilotJsonEditor.Core.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\westj\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
-    "C:\\Users\\westj\\.nuget\\packages\\newtonsoft.json.schema\\4.0.1\\newtonsoft.json.schema.4.0.1.nupkg.sha512"
+    "C:\\Users\\westj\\.nuget\\packages\\newtonsoft.json.schema\\4.0.1\\newtonsoft.json.schema.4.0.1.nupkg.sha512",
+    "C:\\Users\\westj\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\9.0.3\\microsoft.netcore.app.runtime.win-x64.9.0.3.nupkg.sha512",
+    "C:\\Users\\westj\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\9.0.3\\microsoft.windowsdesktop.app.runtime.win-x64.9.0.3.nupkg.sha512",
+    "C:\\Users\\westj\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\9.0.3\\microsoft.aspnetcore.app.runtime.win-x64.9.0.3.nupkg.sha512"
   ],
   "logs": []
 }
