@@ -10,7 +10,6 @@ DRIVE-OPS.json.bak
 # Ignore all .dll and .exe files globally
 *.dll
 *.exe
-*.pdb
 *.vsidx
 # Folders to ignore
 /JsonEditorTool/.vs/

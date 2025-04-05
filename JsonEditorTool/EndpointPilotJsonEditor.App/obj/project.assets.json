@@ -95,7 +95,7 @@
         }
       }
     },
-    "net9.0-windows7.0/win-x64": {
+    "net9.0-windows7.0/win-arm64": {
       "MaterialDesignColors/5.2.1": {
         "type": "package",
         "compile": {
@@ -427,15 +427,15 @@
         "warn": true,
         "downloadDependencies": [
           {
-            "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
+            "name": "Microsoft.AspNetCore.App.Runtime.win-arm64",
             "version": "[9.0.3, 9.0.3]"
           },
           {
-            "name": "Microsoft.NETCore.App.Runtime.win-x64",
+            "name": "Microsoft.NETCore.App.Runtime.win-arm64",
             "version": "[9.0.3, 9.0.3]"
           },
           {
-            "name": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
+            "name": "Microsoft.WindowsDesktop.App.Runtime.win-arm64",
             "version": "[9.0.3, 9.0.3]"
           }
         ],
@@ -451,7 +451,7 @@
       }
     },
     "runtimes": {
-      "win-x64": {
+      "win-arm64": {
         "#import": []
       }
     }
