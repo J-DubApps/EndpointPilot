@@ -2,15 +2,22 @@
 ._.DS_Store
 **/.DS_Store
 **/._.DS_Store
-JsonEditorTool/.vs
+# Ignore json.bak files
 REG-OPS.json.bak
 FILE-OPS.json.bak
 CONFIG.json.bak
 DRIVE-OPS.json.bak
-*.vsidx
+# Ignore all .dll and .exe files globally
 *.dll
 *.exe
 *.pdb
-*.cache
-/JsonEditorTool/EndpointPilotJsonEditor.App/bin/Debug
-
+*.vsidx
+# Folders to ignore
+JsonEditorTool/.vs/
+/JsonEditorTool/EndpointPilotJsonEditor.App/bin/Debug/
+/JsonEditorTool/EndpointPilotJsonEditor.Core/bin/Debug/
+/JsonEditorTool/EndpointPilotJsonEditor.App/obj/Debug/
+/JsonEditorTool/EndpointPilotJsonEditor.Core/obj/Debug/
+# Allow .dll and .exe files in JsonEditorTool/Compiled-Win11-x64
+!JsonEditorTool/Compiled-Win11-x64/*.dll
+!JsonEditorTool/Compiled-Win11-x64/*.exe
