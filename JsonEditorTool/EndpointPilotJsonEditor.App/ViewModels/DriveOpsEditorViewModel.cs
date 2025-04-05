@@ -49,9 +49,16 @@ namespace EndpointPilotJsonEditor.App.ViewModels
             get => _drivePath;
             set
             {
-                if (SetProperty(ref _drivePath, value) && SelectedOperation != null)
+                // Ensure UNC paths always start with double backslashes
+                string normalizedValue = value;
+                if (value != null && value.StartsWith(@"\") && !value.StartsWith(@"\\"))
                 {
-                    SelectedOperation.DrivePath = value;
+                    normalizedValue = @"\" + value;
+                }
+
+                if (SetProperty(ref _drivePath, normalizedValue) && SelectedOperation != null)
+                {
+                    SelectedOperation.DrivePath = normalizedValue;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
                     ValidateAsync();
@@ -222,7 +229,17 @@ namespace EndpointPilotJsonEditor.App.ViewModels
             if (propertyName == nameof(SelectedOperation) && SelectedOperation != null)
             {
                 _driveLetter = SelectedOperation.DriveLetter;
-                _drivePath = SelectedOperation.DrivePath;
+                
+                // Normalize the drive path to ensure UNC paths have double backslashes
+                string normalizedPath = SelectedOperation.DrivePath;
+                if (normalizedPath != null && normalizedPath.StartsWith(@"\") && !normalizedPath.StartsWith(@"\\"))
+                {
+                    normalizedPath = @"\" + normalizedPath;
+                    // Update the model with the normalized path
+                    SelectedOperation.DrivePath = normalizedPath;
+                }
+                _drivePath = normalizedPath;
+                
                 _reconnect = SelectedOperation.Reconnect;
                 _delete = SelectedOperation.Delete;
                 _hidden = SelectedOperation.Hidden;
@@ -253,11 +270,17 @@ namespace EndpointPilotJsonEditor.App.ViewModels
             {
                 Id = newId.ToString("D3"),
                 DriveLetter = "F:",
-                DrivePath = "\\\\server\\share",
+                DrivePath = "\\\\server\\share", // This is correct: in C# string literals, \\ represents a single backslash
                 TargetingType = "none",
                 Target = "all",
                 Comment1 = "New drive mapping"
             };
+
+            // Double-check that the path has double backslashes
+            if (newOperation.DrivePath.StartsWith(@"\") && !newOperation.DrivePath.StartsWith(@"\\"))
+            {
+                newOperation.DrivePath = @"\" + newOperation.DrivePath;
+            }
 
             Operations.Add(newOperation);
             SelectedOperation = newOperation;
@@ -273,11 +296,19 @@ namespace EndpointPilotJsonEditor.App.ViewModels
             if (SelectedOperation != null)
             {
                 var newId = Operations.Max(o => int.Parse(o.Id)) + 1;
+                
+                // Normalize the drive path before duplicating
+                string normalizedPath = SelectedOperation.DrivePath;
+                if (normalizedPath != null && normalizedPath.StartsWith(@"\") && !normalizedPath.StartsWith(@"\\"))
+                {
+                    normalizedPath = @"\" + normalizedPath;
+                }
+                
                 var newOperation = new DriveOperation
                 {
                     Id = newId.ToString("D3"),
                     DriveLetter = SelectedOperation.DriveLetter,
-                    DrivePath = SelectedOperation.DrivePath,
+                    DrivePath = normalizedPath,
                     Reconnect = SelectedOperation.Reconnect,
                     Delete = SelectedOperation.Delete,
                     Hidden = SelectedOperation.Hidden,

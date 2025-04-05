@@ -1,8 +1,7 @@
 [
   {
-    "id": 001,
     "srcfilename": "example1.txt",
-    "dstfilename": "example1.txt",
+    "dstfilename": "example1a.txt",
     "sourcePath": "C:\\example\\folder1",
     "destinationPath": "C:\\example\\destination1",
     "overwrite": true,
@@ -10,13 +9,13 @@
     "existCheckLocation": "C:\\example\\existcheckfile.txt",
     "existCheck": false,
     "deleteFile": false,
+    "id": "001",
     "targeting_type": "none",
     "target": "all",
     "_comment1": "This is File Copy",
     "_comment2": "If existCheckLocation *and* existCheck are not blank, then existCheck must either be yes (check if exist) or no (check if *not* exist)"
   },
   {
-    "id": 002,
     "srcfilename": "example2.txt",
     "dstfilename": "example123.txt",
     "sourcePath": "C:\\example\\folder2",
@@ -26,13 +25,13 @@
     "existCheckLocation": "",
     "existCheck": false,
     "deleteFile": false,
+    "id": "002",
     "targeting_type": "none",
     "target": "all",
     "_comment1": "This is a CopyOnce Example, with no Existence Check performed.  File will copy once.",
     "_comment2": ""
   },
   {
-    "id": 003,
     "srcfilename": "example3.txt",
     "dstfilename": "example3.txt",
     "sourcePath": "C:\\example\\folder3",
@@ -42,13 +41,13 @@
     "existCheckLocation": "C:\\example\\existcheckfolder",
     "existCheck": true,
     "deleteFile": false,
+    "id": "003",
     "targeting_type": "none",
     "target": "all",
     "_comment1": "place comment here",
     "_comment2": ""
   },
   {
-    "id": 004,
     "srcfilename": "",
     "dstfilename": "example4.txt",
     "sourcePath": "",
@@ -58,6 +57,7 @@
     "existCheckLocation": "",
     "existCheck": false,
     "deleteFile": true,
+    "id": "004",
     "targeting_type": "none",
     "target": "all",
     "_comment1": "place comment here",

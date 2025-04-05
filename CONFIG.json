@@ -1,5 +1,5 @@
 {
-  "OrgName": "McKool Smith",
+  "OrgName": "Company Name",
   "Refresh_Interval": 900,
   "NetworkScriptRootPath": "\\\\servername\\SHARE\\PS-EPilot\\",
   "CopyLogFileToNetwork": false,
@@ -10,5 +10,4 @@
   "SkipDriveOps": false,
   "SkipRegOps": false,
   "SkipRoamOps": false
-  
 }
