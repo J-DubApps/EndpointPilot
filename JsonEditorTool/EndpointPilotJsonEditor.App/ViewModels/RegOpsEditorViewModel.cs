@@ -402,6 +402,17 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         /// </summary>
         protected override async Task ValidateAsync()
         {
+            // Skip validation during editing to prevent errors while typing
+            // Only validate when saving
+            IsValid = true;
+            OnStatusChanged("Validation will be performed when saving", false);
+        }
+
+        /// <summary>
+        /// Performs full validation against the schema
+        /// </summary>
+        private async Task PerformFullValidationAsync()
+        {
             try
             {
                 var result = await _schemaValidationService.ValidateRegOperationsAsync(Operations.ToList());
@@ -431,9 +442,23 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         {
             try
             {
-                await _jsonFileService.WriteRegOperationsAsync(Operations.ToList());
-                IsModified = false;
-                OnStatusChanged("Registry operations saved successfully", false);
+                // Perform full validation before saving
+                await PerformFullValidationAsync();
+                
+                // Only save if validation passes
+                if (IsValid)
+                {
+                    await _jsonFileService.WriteRegOperationsAsync(Operations.ToList());
+                    IsModified = false;
+                    OnStatusChanged("Registry operations saved successfully", false);
+                    
+                    // Reload operations after saving to refresh the UI
+                    await ReloadAsync();
+                }
+                else
+                {
+                    OnStatusChanged("Cannot save: Registry operations contain validation errors", true);
+                }
             }
             catch (Exception ex)
             {

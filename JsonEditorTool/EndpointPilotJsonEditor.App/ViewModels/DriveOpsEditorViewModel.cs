@@ -49,11 +49,21 @@ namespace EndpointPilotJsonEditor.App.ViewModels
             get => _drivePath;
             set
             {
-                // Ensure UNC paths always start with double backslashes
+                // Ensure UNC paths always start with double backslashes to meet schema requirements
                 string normalizedValue = value;
-                if (value != null && value.StartsWith(@"\") && !value.StartsWith(@"\\"))
+                
+                if (normalizedValue != null)
                 {
-                    normalizedValue = @"\" + value;
+                    // If it starts with a single backslash but not double, add another backslash
+                    if (normalizedValue.StartsWith(@"\") && !normalizedValue.StartsWith(@"\\"))
+                    {
+                        normalizedValue = @"\" + normalizedValue;
+                    }
+                    // If it doesn't start with any backslash, add two backslashes
+                    else if (!normalizedValue.StartsWith(@"\"))
+                    {
+                        normalizedValue = @"\\" + normalizedValue;
+                    }
                 }
 
                 if (SetProperty(ref _drivePath, normalizedValue) && SelectedOperation != null)
@@ -232,11 +242,22 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 
                 // Normalize the drive path to ensure UNC paths have double backslashes
                 string normalizedPath = SelectedOperation.DrivePath;
-                if (normalizedPath != null && normalizedPath.StartsWith(@"\") && !normalizedPath.StartsWith(@"\\"))
+                if (normalizedPath != null)
                 {
-                    normalizedPath = @"\" + normalizedPath;
-                    // Update the model with the normalized path
-                    SelectedOperation.DrivePath = normalizedPath;
+                    // If it starts with a single backslash but not double, add another backslash
+                    if (normalizedPath.StartsWith(@"\") && !normalizedPath.StartsWith(@"\\"))
+                    {
+                        normalizedPath = @"\" + normalizedPath;
+                        // Update the model with the normalized path
+                        SelectedOperation.DrivePath = normalizedPath;
+                    }
+                    // If it doesn't start with any backslash, add two backslashes
+                    else if (!normalizedPath.StartsWith(@"\"))
+                    {
+                        normalizedPath = @"\\" + normalizedPath;
+                        // Update the model with the normalized path
+                        SelectedOperation.DrivePath = normalizedPath;
+                    }
                 }
                 _drivePath = normalizedPath;
                 
@@ -276,10 +297,22 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 Comment1 = "New drive mapping"
             };
 
-            // Double-check that the path has double backslashes
-            if (newOperation.DrivePath.StartsWith(@"\") && !newOperation.DrivePath.StartsWith(@"\\"))
+            // Ensure the path meets schema requirements
+            string normalizedPath = newOperation.DrivePath;
+            if (normalizedPath != null)
             {
-                newOperation.DrivePath = @"\" + newOperation.DrivePath;
+                // If it starts with a single backslash but not double, add another backslash
+                if (normalizedPath.StartsWith(@"\") && !normalizedPath.StartsWith(@"\\"))
+                {
+                    normalizedPath = @"\" + normalizedPath;
+                    newOperation.DrivePath = normalizedPath;
+                }
+                // If it doesn't start with any backslash, add two backslashes
+                else if (!normalizedPath.StartsWith(@"\"))
+                {
+                    normalizedPath = @"\\" + normalizedPath;
+                    newOperation.DrivePath = normalizedPath;
+                }
             }
 
             Operations.Add(newOperation);
@@ -299,9 +332,18 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 
                 // Normalize the drive path before duplicating
                 string normalizedPath = SelectedOperation.DrivePath;
-                if (normalizedPath != null && normalizedPath.StartsWith(@"\") && !normalizedPath.StartsWith(@"\\"))
+                if (normalizedPath != null)
                 {
-                    normalizedPath = @"\" + normalizedPath;
+                    // If it starts with a single backslash but not double, add another backslash
+                    if (normalizedPath.StartsWith(@"\") && !normalizedPath.StartsWith(@"\\"))
+                    {
+                        normalizedPath = @"\" + normalizedPath;
+                    }
+                    // If it doesn't start with any backslash, add two backslashes
+                    else if (!normalizedPath.StartsWith(@"\"))
+                    {
+                        normalizedPath = @"\\" + normalizedPath;
+                    }
                 }
                 
                 var newOperation = new DriveOperation
@@ -330,9 +372,38 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         /// </summary>
         protected override async Task ValidateAsync()
         {
+            // Skip validation during editing to prevent regex errors while typing
+            // Only validate when saving
+            IsValid = true;
+            OnStatusChanged("Validation will be performed when saving", false);
+        }
+
+        /// <summary>
+        /// Performs full validation against the schema
+        /// </summary>
+        private async Task PerformFullValidationAsync()
+        {
             const string schemaFileName = "DRIVE-OPS.schema.json"; // Define schema name
             try
             {
+                // Ensure all paths are normalized before validation
+                foreach (var operation in Operations)
+                {
+                    if (operation.DrivePath != null)
+                    {
+                        // If it starts with a single backslash but not double, add another backslash
+                        if (operation.DrivePath.StartsWith(@"\") && !operation.DrivePath.StartsWith(@"\\"))
+                        {
+                            operation.DrivePath = @"\" + operation.DrivePath;
+                        }
+                        // If it doesn't start with any backslash, add two backslashes
+                        else if (!operation.DrivePath.StartsWith(@"\"))
+                        {
+                            operation.DrivePath = @"\\" + operation.DrivePath;
+                        }
+                    }
+                }
+
                 // 1. Serialize current operations to JSON string
                 var operationsJson = Newtonsoft.Json.JsonConvert.SerializeObject(Operations.ToList(), Newtonsoft.Json.Formatting.None);
 
@@ -371,9 +442,23 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         {
             try
             {
-                await _jsonFileService.WriteDriveOperationsAsync(Operations.ToList());
-                IsModified = false;
-                OnStatusChanged("Drive operations saved successfully", false);
+                // Perform full validation before saving
+                await PerformFullValidationAsync();
+                
+                // Only save if validation passes
+                if (IsValid)
+                {
+                    await _jsonFileService.WriteDriveOperationsAsync(Operations.ToList());
+                    IsModified = false;
+                    OnStatusChanged("Drive operations saved successfully", false);
+                    
+                    // Reload operations after saving to refresh the UI with normalized paths
+                    await ReloadAsync();
+                }
+                else
+                {
+                    OnStatusChanged("Cannot save: Drive operations contain validation errors", true);
+                }
             }
             catch (Exception ex)
             {

@@ -1,50 +1,62 @@
 [
   {
-    "id": 001,
     "driveLetter": "F:",
-    "drivePath": "\\server\\share",
+    "drivePath": "\\\\server\\share",
     "reconnect": false,
     "delete": false,
     "hidden": false,
+    "id": "001",
     "targeting_type": "none",
     "target": "all",
     "_comment1": "This is drive mapping",
     "_comment2": "place comment here"
   },
   {
-    "id": 002,
     "driveLetter": "F:",
-    "drivePath": "\\server\\share",
+    "drivePath": "\\\\server\\share",
     "reconnect": false,
     "delete": false,
     "hidden": false,
+    "id": "002",
     "targeting_type": "none",
     "target": "all",
     "_comment1": "This is a drive mapping",
     "_comment2": "place comment here"
   },
   {
-    "id": 003,
     "driveLetter": "F:",
-    "drivePath": "\\server\\share",
+    "drivePath": "\\\\server\\share",
     "reconnect": false,
     "delete": false,
     "hidden": false,
+    "id": "003",
     "targeting_type": "none",
     "target": "all",
     "_comment1": "place comment here",
     "_comment2": "place comment here"
   },
   {
-    "id": 004,
     "driveLetter": "F:",
-    "drivePath": "\\server\\share",
+    "drivePath": "\\\\server\\share",
     "reconnect": true,
     "delete": false,
     "hidden": false,
+    "id": "004",
     "targeting_type": "none",
     "target": "all",
     "_comment1": "place comment here",
     "_comment2": "place comment here"
+  },
+  {
+    "driveLetter": "F:",
+    "drivePath": "\\\\server\\share",
+    "reconnect": false,
+    "delete": false,
+    "hidden": false,
+    "id": "005",
+    "targeting_type": "none",
+    "target": "all",
+    "_comment1": "New drive mapping",
+    "_comment2": ""
   }
 ]

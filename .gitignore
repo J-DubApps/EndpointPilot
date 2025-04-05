@@ -6,9 +6,11 @@ JsonEditorTool/.vs
 REG-OPS.json.bak
 FILE-OPS.json.bak
 CONFIG.json.bak
+DRIVE-OPS.json.bak
 *.vsidx
 *.dll
 *.exe
 *.pdb
 *.cache
 /JsonEditorTool/EndpointPilotJsonEditor.App/bin/Debug
+

@@ -383,8 +383,25 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         /// </summary>
         protected override async Task ValidateAsync()
         {
+            // Skip validation during editing to prevent errors while typing
+            // Only validate when saving
+            IsValid = true;
+            OnStatusChanged("Validation will be performed when saving", false);
+        }
+
+        /// <summary>
+        /// Performs full validation against the schema
+        /// </summary>
+        private async Task PerformFullValidationAsync()
+        {
             try
             {
+                // Normalize paths if needed (similar to what we did for DriveOps)
+                foreach (var operation in Operations)
+                {
+                    // Add any path normalization logic here if needed for FILE-OPS
+                }
+
                 var result = await _schemaValidationService.ValidateFileOperationsAsync(Operations.ToList());
                 IsValid = result.IsValid;
 
@@ -412,9 +429,23 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         {
             try
             {
-                await _jsonFileService.WriteFileOperationsAsync(Operations.ToList());
-                IsModified = false;
-                OnStatusChanged("File operations saved successfully", false);
+                // Perform full validation before saving
+                await PerformFullValidationAsync();
+                
+                // Only save if validation passes
+                if (IsValid)
+                {
+                    await _jsonFileService.WriteFileOperationsAsync(Operations.ToList());
+                    IsModified = false;
+                    OnStatusChanged("File operations saved successfully", false);
+                    
+                    // Reload operations after saving to refresh the UI
+                    await ReloadAsync();
+                }
+                else
+                {
+                    OnStatusChanged("Cannot save: File operations contain validation errors", true);
+                }
             }
             catch (Exception ex)
             {
