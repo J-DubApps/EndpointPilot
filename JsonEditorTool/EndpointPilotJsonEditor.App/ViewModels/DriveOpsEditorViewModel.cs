@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EndpointPilotJsonEditor.Core.Models;
 using EndpointPilotJsonEditor.Core.Services;
+using Newtonsoft.Json.Schema;
 
 namespace EndpointPilotJsonEditor.App.ViewModels
 {
@@ -208,6 +209,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
             {
                 SelectedOperation = Operations.First();
             }
+            ValidateAsync(); // Call initial validation after full initialization
         }
 
         /// <summary>
@@ -297,9 +299,21 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         /// </summary>
         protected override async Task ValidateAsync()
         {
+            const string schemaFileName = "DRIVE-OPS.schema.json"; // Define schema name
             try
             {
-                var result = await _schemaValidationService.ValidateDriveOperationsAsync(Operations.ToList());
+                // 1. Serialize current operations to JSON string
+                var operationsJson = Newtonsoft.Json.JsonConvert.SerializeObject(Operations.ToList(), Newtonsoft.Json.Formatting.None);
+
+                // 2. Parse the string back into a JArray
+                var jsonToValidate = Newtonsoft.Json.Linq.JArray.Parse(operationsJson);
+
+                // 3. Get the schema
+                var schema = await _schemaValidationService.GetSchemaAsync(schemaFileName);
+
+                // 4. Validate the parsed JArray
+                var isValid = jsonToValidate.IsValid(schema, out IList<string> errorMessages);
+                var result = new ValidationResult(isValid, errorMessages); // Create result object
                 IsValid = result.IsValid;
 
                 if (result.IsValid)

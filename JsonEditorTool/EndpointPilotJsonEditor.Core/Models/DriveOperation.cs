@@ -41,6 +41,7 @@ namespace EndpointPilotJsonEditor.Core.Models
         /// <summary>
         /// Gets a display name for the operation
         /// </summary>
+        [JsonIgnore] // <-- Add attribute here too
         public override string DisplayName
         {
             get
@@ -59,6 +60,7 @@ namespace EndpointPilotJsonEditor.Core.Models
         /// <summary>
         /// Gets the type of operation
         /// </summary>
+        [JsonIgnore] // <-- Add attribute here
         public override string OperationType => "Drive";
 
         /// <summary>

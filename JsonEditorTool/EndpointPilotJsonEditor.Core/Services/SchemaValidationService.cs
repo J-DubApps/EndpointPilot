@@ -45,7 +45,7 @@ namespace EndpointPilotJsonEditor.Core.Services
         /// </summary>
         /// <param name="schemaFileName">The name of the schema file</param>
         /// <returns>The JSON schema</returns>
-        private async Task<JSchema> GetSchemaAsync(string schemaFileName)
+        public async Task<JSchema> GetSchemaAsync(string schemaFileName) // Changed to public
         {
             if (_schemaCache.TryGetValue(schemaFileName, out var cachedSchema))
             {

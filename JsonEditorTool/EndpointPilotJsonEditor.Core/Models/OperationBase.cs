@@ -46,6 +46,7 @@ namespace EndpointPilotJsonEditor.Core.Models
         /// <summary>
         /// Gets the type of operation (File, Registry, Drive)
         /// </summary>
+        [JsonIgnore] // <-- Add attribute here
         public abstract string OperationType { get; }
     }
 }

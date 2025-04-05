@@ -177,6 +177,9 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         {
             try
             {
+                // Pre-load/cache the schema before creating the ViewModel
+                await _schemaValidationService.GetSchemaAsync("DRIVE-OPS.schema.json");
+
                 var operations = await _jsonFileService.ReadDriveOperationsAsync();
                 var driveOpsEditor = new DriveOpsEditorViewModel(operations, _jsonFileService, _schemaValidationService);
                 driveOpsEditor.StatusChanged += OnEditorStatusChanged;

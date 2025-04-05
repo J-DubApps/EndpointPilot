@@ -279,6 +279,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
             {
                 SelectedOperation = Operations.First();
             }
+            ValidateAsync(); // Call initial validation after full initialization
         }
 
         /// <summary>

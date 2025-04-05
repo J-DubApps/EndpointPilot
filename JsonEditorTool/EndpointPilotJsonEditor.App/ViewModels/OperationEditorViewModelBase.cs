@@ -117,8 +117,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
             MoveDownCommand = new RelayCommand(_ => MoveDown(), _ => CanMoveDown());
             SaveCommand = new RelayCommand(_ => SaveAsync(), _ => IsModified && IsValid);
             ReloadCommand = new RelayCommand(_ => ReloadAsync());
-
-            ValidateAsync();
+            // ValidateAsync(); // Removed from base constructor
         }
 
         /// <summary>
