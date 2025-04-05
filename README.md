@@ -6,7 +6,7 @@
 
 
 
-**EndpointPilot** is a PowerShell-based Windows Endpoint Configuration Tool for PCs operating in an AD or Intune-managed context, with optimization for Remote Work scenarios. It functions a lot like a logon script, but is designed to be run locally via a Scheduled Task-and at specified intervals.
+**EndpointPilot** is a PowerShell-based autonoumous Windows Endpoint Configuration solution for PCs operating in an AD, Intune, or NinjaOne-managed context, with optimization for keeping user profiles managed in in Office and Remote Work scenarios. It functions a lot like a logon script, but runs locally via a Scheduled Task-and at specified intervals.
 
 ### EndpointPilot addresses the following use-case scenarios:
 
