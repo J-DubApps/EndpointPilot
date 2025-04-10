@@ -6,3 +6,10 @@
 #----------------------------------------------------------------------------------------------
 #
 #	2023-02-12  J-DubApps		    Initial version & Repo creation
+#	2025-03-30  J-DubApps		    Resuming Project - created ProjectPlan.md
+#	2025-04-05  J-DubApps		    Coded JsonEditorTool standalone C# app for editing 
+#					    EndpointPilot JSON config files.
+#	2025-04-05  J-DubApps		    Created Functions-Manifest-Plan.md
+#	2025-04-05  J-DubApps		    Created JSON-Schema-Plan to align w/ JsonEditorTool
+#	2025-04-05  J-DubApps		    Created companion Schema Validation JSON files for
+#					    Main JSON files FileOps, RegOps, and DriveOps
