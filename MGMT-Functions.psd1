@@ -27,7 +27,33 @@
     PowerShellVersion = '5.1'
     
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport = @('InGroup', 'Get-Permission', 'IsCurrentProcessArm64')
+    FunctionsToExport = @(
+        # Core Utility Functions
+        'InGroup', 
+        'InGroupGP',
+        'Get-Permission', 
+        'IsCurrentProcessArm64', 
+        'Get-RegistryValue',
+        'Get-TextWithin', 
+        'Get-DsRegStatusInfo', 
+        'Get-WorkstationUsageStatus', 
+        
+        # Network/Performance Functions
+        'Measure-DownloadSpeed', 
+        'Measure-UploadSpeed', 
+        'Send-SmtpMail',
+        
+        # User Information Functions
+        'Get-LoggedInUser',
+
+        # File Operation Functions
+        
+        'Copy-File', 
+        'Copy-Directory', 
+        'Move-Files', 
+        'Move-Directory',
+        'Import-RegKey'
+    )
     
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport = @()
@@ -36,7 +62,10 @@
     VariablesToExport = @()
     
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-    AliasesToExport = @('Get-Permissions')
+    AliasesToExport = @(
+    'Get-Permissions'
+    # Add any other aliases here
+    )
     
     # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
     PrivateData = @{

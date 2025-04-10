@@ -31,6 +31,17 @@ else {
     # We are being called by MAIN.PS1, nothing to load 
 }
 
+# Check current Workstation Usage Status during this Script run
+$workstationUsageStatus = Get-WorkstationUsageStatus
+$RunTimeLockedStatus = if ($workstationUsageStatus.IsLocked) { "locked" } else { "unlocked" }
+
+if ($workstationUsageStatus.IsLocked) {
+    # Write-Output "The workstation is locked."
+	WriteLog "The workstation is locked during this Telemetry Script run."
+} else {
+    #Write-Output "The workstation is not locked."
+	WriteLog "The workstation is being actively-used, and is NOT auto-locked, during this Telemetry Script run."
+}
 
 WriteLog "Determining connection type - VPN vs office, and if on Wired/Wireless LAN"
 
@@ -173,86 +184,6 @@ else {
 }
 
 
-WriteLog "Attempting anonymous ISP Geoloction..."
-
-$InOffice = $null
-
-Add-Type -AssemblyName System.Device #Required to access System.Device.Location namespace
-$GeoWatcher = New-Object System.Device.Location.GeoCoordinateWatcher #Create the required object
-$GeoWatcher.Start() #Begin resolving current locaton
-
-while (($GeoWatcher.Status -ne 'Ready') -and ($GeoWatcher.Permission -ne 'Denied')) {
-    Start-Sleep -Milliseconds 100 #Wait for discovery.
-}
-
-if ($GeoWatcher.Permission -eq 'Denied') {
-    WriteLog 'WARN: Access Denied for Location Information. Geolocation skipped.' # Changed from Write-Error
-}
-else {
-    $ISPGeoLocation = $GeoWatcher.Position.Location | Select Latitude, Longitude #Select the relevent results.
-    WriteLog "ISP Geoloction Info - $ISPGeoLocation "
-}
-
-#extract the Latitude using a capture group
-$latmatch = select-string "Latitude=(.*;)" -inputobject $ISPGeoLocation
-$latvalue = $latmatch.matches.groups[1].value
-$latvalue = $latvalue -replace '[;]', ""
-#$latvalue
-
-#extract the Longitude using a capture group
-$longmatch = select-string "Longitude=(.*})" -inputobject $ISPGeoLocation
-$longvalue = $longmatch.matches.groups[1].value
-$longvalue = $longvalue -replace '[}]', ""
-
-
-if (($latmatch -match '32.8131') -and ($longmatch -match '-96.8112')) {
-    #Write-Error 'Access Denied for Location Information'
-    WriteLog "PC Endpoint's Physical Location confirmed Dallas Office."
-    $InOffice = $True
-    #WriteLog "Exiting Script"
-    #Exit (0)
-}
-elseif (($latmatch -match '32.8657') -and ($longmatch -match '-96.7981')) {
-    WriteLog "PC Endpoint's Physical Location confirmed Dallas Office."
-    $InOffice = $True
-}
-else {
-
-    #$ISPGeoLocation = $GeoWatcher.Position.Location | Select Latitude,Longitude #Select the relevent results.
-    #Write-Output "Not Dallas Office"
-}
-
-if (($latmatch -match '33.7857') -and ($longmatch -match '-84.5926')) {
-    #Write-Error 'Access Denied for Location Information'
-    $InOffice = $True
-    WriteLog "PC Endpoint's Physical Location confirmed Washington DC Office."
-    #WriteLog "Exiting Script"
-    #Exit (0)
-}
-elseif (($latmatch -match '38.9776') -and ($longmatch -match '-77.384')) {
-
-    WriteLog "PC Endpoint's Physical Location confirmed Washington DC Office."
-    $InOffice = $True
-}
-else {
-
-    #$ISPGeoLocation = $GeoWatcher.Position.Location | Select Latitude,Longitude #Select the relevent results.
-    #Write-Output "Not Dallas Office"
-}
-
-
-# Check if both in the office AND using VPN (for potential Hotspot abuse)
-
-if (($InOffice = $True) -and ($ConnectionType -eq "VPN")) {
-
-    # WriteLog "PC Endpoint is on VPN at the Office! If PC is not a test VM, consider accidental Tethering/Hotspot use!"
-
-}
-else {
-
-
-}
-
 WriteLog "Getting original install date of this machine."
 WriteLog ""
 $builddate = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\' | select -ExpandProperty InstallDate
@@ -327,7 +258,7 @@ If ($freeSpaceGB -lt 55) {
 $FolderPath = "C:\users\$env:username"
 
 # List of folders to ignore, we create an array of strings here which we will use below
-$IgnoreList = @('.ms-ad', '.1Password', '.android', '.cache', '.fcc', '.junique', '.openjfx', '.vscode', '3D Objects', 'Contacts', 'Desktop', 'Documents', 'Downloads', 'Favorites', 'Links', 'Music', 'MS-Scripts', 'OneDrive', 'OneDrive - McKool Smith', 'ND Office Echo', 'Pictures', 'Saved Games', 'Searches', 'Videos', 'Work Folders')
+$IgnoreList = @('.ms-ad', '.1Password', '.android', '.cache', '.fcc', '.junique', '.openjfx', '.vscode', '3D Objects', 'Contacts', 'Desktop', 'Documents', 'Downloads', 'Favorites', 'Links', 'Music', 'MS-Scripts', 'OneDrive', 'ND Office Echo', 'Pictures', 'Saved Games', 'Searches', 'Videos', 'Work Folders')
 
 # Get all directories in the folder
 $Directories = Get-ChildItem -Path $FolderPath -Directory
@@ -342,4 +273,249 @@ If ($Count -gt 0) {
     # Output the count
     # Write-Output "Count of sub-folders excluding ignored list: $Count"
     writelog "User-created, non-protected sub-folder count (if not zero) numbers $Count folders for user $env:UserName on $env:computername."
+}
+
+#Check Chrome Extensions
+# Define the registry path
+$extRegistryPath = "HKCU:\Software\Google\Chrome\PreferenceMACs\Default\extensions.settings"
+$extOutputFilePath = "$env:userprofile\Chrome-Extensions.txt"
+
+# Clear the output file if it exists
+if (Test-Path $extOutputFilePath) {
+    Remove-Item $extOutputFilePath
+}
+
+# Check if the registry path exists
+if (Test-Path $extRegistryPath) {
+    # Get all installed extensions
+    $extensionscheck = Get-ItemProperty -Path $extRegistryPath
+
+    # Create a custom object to store extension details
+    $extensionList = @()
+    foreach ($extension in $extensionscheck.PSObject.Properties) {
+        $extensionDetails = [PSCustomObject]@{
+            ExtensionID = $extension.Name
+            Data        = $extension.Value
+        }
+        $extensionList += $extensionDetails
+    }
+
+    # Output the list of extensions to a text file
+    $extensionList | Format-Table -AutoSize | Out-File -FilePath $extOutputFilePath
+    Write-Output "Chrome extensions have been written to $extOutputFilePath"
+} else {
+    Write-Output "No Chrome extensions found for the current user." | Out-File -FilePath $extOutputFilePath
+}
+
+#region PST_Check
+# DETECT PSTs in-use by Outlook (if Outlook is running)
+WriteLog ""
+Writelog "Looking for user-added PSTs in Outlook Profile..."
+#Get the current date and time, computer name, user name and path to share where to save the list of PST files found
+$date_time = Get-Date -Format yyyy-MM-dd_HH-mm-ss
+$computername = $env:COMPUTERNAME
+#$sharepath = "\\server\share"
+$username = $env:USERNAME
+$outlookrunning = $null
+
+#Test if Outlook is running. Script should only run when Outlook is running. Otherwise a pop-up appears on the user's screen...
+try {
+	$proc = Get-Process -Name OUTLOOK -ErrorAction Stop
+
+	#Get the version of Office
+	$prodver = $proc.ProductVersion
+	$outlookrunning = $true
+}
+catch {
+	#"$date_time;$computername;Outlook is not running;N/A;N/A;$username" | Out-File -FilePath ("$env:userprofile\${username}" + "_PST_In-Use.csv") -Append
+	WriteLog ""
+	Writelog "Outlook is not running."
+	WriteLog ""
+	$outlookrunning = $false
+}
+
+If ($outlookrunning -eq $true){
+#Load Outlook object from current user's profile
+$Outlook = New-Object -ComObject 'Outlook.Application' -ErrorAction 'Stop'
+
+#Get all Outlook stores of type 3 (PST)
+$pstobjects = $outlook.GetNameSpace('MAPI').Stores | Where-Object { $_.ExchangeStoreType -eq 3 }
+if ($pstobjects -eq $null) {
+	#"$date_time;$computername;No PST files found;N/A;$prodver;$username" | Out-File -FilePath ("$env:userprofile\${username}" + "_No_Detected_PST_In-Use.csv") -Append
+	WriteLog ""
+	Writelog "No PST files found in Outlook Profile."
+	continue
+}
+
+#For each PST file found...
+foreach ($pstobject in $pstobjects) {
+	#get the PST file path
+	$filepath = $pstobject.filepath
+
+	<#Remove invalid characters from from file path
+    if ($filepath -match ":") {
+        $drive = (Split-Path $filepath -Qualifier).Replace(':','')
+        $leaf = Split-Path $filepath -NoQualifier
+        $unc = Join-Path (Get-PSDrive $drive)[0].DisplayRoot -ChildPath $leaf
+        $filepathcleaned = $unc
+    } else {
+        $filepathcleaned = $pstobject.filepath -replace [regex]::escape('?\UNC\'),''
+    }
+    #>
+	$filepathcleaned = $filepath
+	#If the file exists, get the size and output data to a CSV file. The name includes the computer name.
+	if (test-path $filepathcleaned) {
+		$filesize = (Get-Item $filepathcleaned).length
+		$pstInUsereportfilepath = "$env:userprofile\${username}" + "_PST_In-Use.csv"
+		$pstInUsereportfilename = "${username}" + "_PST_In-Use.csv"
+		$pstdetectfilepath = "$env:userprofile\${username}" + "_pst.csv"
+		$pstdetectfilename = "${username}" + "_pst.csv"
+		Remove-Item -Path $pstInUsereportfilepath -Force -ErrorAction Ignore | Out-Null
+		# "$date_time;$computername;$filepathcleaned;$filesize;$prodver;$username" | Out-File -FilePath ("$sharepath\$computername" + "_PST_files.csv") -Append
+		WriteLog ""
+		Writelog "PST(s) file(s) found in Outlook Profile."
+		WriteLog "$date_time;$computername;$filepathcleaned;$filesize;$prodver;$username"
+		"$date_time;$computername;$filepathcleaned;$filesize;$prodver;$username" | Out-File -FilePath ($pstInUsereportfilepath) -Append
+	}
+}
+
+}
+#endregion PST_Check
+
+# Get the information of logical disk C:
+$disk = Get-WmiObject -Class Win32_LogicalDisk -Filter "DeviceID='C:'"
+
+# Convert the free space in bytes to GB and round it to 2 decimal places
+$freeSpaceGB = [math]::Round(($disk.FreeSpace / 1GB), 2)
+
+# Print the free space
+WriteLog ""
+WriteLog "The free space on the C: drive is $freeSpaceGB GB"
+
+If ($isVM -eq $false) {
+	# Set the path of the Downloads folder
+	$downloadsFolderPath = Join-Path -Path $env:userprofile -ChildPath "Downloads"
+
+	if ($freeSpaceGB -lt 55) {
+		WriteLog ""
+		WriteLog "Low Disk Space detected on $env:computername.  $freeSpaceGB GB free on C: drive."
+		"$freeSpaceGB GB free on C: drive. User Downloads folder size has been logged to the log found at: Logon_Script_RunLogs" | out-file "\\mckoolsmith.law\dfs\SOURCE\Tools\FlagFiles\Logon_Script_RunLogs\Free_Space_Reports\Under_50gb\$env:UserName-on-$env:computername.log"
+		$LowDiskSpace = $True
+	}
+ elseif ($freeSpaceGB -lt 105) {
+		WriteLog ""
+		WriteLog "Low Disk Space detected on $env:computername.  $freeSpaceGB GB free on C: drive."
+		"$freeSpaceGB GB free on C: drive. User Downloads folder size has been logged to the log found at: Logon_Script_RunLogs" | out-file "\\mckoolsmith.law\dfs\SOURCE\Tools\FlagFiles\Logon_Script_RunLogs\Free_Space_Reports\Under_100gb\$env:UserName-on-$env:computername.log"
+		$LowDiskSpace = $True
+	}
+	else {
+		$LowDiskSpace = $False
+	}
+
+	If ($LowDiskSpace -eq $True) {
+	 if (Test-Path -Path $downloadsFolderPath) {
+			# Calculate the size of the Downloads folder
+			$downloadsFolderSize = (Get-ChildItem -Path $downloadsFolderPath -Recurse -File | Measure-Object -Property Length -Sum).Sum / 1MB
+
+			# Print the size of the Downloads folder
+			WriteLog ""
+			WriteLog "Downloads folder size: $([Math]::Round($downloadsFolderSize, 2)) MB"
+		}
+	}
+
+}
+
+WriteLog "Checking TPM Status for Bitlocker Pre-reqs"
+dsregcmd /status | findstr /C:"TpmProtected" | Out-File -Append -NoClobber -Encoding UTF8 -FilePath "$env:userprofile\LOGON-$env:computername.log"
+WriteLog ""
+
+#region BitLocker_Status_Check
+$BitLockerStatus = $null
+$cmd = "(New-Object -ComObject Shell.Application).NameSpace('C:').Self.ExtendedProperty('System.Volume.BitLockerProtection')"
+$bitLockerResult = Invoke-Expression -Command $cmd
+
+if ($bitLockerResult -eq "0" -or $bitLockerResult -eq "2") {
+	$BitLockerStatus = $false
+}
+elseif ($bitLockerResult -eq "1") {
+	$BitLockerStatus = $true
+}
+
+# Check the BitLocker status
+if ($BitLockerStatus) {
+	#Write-Host "BitLocker protection is enabled."
+	WriteLog "BitLocker protection is enabled."
+}
+else {
+	#Write-Host "BitLocker protection is not enabled."
+	WriteLog "BitLocker protection is not enabled."
+}
+
+#endregion BitLocker_Status_Check
+
+WriteLog ""
+WriteLog "Checking for Hybrid Domain Join & Readiness for Intune Mgmt and Windows Hello For Business."
+dsregcmd /status | findstr /C:"AzureAdJoined" /C:"DomainJoined" /C:"TenantId" /C:"AzureAdPrt" /C:"NgsSet" /C:"PolicyEnabled" /C:"CertEnrollment" | Out-File -Append -NoClobber -Encoding UTF8 -FilePath "$env:userprofile\LOGON-$env:computername.log"
+
+#Clean-up any old Robocopy Logfiles
+
+Get-ChildItem -Path "$env:userprofile\Start-Robocopy-*" | Where-Object { ($_.LastWriteTime -lt (Get-Date).AddDays(-1)) } | Remove-Item -Force -ErrorAction Ignore | Out-Null
+WriteLog ""
+
+WriteLog "Attempting to detect Local and Network printers, and basic Printer Driver information..."
+WriteLog ""
+# Backup of Discovered Printers to "$env:userprofile\MS-Scripts\Activity_Telemetry\printers.csv" and Logon Script Runtime Log
+# Define the array of printer names to ignore
+$printerIgnore = @("Adobe PDF", "Litera Compare PDF Publisher", "Microsoft Print to PDF", "OneNote (Desktop)", "Fax", "Send To OneNote 16", "Microsoft XPS Document Writer") # Add the printer names you want to ignore
+
+# Initialize an array to hold printer information
+$printerInfo = @()
+
+# Get the list of all printers
+$printers = Get-Printer
+
+# Loop through each printer
+foreach ($printer in $printers) {
+    # Check if the printer is in the ignore list
+    if ($printerIgnore -notcontains $printer.Name) {
+        # Initialize a hashtable to hold the printer information
+        $printerDetails = @{
+            PrinterName   = $printer.Name
+            DriverName    = $printer.DriverName
+            #PrintServer   = ""
+        }
+
+        # Check if the printer is a network printer
+        #if ($printer.Shared -eq $true -or $printer.PortName -match "^\\\\") {
+         #   $printerDetails.PrintServer = $printer.PrinterHostAddress
+        #}
+
+        # Add the printer details to the array
+        $printerInfo += [pscustomobject]$printerDetails
+    }
+}
+
+Remove-Item -Path "$env:userprofile\MS-Scripts\Activity_Telemetry\printers.csv" -Force -ErrorAction Ignore | Out-Null
+
+# Export the printer information to a CSV file
+$printerInfo | Export-Csv -Path "$env:userprofile\MS-Scripts\Activity_Telemetry\printers.csv" -NoTypeInformation -Force
+
+$printerInfo | Format-Table -AutoSize | Out-File -FilePath "$env:userprofile\LOGON-$env:computername.log" -Append -Encoding UTF8
+"`n" | Out-File -FilePath "$env:userprofile\LOGON-$env:computername.log" -Append -Encoding UTF8
+
+WriteLog ""
+
+# If the UEV module is installed, import the module
+If (Get-Module -ListAvailable -Name UEV) {
+	Import-Module -Name UEV
+
+    # Check for UE-V service
+    $status = Get-UevStatus
+    If ($status.UevEnabled -ne $True) {
+	    WriteLog "UE-V service is NOT enabled."
+    } Else {
+	    WriteLog "UE-V service is enabled."
+    }
+} Else {
+    WriteLog "UE-V module is NOT installed."
 }

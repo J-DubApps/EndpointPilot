@@ -125,6 +125,21 @@ If ($psClassicDesktop -eq $true) {
 }
 #endregion 32bitHandling
 
+# Set Variables for Location for the Config / Runtime script-placement and script-names
+If ($DeployRunTimeScriptOnly -ne $true) {
+	$setRuntimeScriptFolder = Join-Path $Env:ProgramData -ChildPath "EndpointPilot"
+}
+else {
+	$setRuntimeScriptFolder = $PSScriptRoot
+}
+#endregion TEST_MODE_CHECK
+
+#region SET_RUNTIME_SCRIPT_PATH
+$setRuntimeScriptPath = Join-Path $setRuntimeScriptFolder -ChildPath "./ENDPOINT-PILOT.PS1"
+$setPSRuntimeLauncherPath = Join-Path $setRuntimeScriptFolder -ChildPath "./EPILOT-Launcher.vbs"
+#endregion SET_RUNTIME_SCRIPT_PATH
+
+
 # Launch EP Main runtime script
 .\MAIN.ps1
 

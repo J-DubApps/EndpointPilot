@@ -43,7 +43,7 @@ Function Test-ClientEnvironment() {
     #	}
 }
 
-Function Test-OperatingSystem() {
+Function Get-OperatingSystemApproved() {
     ##########################################################################
     ##	Checks what version of Windows the machine is running
     ##	and quits if it is on an unsupported platform
@@ -106,14 +106,6 @@ Function Move-Files($Path, $NewPath) {
     }
 }
 
-Function Import-RegKey($RegFile) {
-    ##########################################################################
-    ##	Imports a Registry Key to the local machine
-    ##########################################################################
-    If (Test-Path -Path $RegFile) {
-        REG Import $RegFile /reg:32
-    }
-}
 
 Function Write-InformationalEvent($Message) {
     #########################################################################
@@ -130,16 +122,6 @@ Function Write-WarningEvent($Message) {
     $QualifiedMessage = $ClientName + " Script:" + $Message
     Write-EventLog -LogName Application -Source Winlogon -Message $QualifiedMessage -EventId 1001 -EntryType Warning
 }
-
-Function Move-Directory($Path, $NewPath) {
-    ##########################################################################
-    ##	Exports a file to a new location
-    ##########################################################################
-    If (Test-Path -Path $Path) {
-        Move-Item $Path $NewPath -force
-    }
-}
-
 
 Function WriteLog($LogString) {
     ##########################################################################

@@ -83,8 +83,8 @@ else {
 #endregion TEST_MODE_CHECK
 
 #region SET_RUNTIME_SCRIPT_PATH
-$setRuntimeScriptPath = Join-Path $setRuntimeScriptFolder -ChildPath "./PSTART.PS1"
-$setPSRuntimeLauncherPath = Join-Path $setRuntimeScriptFolder -ChildPath "./PSTART.vbs"
+$setRuntimeScriptPath = Join-Path $setRuntimeScriptFolder -ChildPath "./ENDPOINT-PILOT.PS1"
+$setPSRuntimeLauncherPath = Join-Path $setRuntimeScriptFolder -ChildPath "./EPILOT-Launcher.vbs"
 #endregion SET_RUNTIME_SCRIPT_PATH
 
 
@@ -119,8 +119,6 @@ else {
 
 # Exit if not running Enterprise Edition
 Test-OperatingSystem
-
-
 
 
 #Call Script Element / Component Modules -

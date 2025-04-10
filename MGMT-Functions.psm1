@@ -5,55 +5,10 @@
 
 Set-Alias -Name 'Get-Permissions' -Value 'Get-Permission'
 
-Export-ModuleMember -Function InGroup, Get-Permission, IsCurrentProcessArm64
+Export-ModuleMember -Function InGroup, InGroupGP, Get-Permission, IsCurrentProcessArm64, Get-RegistryValue, Import-RegKey, Get-DsRegStatusInfo, Measure-DownloadSpeed, Measure-UploadSpeed, Get-LoggedInUser, Get-TextWithin, Get-WorkstationUsageStatus, Copy-File, Copy-Directory, Move-Files, Move-Directory, Send-SmtpMail
+Export-ModuleMember -Alias Get-Permissions
 
 #region FUNCTIONS
-
-function InGroup {
-    ##########################################################################
-    ##  Group check - Returns True/False for whether the user is in a group
-    ##########################################################################
-    <#
-      .SYNOPSIS
-          Check if the current user is in a specified group
-      .DESCRIPTION
-          Check if the current user is in a specified group
-      .PARAMETER GroupName
-          The name of the group to check
-      .EXAMPLE
-          # Check if the current user is in the Administrators group
-          $b = InGroup 'Administrators'
-  #>
-    Param(
-        [string]$GroupName
-    )
-
-    if ($GroupName) {
-        $mytoken = [System.Security.Principal.WindowsIdentity]::GetCurrent()
-        $me = New-Object System.Security.Principal.WindowsPrincipal($mytoken)
-        return $me.IsInRole($GroupName)
-    }
-    else {
-        $user_token = [System.Security.Principal.WindowsIdentity]::GetCurrent()
-        $groups = New-Object System.Collections.ArrayList
-        foreach ($group in $user_token.Groups) {
-            [void] $groups.Add( $group.Translate("System.Security.Principal.NTAccount") )
-        }
-        return $groups
-    }
-}
-
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 function Get-Permission {
     <#
@@ -246,23 +201,6 @@ Function Get-RegistryValue($RegPath, $Property) {
 	}
 }
 
-Function Check-ClientEnvironment() {
-	##########################################################################
-	##	Checks if the machine is connected to the client domain
-	##	and if so if it is connected to a PC or to a Citrix machine
-	##########################################################################
-
-	#Check if the Computer is in a Workstations directory
-
-	#If([string]$objComputer -like "*BRWorkstations*"){
-	#	$PCType = "Workstation"
-	#	}
-	#Else{
-	#	Log-WarningEvent("Non-compliant desktop environment detected. Quitting the script now.")
-	#	Exit
-	#	}
-}
-
 Function Get-OperatingSystem() {
 	##########################################################################
 	##	Checks what version of Windows the machine is running
@@ -280,6 +218,7 @@ Function Get-OperatingSystem() {
 		} elseif ($OSVersion -like "10.0*" -and $BuildNumber -ge 22000) {
 			# Windows 11 starts with build number 22000 and above
 			$OSDetectedversion = "Windows 11"
+			# $OSDetectedversion = "Windows 11"
 		} else {
 			$OSDetectedversion = "Unknown OS"
 		}
@@ -287,7 +226,7 @@ Function Get-OperatingSystem() {
 		# Return the detected OS
 		return $OSDetectedversion
 	}
-	# $OSDetectedversion = "Windows 11"
+	
 	
 
 function Get-DsRegStatusInfo {
@@ -486,7 +425,16 @@ Function Get-LoggedInUser () {
 	} #process
 }
 
-Function Cp-Directory($Path, $NewPath) {
+Function Move-Directory($Path, $NewPath) {
+    ##########################################################################
+    ##	Exports a file to a new location
+    ##########################################################################
+    If (Test-Path -Path $Path) {
+        Move-Item $Path $NewPath -force
+    }
+}
+
+Function Copy-Directory($Path, $NewPath, $strExcludedFiles, $strExcludedDirectories) {
 	##########################################################################
 	##	Copies a directory/folder to a new location
 	##########################################################################
@@ -498,7 +446,7 @@ Function Cp-Directory($Path, $NewPath) {
 	}
 }
 
-Function Cp-File($Path, $NewPath) {
+Function Copy-File($Path, $NewPath) {
 	##########################################################################
 	##	Copies a file or a set of files to a new location
 	##########################################################################
@@ -511,7 +459,7 @@ Function Cp-File($Path, $NewPath) {
 	}
 }
 
-Function Mv-Files($Path, $NewPath) {
+Function Move-Files($Path, $NewPath) {
 	##########################################################################
 	##	Moves a file or a set of files to a new location
 	##########################################################################
@@ -525,13 +473,22 @@ Function Mv-Files($Path, $NewPath) {
 }
 
 Function Import-RegKey($RegFile) {
-	##########################################################################
-	##	Imports a Registry Key to the local machine
-	##########################################################################
-	If (Test-Path -Path $RegFile) {
-		REG Import $RegFile /reg:32
-	}
-}
+    ##########################################################################
+    ##	Imports a Registry Key to the local machine
+    ## 
+    ## Parameters:
+    ##   $RegFile - The path to the registry file to be imported.
+    ## 
+    ## This function checks if the specified registry file exists at the given 
+    ## path. If the file exists, it imports the registry key using the REG 
+    ## command with the /reg:32 option, which specifies that the import should 
+    ## be done in the 32-bit registry view.
+    ##########################################################################
+    If (Test-Path -Path $RegFile) {
+        REG Import $RegFile /reg:32
+    }
+} 
+
 
 function Get-TextWithin {
 	<#
