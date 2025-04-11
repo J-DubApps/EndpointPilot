@@ -1,14 +1,14 @@
 # EndpointPilot Packaging and Release Plan
 
-Based on my review of the EndpointPilot project files and our discussion, I'll outline a comprehensive plan for creating a packaging solution and GitHub release workflow for your project.
+Here is the comprehensive plan for creating a packaging solution and GitHub release workflow for this project.
 
-## Project Understanding
+## Project and installer need
 
 EndpointPilot is a PowerShell-based Windows Endpoint Configuration solution that:
 - Runs as a scheduled task at specified intervals
-- Manages user profiles in Office and Remote Work scenarios
-- Uses JSON configuration files for operations
-- Includes a .NET-based JSON editor tool
+- Manages user profiles on Endpoints in Office and emote Work scenarios
+- Uses JSON configuration files to direct operations
+- Includes a .NET-based JSON editor tool to manage the JSON config files
 
 ## Requirements Summary
 
@@ -19,7 +19,7 @@ EndpointPilot is a PowerShell-based Windows Endpoint Configuration solution that
 
 2. **Cost Constraints**:
    - Free or low-cost solution (open-source project)
-   - No commercial installer solutions
+   - No commercial installer solutions wanted at this time
 
 3. **GitHub Release Integration**:
    - Semi-automated approach
@@ -28,22 +28,22 @@ EndpointPilot is a PowerShell-based Windows Endpoint Configuration solution that
 
 ## Installer Solution Options
 
-I've evaluated several free/open-source installer options:
+Below is the first method J-DubApps will use to distribute this solution, with pros/cons on the solutions I am skipping for now:
 
-### 1. PowerShell-based Installer (Recommended)
+### 1. PowerShell-based Installer (Current)
 
-**Pros:**
+**Why PowerShell:**
 - Native to the project's technology stack
 - Complete control over installation process
 - No external dependencies
 - Easy to maintain and update
 - Can be easily integrated with GitHub Actions
 
-**Cons:**
+**Caveats:**
 - Requires script execution policy to be set appropriately
 - Less polished UI compared to dedicated installer frameworks
 
-### 2. NSIS (Nullsoft Scriptable Install System)
+### 2. NSIS (Nullsoft Scriptable Install System) - ***skipped***
 
 **Pros:**
 - Free and open-source
@@ -56,7 +56,7 @@ I've evaluated several free/open-source installer options:
 - Additional build dependency
 - More complex to maintain
 
-### 3. WiX Toolset (Windows Installer XML)
+### 3. WiX Toolset (Windows Installer XML) - ***skipped***
 
 **Pros:**
 - Creates standard MSI packages
@@ -64,13 +64,13 @@ I've evaluated several free/open-source installer options:
 - Extensive capabilities
 
 **Cons:**
-- Steep learning curve
+- Steep learning curve (maybe later - sysadmins just live .msi)
 - XML-based configuration can be verbose
 - More complex build process
 
-## Recommended Approach
+## Our Approach At Launch-Time
 
-I recommend using a **PowerShell-based installer** for the following reasons:
+ **EndpointPilot** (being a PowerShell-based solution) will use a **PowerShell-based installer** for the following reasons:
 1. Aligns with the existing technology stack
 2. Simplest to implement and maintain
 3. No additional dependencies or costs
@@ -81,7 +81,7 @@ I recommend using a **PowerShell-based installer** for the following reasons:
 
 ### 1. PowerShell Installer Script
 
-Create a PowerShell script (`Install-EndpointPilot.ps1`) that:
+I will write a PowerShell script (`Install-EndpointPilot.ps1`) that:
 
 ```mermaid
 flowchart TD
@@ -100,12 +100,12 @@ The installer will:
 2. Create necessary directories
 3. Copy JsonEditorTool files to `%PROGRAMDATA%\EndpointPilot\JsonEditorTool\`
 4. Copy script files to `%PROGRAMDATA%\EndpointPilot\`
-5. Create shortcuts (optional)
+5. Create any shortcuts (optional)
 6. Display completion message
 
 ### 2. GitHub Actions Workflow
 
-Create a GitHub Actions workflow file (`.github/workflows/release.yml`) that:
+J-DubApps is working on a GitHub Actions workflow file (`.github/workflows/release.yml`) that:
 
 ```mermaid
 flowchart TD
@@ -127,11 +127,11 @@ The workflow will:
 
 ### 3. Downloader Script (Optional Enhancement)
 
-Create a small PowerShell script that:
+J-DubApps will also create a small PowerShell script that:
 1. Downloads the latest release from GitHub
 2. Extracts and runs the installer
 
-This provides an easy one-line installation command for users.
+This provides an easy one-line installation command for most sysadmins to get up-and-running to evalute if EndPointPilot is for them.
 
 ## Implementation Details
 
@@ -332,7 +332,7 @@ if ($installerPath) {
 
 The GitHub release process will work as follows:
 
-1. When ready to create a new release, the developer manually triggers the GitHub Actions workflow
+1. When ready to create a new release, J-DubApps will manually trigger the GitHub Actions workflow
 2. The workflow prompts for a version number and whether it's a prerelease
 3. GitHub Actions builds the JsonEditorTool, packages all components, and creates a release
 4. The release includes:
@@ -353,5 +353,5 @@ The GitHub release process will work as follows:
 1. **Versioning system**: Automatically increment version numbers based on semantic versioning
 2. **Changelog generation**: Automatically generate release notes from commit messages
 3. **Installation verification**: Add checks to verify successful installation
-4. **Uninstaller**: Create an uninstaller script
+4. **Uninstaller**: Maybe create an uninstaller script (if we haven't converted to MSI)
 5. **Update mechanism**: Add ability to check for and install updates
