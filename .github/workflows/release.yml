@@ -1,0 +1,83 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.0.0)'
+        required: true
+      prerelease:
+        description: 'Is this a prerelease?'
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Use latest version
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4 # Use latest version
+        with:
+          dotnet-version: '6.0.x' # Adjust if your project uses a different .NET version
+
+      - name: Build JsonEditorTool
+        run: |
+          cd JsonEditorTool
+          dotnet publish EndpointPilotJsonEditor.App/EndpointPilotJsonEditor.App.csproj -c Release -o publish
+        shell: pwsh
+
+      - name: Create installer package
+        run: |
+          # Define release directory name
+          $releaseDir = "EndpointPilot-${{ github.event.inputs.version }}"
+          New-Item -Path $releaseDir -ItemType Directory -Force
+
+          # Copy the installer script (assuming it's in the root)
+          Copy-Item -Path "Install-EndpointPilot.ps1" -Destination $releaseDir -ErrorAction SilentlyContinue
+
+          # Copy script files
+          $scriptExtensions = @("*.ps1", "*.psm1", "*.psd1", "*.json", "*.cmd", "*.exe", "*.vbs")
+          foreach ($extension in $scriptExtensions) {
+              Get-ChildItem -Path . -Filter $extension -File -Recurse | Where-Object { $_.FullName -notlike "*\.github\*" -and $_.Name -ne "Install-EndpointPilot.ps1" } | ForEach-Object {
+                  Copy-Item -Path $_.FullName -Destination $releaseDir -Force
+              }
+          }
+
+          # Copy JsonEditorTool publish directory
+          Copy-Item -Path "JsonEditorTool/publish" -Destination (Join-Path -Path $releaseDir -ChildPath "JsonEditorTool") -Recurse -Force
+
+          # Create ZIP file
+          Compress-Archive -Path "$releaseDir\*" -DestinationPath "EndpointPilot-${{ github.event.inputs.version }}.zip" -Force
+        shell: pwsh
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.event.inputs.version }}
+          release_name: EndpointPilot v${{ github.event.inputs.version }}
+          draft: false
+          prerelease: ${{ github.event.inputs.prerelease }}
+          body: |
+            Release of EndpointPilot version ${{ github.event.inputs.version }}.
+            Includes the installer package containing the JsonEditorTool and all necessary scripts.
+            
+            **Installation:**
+            1. Download the `EndpointPilot-${{ github.event.inputs.version }}.zip` file.
+            2. Extract the contents.
+            3. Right-click `Install-EndpointPilot.ps1` and select "Run with PowerShell". Ensure you run as Administrator.
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./EndpointPilot-${{ github.event.inputs.version }}.zip
+          asset_name: EndpointPilot-${{ github.event.inputs.version }}.zip
+          asset_content_type: application/zip
