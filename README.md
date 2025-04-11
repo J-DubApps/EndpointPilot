@@ -6,7 +6,7 @@
 
 
 
-**EndpointPilot** is a PowerShell-based autonoumous Windows Endpoint Configuration solution for PCs operating in an AD, Intune, or NinjaOne-managed context, with optimization for keeping user profiles managed in in Office and Remote Work scenarios. It functions a lot like a logon script, but runs locally via a Scheduled Task-and at specified intervals.
+**EndpointPilot** is a PowerShell-based autonoumous Windows Endpoint Configuration script solution for PCs operating in an AD, Intune, or a NinjaOne-managed context.  It optimizes user profiles on managed Windows Endpoints, in Office and Remote Work scenarios. It functions a lot like a logon script, but runs locally via a Scheduled Task-and by default operates under the current user's privilege level.  EndpointPilot is driven by ***x-OPS.JSON*** directive files, which govern actions that the configuration script takes, and the solution includes a Json Editor Tool for managing each ***x-OPS.JSON*** JSON directive file.  
 
 ### EndpointPilot addresses the following use-case scenarios:
 
