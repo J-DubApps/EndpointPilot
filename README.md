@@ -44,5 +44,5 @@ See [**here**](https://github.com/J-DubApps/EndpointPilot?tab=BSD-3-Clause-1-ov-
 **Full Roadmap is** [***here***](https://github.com/J-DubApps/EndpointPilot/blob/main/ProjectPlan.md) 
 <br />
 <p align="center">
-    <img src="https://github.com/J-DubApps/EndpointPilot/blob/main/images/EndpointPilot.jpg" width="500" height="500" />
+    <img src="https://github.com/J-DubApps/EndpointPilot/blob/main/images/EndpointPilot.png" width="500" height="500" />
 </p>
