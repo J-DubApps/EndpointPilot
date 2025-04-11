@@ -1,8 +1,8 @@
 # EndpointPilot Installation Solution Plan
 
-## Executive Summary
+## Summary
 
-This document outlines a comprehensive installation solution for EndpointPilot, a PowerShell-based Windows Endpoint Configuration Tool designed for PCs in AD, Intune, or NinjaOne-managed environments. The solution addresses the need for a reliable deployment mechanism that works in both cloud-managed (Intune) and traditional on-premises (AD-only) scenarios.
+This document outlines a comprehensive installation solution plan for EndpointPilot, a PowerShell-based Windows Endpoint Configuration Tool designed for PCs in AD, Intune, or NinjaOne-managed environments. The solution addresses the need for a reliable deployment mechanism that works in both cloud-managed (Intune) and traditional on-premises (AD-only) scenarios.
 
 ### Key Objectives
 
