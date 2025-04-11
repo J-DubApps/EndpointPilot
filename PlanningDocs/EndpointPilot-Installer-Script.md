@@ -146,8 +146,8 @@ Write-Host "`nThank you for installing EndpointPilot!" -ForegroundColor Cyan
 
 ## Usage Instructions
 
-1. Place this script in the root directory of your EndpointPilot project
-2. Ensure the JsonEditorTool is built and available in the `JsonEditorTool\publish` directory
+1. Plan is to place this script in the root of EndpointPilot project itself
+2. Ensure the latest JsonEditorTool is built and available in the `JsonEditorTool\publish` directory
 3. Run the script with administrator privileges
 4. Follow the prompts to complete the installation
 
@@ -165,6 +165,5 @@ Write-Host "`nThank you for installing EndpointPilot!" -ForegroundColor Cyan
 You can customize this script by:
 
 - Modifying the installation paths
-- Adding additional file types to copy
-- Implementing additional installation steps
 - Adding validation checks
+- etc
