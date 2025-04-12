@@ -5,6 +5,9 @@
 <img src="https://github.com/J-DubApps/EndpointPilot/blob/main/images/Endpoint-Pilot-logo.png" width="300" height="300" />
 
 
+> [!NOTE]
+> This repo isn't accepting code contributions. It's public and open source to show progress and
+> enable feedback. Once I get it to a feature complete state, I can start taking code contributions.
 
 **EndpointPilot** is a PowerShell-based autonoumous Windows Endpoint Configuration script solution for PCs operating in an AD, Intune, or a NinjaOne-managed context.  It optimizes user profiles on managed Windows Endpoints, in Office and Remote Work scenarios. It functions a lot like a logon script, but runs locally via a Scheduled Task-and by default operates under the current user's privilege level.  EndpointPilot is driven by ***x-OPS.JSON*** directive files, which govern actions that the configuration script takes, and the solution includes a Json Editor Tool for managing each ***x-OPS.JSON*** JSON directive file.  
 
