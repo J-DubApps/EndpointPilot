@@ -244,7 +244,7 @@ Write-Host "EndpointPilot Core Scripts have been uninstalled." -ForegroundColor 
 finally {
     Write-Host "`nPerforming cleanup..." -ForegroundColor Cyan
     WriteLog "`nPerforming cleanup..."
-    if ($tempDir -ne $null -and (Test-Path -Path $tempDir)) {
+    if ($null -ne $tempDir -and (Test-Path -Path $tempDir)) {
         Write-Host "Removing temporary directory: $tempDir"
         WriteLog "Removing temporary directory: $tempDir"
         Remove-Item -Path $tempDir -Recurse -Force
