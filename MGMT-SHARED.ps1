@@ -217,8 +217,12 @@ $config = Get-Content -Path $configPath | ConvertFrom-Json
 
 # Assign variables from config json
 $ClientName = $config.ClientName
+$OrgName = $config.OrgName #Read OrgName from Config
 $Refresh_Interval = $config.Refresh_Interval    #Seconds
-$NetworkScriptRootPath = $config.NetworkScriptRootPath
+$NetworkScriptRootEnabled = $config.NetworkScriptRootEnabled #Set to $true or $false from Config 
+$NetworkScriptRootPath = $config.NetworkScriptRootPath #Set to on-premisis SMB Share where new json files and script code can be checked. If using https (e.g. Intune or NinjaOne) this is disabled.
+$HttpsScriptRootEnabled = $config.HttpsScriptRootEnabled #Set to $true or $false from Config
+$HttpsScriptRootPath = $config.HttpsScriptRootPath #Set to https site where new json files and script code can be checked. 
 $CopyLogFileToNetwork = $config.CopyLogFileToNetwork    #Set to $true or $false from Config
 # populates the network location, below, if above var is set to $true from Config.  Create that shared folder if it doesn't exist, and make sure the user has write access to it.
 $NetworkLogFile = $config.NetworkLogFile
@@ -230,6 +234,13 @@ $SkipDriveOps = $config.SkipDriveOps
 $SkipRegOps = $config.SkipRegOps
 $SkipRoamOps = $config.SkipRoamOps
 
+If ($HttpsScriptRootEnabled -eq $true) {
+    $NetworkScriptRootEnabled = $false
+} elseif ($NetworkScriptRootEnabled -eq $true -and $HttpsScriptRootEnabled -eq $true) {
+    $NetworkScriptRootEnabled = $false
+} else {
+    # nothing for now
+}
 
 # $ClientName = "McKool Smith"
 # $Refresh_Interval = 900 #Seconds
