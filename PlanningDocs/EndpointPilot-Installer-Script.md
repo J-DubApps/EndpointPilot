@@ -3,7 +3,7 @@
 Below is the PowerShell installer script for EndpointPilot. To use this script:
 
 1. Copy the code below
-2. Save it as `Install-EndpointPilot.ps1`
+2. Save it as `Install-EndpointPilotAdmin.ps1`
 3. Run it with administrator privileges
 
 ```powershell

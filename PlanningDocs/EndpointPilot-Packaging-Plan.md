@@ -81,7 +81,7 @@ Below is the first method J-DubApps will use to distribute this solution, with p
 
 ### 1. PowerShell Installer Script
 
-I will write a PowerShell script (`Install-EndpointPilot.ps1`) that:
+I will write a PowerShell script (`Install-EndpointPilotAdmin.ps1`) that:
 
 ```mermaid
 flowchart TD
@@ -234,8 +234,8 @@ jobs:
       - name: Create installer package
         run: |
           # Create the installer script
-          $installerContent = Get-Content -Path .github/workflows/Install-EndpointPilot.ps1 -Raw
-          Set-Content -Path Install-EndpointPilot.ps1 -Value $installerContent
+          $installerContent = Get-Content -Path .github/workflows/Install-EndpointPilotAdmin.ps1 -Raw
+          Set-Content -Path Install-EndpointPilotAdmin.ps1 -Value $installerContent
 
           # Create release package
           $releaseDir = "EndpointPilot-${{ github.event.inputs.version }}"
@@ -342,7 +342,7 @@ The GitHub release process will work as follows:
 
 ## Next Steps
 
-1. **Create the installer script** (`Install-EndpointPilot.ps1`)
+1. **Create the installer script** (`Install-EndpointPilotAdmin.ps1`)
 2. **Set up the GitHub Actions workflow** (`.github/workflows/release.yml`)
 3. **Test the installation process** on different Windows versions
 4. **Create documentation** for the installation process
