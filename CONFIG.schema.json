@@ -13,9 +13,21 @@
       "minimum": 0,
       "description": "Refresh interval in minutes"
     },
+    "NetworkScriptRootEnabled": {
+      "type": "boolean",
+      "description": "Whether to enable the network script root"
+    },
     "NetworkScriptRootPath": {
       "type": "string",
       "description": "Network path to script root"
+    },
+    "HttpsScriptRootEnabled": {
+      "type": "boolean",
+      "description": "Whether to enable the HTTPS script root"
+    },
+    "HttpsScriptRootPath": {
+      "type": "string",
+      "description": "HTTPS path to script root"
     },
     "CopyLogFileToNetwork": {
       "type": "boolean",
