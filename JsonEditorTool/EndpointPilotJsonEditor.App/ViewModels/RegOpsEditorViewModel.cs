@@ -418,7 +418,9 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     Path = SelectedOperation.Path,
                     Value = SelectedOperation.Value,
                     RegType = SelectedOperation.RegType,
-                    WriteOnce = SelectedOperation!.WriteOnce, // Use null-forgiving operator - outer 'if' guarantees non-null
+#pragma warning disable CS8602 // Dereference of a possibly null reference. - Outer 'if' check guarantees non-null.
+                    WriteOnce = SelectedOperation.WriteOnce,
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                     Delete = SelectedOperation.Delete,
                     TargetingType = SelectedOperation.TargetingType,
                     Target = SelectedOperation.Target,
