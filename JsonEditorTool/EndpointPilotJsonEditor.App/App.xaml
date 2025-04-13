@@ -7,7 +7,12 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
-            <!-- Material Design Dictionaries will be loaded in code-behind -->
+            <ResourceDictionary.MergedDictionaries>
+                <!-- Include Material Design dictionaries -->
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
+            </ResourceDictionary.MergedDictionaries>
 
             <!-- Data Templates for ViewModels -->
         <DataTemplate DataType="{x:Type viewmodels:ConfigEditorViewModel}">
