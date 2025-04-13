@@ -46,21 +46,19 @@ namespace EndpointPilotJsonEditor.App
         {
             base.OnStartup(e);
 
-            // Programmatically load Material Design resources
+            // Programmatically load Material Design resources using Application.LoadComponent
             try
             {
-                var themeDictionary = new ResourceDictionary
-                {
-                    Source = new Uri("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.xaml", UriKind.RelativeOrAbsolute)
-                };
-                var primaryColorDictionary = new ResourceDictionary
-                {
-                    Source = new Uri("pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml", UriKind.RelativeOrAbsolute)
-                };
-                var accentColorDictionary = new ResourceDictionary
-                {
-                    Source = new Uri("pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml", UriKind.RelativeOrAbsolute)
-                };
+                 // Define URIs using the component path syntax
+                Uri themeUri = new Uri("/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.xaml", UriKind.Relative);
+                Uri primaryColorUri = new Uri("/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml", UriKind.Relative);
+                Uri accentColorUri = new Uri("/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml", UriKind.Relative);
+
+                // Load dictionaries using Application.LoadComponent
+                var themeDictionary = (ResourceDictionary)Application.LoadComponent(themeUri);
+                var primaryColorDictionary = (ResourceDictionary)Application.LoadComponent(primaryColorUri);
+                var accentColorDictionary = (ResourceDictionary)Application.LoadComponent(accentColorUri);
+
 
                 // Ensure Application.Current.Resources is initialized if it's null
                 if (Application.Current.Resources == null)
