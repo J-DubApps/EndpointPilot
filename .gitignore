@@ -27,3 +27,4 @@ DRIVE-OPS.json.bak
 !JsonEditorTool/publish/*.exe
 !JsonEditorTool/publish-arm64/*.dll
 !JsonEditorTool/publish-arm64/*.exe
+*.cache
