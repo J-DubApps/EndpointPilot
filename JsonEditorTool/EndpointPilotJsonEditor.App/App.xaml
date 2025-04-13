@@ -6,7 +6,16 @@
              xmlns:views="clr-namespace:EndpointPilotJsonEditor.App.Views"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <!-- Data Templates for ViewModels -->
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- Include Material Design dictionaries -->
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Data Templates for ViewModels -->
         <DataTemplate DataType="{x:Type viewmodels:ConfigEditorViewModel}">
             <views:ConfigEditorView />
         </DataTemplate>
@@ -22,5 +31,6 @@
         <DataTemplate DataType="{x:Type viewmodels:DriveOpsEditorViewModel}">
             <views:DriveOpsEditorView />
         </DataTemplate>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
