@@ -66,9 +66,11 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     }
                 }
 
-                if (SetProperty(ref _drivePath, normalizedValue) && SelectedOperation != null)
+                // Ensure normalizedValue is not null before assigning
+                string nonNullNormalizedValue = normalizedValue ?? string.Empty;
+                if (SetProperty(ref _drivePath, nonNullNormalizedValue) && SelectedOperation != null)
                 {
-                    SelectedOperation.DrivePath = normalizedValue;
+                    SelectedOperation.DrivePath = nonNullNormalizedValue;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
                     Validate();

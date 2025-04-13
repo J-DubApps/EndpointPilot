@@ -418,7 +418,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     Path = SelectedOperation.Path,
                     Value = SelectedOperation.Value,
                     RegType = SelectedOperation.RegType,
-                    WriteOnce = SelectedOperation.WriteOnce,
+                    WriteOnce = SelectedOperation!.WriteOnce, // Use null-forgiving operator
                     Delete = SelectedOperation.Delete,
                     TargetingType = SelectedOperation.TargetingType,
                     Target = SelectedOperation.Target,

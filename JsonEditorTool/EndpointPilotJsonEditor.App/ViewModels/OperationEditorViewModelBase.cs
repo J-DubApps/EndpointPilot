@@ -118,7 +118,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
             MoveDownCommand = new RelayCommand(_ => MoveDown(), _ => CanMoveDown()); // CanMoveDown already checks for null
             SaveCommand = new RelayCommand(_ => SaveAsync(), _ => IsModified && IsValid);
             ReloadCommand = new RelayCommand(_ => ReloadAsync());
-            // ValidateAsync(); // Removed from base constructor
+            // Validate(); // Removed from base constructor
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 {
                     Operations.Remove(SelectedOperation);
                 IsModified = true;
-                ValidateAsync();
+                Validate();
 
                 // Select the next operation, or the last one if we removed the last operation
                     // Select the next operation, or the last one if we removed the last operation
@@ -172,7 +172,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 var index = Operations.IndexOf(SelectedOperation!); // Use null-forgiving as CanMoveUp checks null
                 Operations.Move(index, index - 1);
                 IsModified = true;
-                ValidateAsync();
+                Validate();
             }
         }
 
@@ -187,7 +187,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 var index = Operations.IndexOf(SelectedOperation!); // Use null-forgiving as CanMoveDown checks null
                 Operations.Move(index, index + 1);
                 IsModified = true;
-                ValidateAsync();
+                Validate();
             }
         }
 
