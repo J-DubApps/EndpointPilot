@@ -6,13 +6,15 @@
              xmlns:views="clr-namespace:EndpointPilotJsonEditor.App.Views"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <!-- Include Material Design dictionaries -->
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
-            </ResourceDictionary.MergedDictionaries>
+        <Application.Resources.MergedDictionaries>
+            <!-- Include Material Design dictionaries (Colors first) -->
+            <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
+            <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
+            <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.xaml" />
+            <!-- Removed duplicate Lime color dictionary reference -->
+
+            <!-- Local Resources including DataTemplates -->
+            <ResourceDictionary>
 
             <!-- Data Templates for ViewModels -->
         <DataTemplate DataType="{x:Type viewmodels:ConfigEditorViewModel}">
@@ -30,6 +32,7 @@
         <DataTemplate DataType="{x:Type viewmodels:DriveOpsEditorViewModel}">
             <views:DriveOpsEditorView />
         </DataTemplate>
-        </ResourceDictionary>
+            </ResourceDictionary>
+        </Application.Resources.MergedDictionaries>
     </Application.Resources>
 </Application>
