@@ -301,7 +301,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         /// <summary>
         /// Updates the property values when the selected operation changes
         /// </summary>
-        protected override void OnPropertyChanged(string propertyName = null)
+        protected override void OnPropertyChanged(string? propertyName = null) // Make propertyName nullable
         {
             base.OnPropertyChanged(propertyName);
 

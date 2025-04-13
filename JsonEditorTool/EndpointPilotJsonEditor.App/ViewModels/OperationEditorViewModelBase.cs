@@ -216,7 +216,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         /// <summary>
         /// Validates the operations
         /// </summary>
-        protected abstract Task ValidateAsync();
+        protected abstract void Validate(); // Change to void to match derived classes
 
         /// <summary>
         /// Saves the operations
