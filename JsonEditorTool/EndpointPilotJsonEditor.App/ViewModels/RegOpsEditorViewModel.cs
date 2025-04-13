@@ -38,7 +38,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.Name = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    ValidateAsync();
+                    Validate();
                 }
             }
         }
@@ -56,7 +56,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.Path = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    ValidateAsync();
+                    Validate();
                 }
             }
         }
@@ -74,7 +74,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     UpdatePath();
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    ValidateAsync();
+                    Validate();
                 }
             }
         }
@@ -92,7 +92,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     UpdatePath();
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    ValidateAsync();
+                    Validate();
                 }
             }
         }
@@ -110,7 +110,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.Value = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    ValidateAsync();
+                    Validate();
                 }
             }
         }
@@ -128,7 +128,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.RegType = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    ValidateAsync();
+                    Validate();
                 }
             }
         }
@@ -146,7 +146,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.WriteOnceAsBool = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    ValidateAsync();
+                    Validate();
                 }
             }
         }
@@ -164,7 +164,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.Delete = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    ValidateAsync();
+                    Validate();
                 }
             }
         }
@@ -182,7 +182,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.TargetingType = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    ValidateAsync();
+                    Validate();
                 }
             }
         }
@@ -200,7 +200,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.Target = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    ValidateAsync();
+                    Validate();
                 }
             }
         }
@@ -218,7 +218,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.Comment1 = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    ValidateAsync();
+                    Validate();
                 }
             }
         }
@@ -236,7 +236,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.Comment2 = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    ValidateAsync();
+                    Validate();
                 }
             }
         }
@@ -357,7 +357,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
             Operations.Add(newOperation);
             SelectedOperation = newOperation;
             IsModified = true;
-            ValidateAsync();
+            Validate();
         }
 
         /// <summary>
@@ -429,7 +429,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 Operations.Add(newOperation);
                 SelectedOperation = newOperation;
                 IsModified = true;
-                ValidateAsync();
+                Validate();
             }
         }
 

@@ -131,21 +131,27 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         /// </summary>
         protected virtual void RemoveOperation()
         {
-            if (SelectedOperation != null)
+            // RelayCommand's CanExecute ensures SelectedOperation is not null here,
+            // but we add a check for extra safety and to satisfy compiler analysis.
+            if (SelectedOperation is not null)
             {
                 var index = Operations.IndexOf(SelectedOperation);
-                Operations.Remove(SelectedOperation);
+                if (index >= 0) // Ensure item was found before removing/selecting next
+                {
+                    Operations.Remove(SelectedOperation);
                 IsModified = true;
                 ValidateAsync();
 
                 // Select the next operation, or the last one if we removed the last operation
-                if (Operations.Count > 0)
-                {
-                    SelectedOperation = Operations[Math.Min(index, Operations.Count - 1)];
-                }
-                else
-                {
-                    SelectedOperation = null;
+                    // Select the next operation, or the last one if we removed the last operation
+                    if (Operations.Count > 0)
+                    {
+                        SelectedOperation = Operations[Math.Min(index, Operations.Count - 1)];
+                    }
+                    else
+                    {
+                        SelectedOperation = null;
+                    }
                 }
             }
         }
@@ -162,7 +168,8 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         {
             if (CanMoveUp())
             {
-                var index = Operations.IndexOf(SelectedOperation);
+                // CanMoveUp ensures SelectedOperation is not null and index > 0
+                var index = Operations.IndexOf(SelectedOperation!); // Use null-forgiving as CanMoveUp checks null
                 Operations.Move(index, index - 1);
                 IsModified = true;
                 ValidateAsync();
@@ -176,7 +183,8 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         {
             if (CanMoveDown())
             {
-                var index = Operations.IndexOf(SelectedOperation);
+                // CanMoveDown ensures SelectedOperation is not null and index is valid
+                var index = Operations.IndexOf(SelectedOperation!); // Use null-forgiving as CanMoveDown checks null
                 Operations.Move(index, index + 1);
                 IsModified = true;
                 ValidateAsync();
