@@ -393,8 +393,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                  _path = SelectedOperation.Path; // Update local backing field as well
                  OnPropertyChanged(nameof(Path)); // Notify UI that Path might have changed
             }
-            _path = SelectedOperation.Path;
-            OnPropertyChanged(nameof(Path));
+            // Removed redundant assignment outside null check
         }
 
         /// <summary>
@@ -418,9 +417,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     Path = SelectedOperation.Path,
                     Value = SelectedOperation.Value,
                     RegType = SelectedOperation.RegType,
-#pragma warning disable CS8602 // Dereference of a possibly null reference. - Outer 'if' check guarantees non-null.
-                    WriteOnce = SelectedOperation.WriteOnce,
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                    WriteOnce = SelectedOperation.WriteOnce, // Outer 'if' guarantees non-null
                     Delete = SelectedOperation.Delete,
                     TargetingType = SelectedOperation.TargetingType,
                     Target = SelectedOperation.Target,
