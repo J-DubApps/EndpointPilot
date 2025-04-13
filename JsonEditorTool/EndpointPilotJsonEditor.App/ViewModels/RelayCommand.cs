@@ -48,7 +48,9 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         /// <param name="parameter">Data used by the command</param>
         public void Execute(object? parameter) // Accept nullable parameter
         {
+#pragma warning disable CS8604 // Possible null reference argument. - Delegate type Action<object?> explicitly allows null.
             _execute(parameter); // Pass nullable parameter to action
+#pragma warning restore CS8604 // Possible null reference argument.
         }
 
         /// <summary>

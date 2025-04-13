@@ -66,14 +66,12 @@ namespace EndpointPilotJsonEditor.App
                     Application.Current.Resources = new ResourceDictionary();
                 }
                 
-                // Ensure MergedDictionaries is initialized
+                // Ensure MergedDictionaries is available (it should be if Resources was just initialized)
                 if (Application.Current.Resources.MergedDictionaries == null)
                 {
-                    // This case is less likely but good to handle
-                    // If Resources exists but MergedDictionaries is null, we might need to replace Resources
-                    // or handle it based on specific application structure.
-                    // For simplicity here, we assume if Resources exists, MergedDictionaries should too, 
-                    // or we initialize Resources which includes MergedDictionaries.
+                     // If Resources existed but MergedDictionaries was somehow null, re-initialize Resources
+                     // This is defensive coding for an unlikely scenario.
+                     Application.Current.Resources = new ResourceDictionary();
                 }
 
                 Application.Current.Resources.MergedDictionaries.Add(themeDictionary);
