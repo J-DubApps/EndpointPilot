@@ -10,23 +10,23 @@ namespace EndpointPilotJsonEditor.App.ViewModels
     public class RelayCommand : ICommand
     {
         private readonly Action<object> _execute;
-        private readonly Predicate<object> _canExecute;
+        private readonly Predicate<object?>? _canExecute; // Make predicate nullable and accept nullable object
 
         /// <summary>
         /// Initializes a new instance of the RelayCommand class
         /// </summary>
         /// <param name="execute">The execution logic</param>
         /// <param name="canExecute">The execution status logic</param>
-        public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
+        public RelayCommand(Action<object?> execute, Predicate<object?>? canExecute = null) // Accept nullable parameter and predicate
         {
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
-            _canExecute = canExecute;
+            _canExecute = canExecute; // Assign nullable predicate
         }
 
         /// <summary>
         /// Occurs when changes occur that affect whether the command should execute
         /// </summary>
-        public event EventHandler CanExecuteChanged
+        public event EventHandler? CanExecuteChanged // Make event nullable
         {
             add { CommandManager.RequerySuggested += value; }
             remove { CommandManager.RequerySuggested -= value; }
@@ -37,18 +37,18 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         /// </summary>
         /// <param name="parameter">Data used by the command</param>
         /// <returns>True if this command can be executed; otherwise, false</returns>
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter) // Accept nullable parameter
         {
-            return _canExecute == null || _canExecute(parameter);
+            return _canExecute == null || _canExecute(parameter); // Pass nullable parameter to predicate
         }
 
         /// <summary>
         /// Defines the method to be called when the command is invoked
         /// </summary>
         /// <param name="parameter">Data used by the command</param>
-        public void Execute(object parameter)
+        public void Execute(object? parameter) // Accept nullable parameter
         {
-            _execute(parameter);
+            _execute(parameter); // Pass nullable parameter to action
         }
 
         /// <summary>

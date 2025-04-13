@@ -18,14 +18,14 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         protected readonly JsonFileService _jsonFileService;
         protected readonly SchemaValidationService _schemaValidationService;
         protected ObservableCollection<T> _operations;
-        protected T _selectedOperation;
+        protected T? _selectedOperation; // Make nullable
         protected bool _isModified;
         protected bool _isValid;
 
         /// <summary>
         /// Occurs when the status changes
         /// </summary>
-        public event EventHandler<StatusChangedEventArgs> StatusChanged;
+        public event EventHandler<StatusChangedEventArgs>? StatusChanged; // Make nullable
 
         /// <summary>
         /// Gets or sets the operations
@@ -39,10 +39,10 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         /// <summary>
         /// Gets or sets the selected operation
         /// </summary>
-        public T SelectedOperation
+        public T? SelectedOperation // Return nullable type
         {
             get => _selectedOperation;
-            set => SetProperty(ref _selectedOperation, value);
+            set => SetProperty(ref _selectedOperation, value); // Set nullable type
         }
 
         /// <summary>
@@ -111,10 +111,11 @@ namespace EndpointPilotJsonEditor.App.ViewModels
             _schemaValidationService = schemaValidationService;
 
             AddOperationCommand = new RelayCommand(_ => AddOperation());
-            RemoveOperationCommand = new RelayCommand(_ => RemoveOperation(), _ => SelectedOperation != null);
-            DuplicateOperationCommand = new RelayCommand(_ => DuplicateOperation(), _ => SelectedOperation != null);
-            MoveUpCommand = new RelayCommand(_ => MoveUp(), _ => CanMoveUp());
-            MoveDownCommand = new RelayCommand(_ => MoveDown(), _ => CanMoveDown());
+            // Pass null check predicate directly
+            RemoveOperationCommand = new RelayCommand(_ => RemoveOperation(), _ => SelectedOperation is not null);
+            DuplicateOperationCommand = new RelayCommand(_ => DuplicateOperation(), _ => SelectedOperation is not null);
+            MoveUpCommand = new RelayCommand(_ => MoveUp(), _ => CanMoveUp()); // CanMoveUp already checks for null
+            MoveDownCommand = new RelayCommand(_ => MoveDown(), _ => CanMoveDown()); // CanMoveDown already checks for null
             SaveCommand = new RelayCommand(_ => SaveAsync(), _ => IsModified && IsValid);
             ReloadCommand = new RelayCommand(_ => ReloadAsync());
             // ValidateAsync(); // Removed from base constructor

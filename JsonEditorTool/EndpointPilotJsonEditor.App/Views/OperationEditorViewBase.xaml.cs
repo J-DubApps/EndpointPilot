@@ -29,9 +29,9 @@ namespace EndpointPilotJsonEditor.App.Views
         /// <summary>
         /// Gets or sets the details content
         /// </summary>
-        public UIElement Details
+        public UIElement? Details // Make nullable
         {
-            get => DetailsContent.Content as UIElement;
+            get => DetailsContent.Content as UIElement; // 'as' can return null
             set => DetailsContent.Content = value;
         }
 

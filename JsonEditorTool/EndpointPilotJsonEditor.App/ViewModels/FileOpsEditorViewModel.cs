@@ -274,12 +274,28 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         public FileOpsEditorViewModel(IEnumerable<FileOperation> operations, JsonFileService jsonFileService, SchemaValidationService schemaValidationService)
             : base(operations, jsonFileService, schemaValidationService)
         {
+            // Initialize backing fields
+            _sourceFilename = string.Empty;
+            _destinationFilename = string.Empty;
+            _sourcePath = string.Empty;
+            _destinationPath = string.Empty;
+            _existCheckLocation = string.Empty;
+            _targetingType = string.Empty;
+            _target = string.Empty;
+            _comment1 = string.Empty;
+            _comment2 = string.Empty;
+
             // Set the selected operation if there are any operations
             if (Operations.Any())
             {
-                SelectedOperation = Operations.First();
+                SelectedOperation = Operations.FirstOrDefault();
             }
-            ValidateAsync(); // Call initial validation after full initialization
+             // Trigger property updates if an item was selected
+            if (SelectedOperation != null)
+            {
+                 OnPropertyChanged(nameof(SelectedOperation)); // Manually trigger update for initial selection
+            }
+            Validate(); // Call initial validation (now synchronous)
         }
 
         /// <summary>
@@ -381,12 +397,15 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         /// <summary>
         /// Validates the operations
         /// </summary>
-        protected override async Task ValidateAsync()
+        protected override void Validate() // Change to void, remove async
         {
             // Skip validation during editing to prevent errors while typing
             // Only validate when saving
-            IsValid = true;
-            OnStatusChanged("Validation will be performed when saving", false);
+            // This validation is intentionally minimal during editing.
+            // Full validation happens in PerformFullValidationAsync before saving.
+            IsValid = true; // Assume valid during editing unless PerformFullValidationAsync fails
+             // Optionally clear status or set a generic "Editing..." message
+            // OnStatusChanged("Editing...", false);
         }
 
         /// <summary>
@@ -477,7 +496,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 }
 
                 IsModified = false;
-                ValidateAsync();
+                Validate(); // Call synchronous version
                 OnStatusChanged("File operations reloaded successfully", false);
             }
             catch (Exception ex)

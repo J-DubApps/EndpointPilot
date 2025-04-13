@@ -20,7 +20,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         /// <summary>
         /// Occurs when the status changes
         /// </summary>
-        public event EventHandler<StatusChangedEventArgs> StatusChanged;
+        public event EventHandler<StatusChangedEventArgs>? StatusChanged; // Make nullable
 
         /// <summary>
         /// Gets or sets the organization name
