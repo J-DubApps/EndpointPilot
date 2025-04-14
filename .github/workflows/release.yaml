@@ -1,0 +1,76 @@
+name: Create Release Zip
+
+on:
+  workflow_dispatch: # Allows manual triggering
+    inputs:
+      version:
+        description: 'Release Version (e.g., 1.0.0)'
+        required: true
+
+jobs:
+  create_release:
+    name: Create Release Asset
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Needed to create releases
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Fetch all history for all tags and branches
+          fetch-depth: 0
+
+      - name: Set up staging directory
+        run: mkdir release_staging
+
+      - name: Copy files to staging (excluding specific dirs)
+        run: |
+          rsync -av --exclude='.git' --exclude='JsonEditorTool' --exclude='release_staging' ./ release_staging/
+          echo "Copied root files and directories."
+
+      - name: Create JsonEditorTool structure in staging
+        run: mkdir -p release_staging/JsonEditorTool
+        
+      - name: Copy specific JsonEditorTool subdirectories
+        run: |
+          if [ -d "JsonEditorTool/publish" ]; then
+            cp -r JsonEditorTool/publish release_staging/JsonEditorTool/
+            echo "Copied JsonEditorTool/publish."
+          else
+            echo "Warning: JsonEditorTool/publish not found."
+          fi
+          if [ -d "JsonEditorTool/publish-arm64" ]; then
+            cp -r JsonEditorTool/publish-arm64 release_staging/JsonEditorTool/
+            echo "Copied JsonEditorTool/publish-arm64."
+          else
+            echo "Warning: JsonEditorTool/publish-arm64 not found."
+          fi
+
+      - name: Set Tag Name from Input
+        id: tag
+        run: echo "tag_name=v${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+
+      - name: Create Zip Archive
+        id: zip
+        run: |
+          zip_filename="EndpointPilot-Release-v${{ github.event.inputs.version }}.zip"
+          cd release_staging
+          zip -r ../${zip_filename} .
+          cd ..
+          echo "zip_path=${zip_filename}" >> $GITHUB_OUTPUT
+          echo "Created zip file: ${zip_filename}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: EndpointPilot Release v${{ github.event.inputs.version }}
+          tag_name: v${{ github.event.inputs.version }}
+          files: ${{ steps.zip.outputs.zip_path }}
+          body: |
+            Automated release for EndpointPilot.
+            Contains project files excluding most of JsonEditorTool source, but including publish folders.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is automatically provided by GitHub Actions
