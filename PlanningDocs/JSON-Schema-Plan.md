@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-We'll create JSON schemas for the following files:
+J-DubApps (me) plan to create JSON schemas for the following files:
 - CONFIG.schema.json (for CONFIG.json)
 - FILE-OPS.schema.json (for FILE-OPS.json)
 - REG-OPS.schema.json (for REG-OPS.json)
@@ -39,9 +39,21 @@ Schema structure:
       "minimum": 0,
       "description": "Refresh interval in minutes"
     },
+    "NetworkScriptRootEnabled": {
+      "type": "boolean",
+      "description": "Whether to enable the network script root"
+    },
     "NetworkScriptRootPath": {
       "type": "string",
       "description": "Network path to script root"
+    },
+    "HttpsScriptRootEnabled": {
+      "type": "boolean",
+      "description": "Whether to enable the HTTPS script root"
+    },
+    "HttpsScriptRootPath": {
+      "type": "string",
+      "description": "HTTPS path to script root"
     },
     "CopyLogFileToNetwork": {
       "type": "boolean",
@@ -76,7 +88,8 @@ Schema structure:
       "description": "Whether to skip roaming operations"
     }
   },
-  "required": ["OrgName", "Refresh_Interval", "NetworkScriptRootPath"]
+  "required": ["OrgName", "Refresh_Interval", "NetworkScriptRootPath"],
+  "additionalProperties": false
 }
 ```
 
