@@ -129,7 +129,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
             }
         }
 
-        }
+        // Removed extra closing brace
 
 
         /// <summary>
