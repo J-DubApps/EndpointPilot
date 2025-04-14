@@ -247,6 +247,7 @@
   "projectFileDependencyGroups": {
     "net8.0-windows7.0": [
       "EndpointPilotJsonEditor.Core >= 1.0.0",
+      "MaterialDesignColors >= 5.2.1",
       "MaterialDesignThemes >= 5.2.1",
       "Newtonsoft.Json >= 13.0.3",
       "Newtonsoft.Json.Schema >= 4.0.1"
@@ -307,6 +308,11 @@
       "net8.0-windows7.0": {
         "targetAlias": "net8.0-windows",
         "dependencies": {
+          "MaterialDesignColors": {
+            "suppressParent": "None",
+            "target": "Package",
+            "version": "[5.2.1, )"
+          },
           "MaterialDesignThemes": {
             "suppressParent": "None",
             "target": "Package",

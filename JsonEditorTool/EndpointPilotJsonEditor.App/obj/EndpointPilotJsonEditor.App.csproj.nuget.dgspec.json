@@ -55,6 +55,11 @@
         "net8.0-windows7.0": {
           "targetAlias": "net8.0-windows",
           "dependencies": {
+            "MaterialDesignColors": {
+              "suppressParent": "None",
+              "target": "Package",
+              "version": "[5.2.1, )"
+            },
             "MaterialDesignThemes": {
               "suppressParent": "None",
               "target": "Package",
