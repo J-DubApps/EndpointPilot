@@ -30,6 +30,19 @@ namespace EndpointPilotJsonEditor.Core.Models
         /// Whether the network script root is enabled
         /// </summary>
         [JsonProperty("NetworkScriptRootEnabled")]
+
+        /// <summary>
+        /// Whether the HTTPS script root is enabled
+        /// </summary>
+        [JsonProperty("HttpsScriptRootEnabled")]
+        public bool HttpsScriptRootEnabled { get; set; } = false;
+
+        /// <summary>
+        /// HTTPS path to script root
+        /// </summary>
+        [JsonProperty("HttpsScriptRootPath")]
+        public string HttpsScriptRootPath { get; set; } = string.Empty;
+
         public bool NetworkScriptRootEnabled { get; set; } = false;
 
 

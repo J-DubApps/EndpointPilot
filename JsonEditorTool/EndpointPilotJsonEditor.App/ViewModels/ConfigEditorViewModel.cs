@@ -92,6 +92,43 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     ValidateAsync(); // Note: We might need to adjust async/await later
                 }
             }
+
+        /// <summary>
+        /// Gets or sets whether the HTTPS script root is enabled
+        /// </summary>
+        public bool HttpsScriptRootEnabled
+        {
+            get => _config.HttpsScriptRootEnabled;
+            set
+            {
+                if (_config.HttpsScriptRootEnabled != value)
+                {
+                    _config.HttpsScriptRootEnabled = value;
+                    OnPropertyChanged();
+                    IsModified = true;
+                    ValidateAsync(); // Note: We might need to adjust async/await later
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the HTTPS script root path
+        /// </summary>
+        public string HttpsScriptRootPath
+        {
+            get => _config.HttpsScriptRootPath;
+            set
+            {
+                if (_config.HttpsScriptRootPath != value)
+                {
+                    _config.HttpsScriptRootPath = value;
+                    OnPropertyChanged();
+                    IsModified = true;
+                    ValidateAsync(); // Note: We might need to adjust async/await later
+                }
+            }
+        }
+
         }
 
 
