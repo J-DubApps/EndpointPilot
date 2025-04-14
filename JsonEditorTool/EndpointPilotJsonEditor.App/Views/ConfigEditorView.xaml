@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:EndpointPilotJsonEditor.App.Views"
              xmlns:viewmodels="clr-namespace:EndpointPilotJsonEditor.App.ViewModels"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type=viewmodels:ConfigEditorViewModel}">
@@ -23,6 +24,12 @@
         </Style>
         
         <Style x:Key="CheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="Margin" Value="0,5,0,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <!-- Style for ToggleSwitch -->
+        <Style x:Key="ToggleSwitchStyle" TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignSwitchToggleButton}">
             <Setter Property="Margin" Value="0,5,0,0" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
@@ -51,6 +58,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" /> <!-- NetworkScriptRootEnabled -->
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -73,38 +81,42 @@
                 <!-- Network Script Root Path -->
                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Network Script Root Path:" Style="{StaticResource FieldLabelStyle}" />
                 <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding NetworkScriptRootPath, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource FieldValueStyle}" />
+
+                <!-- Network Script Root Enabled -->
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Network Script Root Enabled:" Style="{StaticResource FieldLabelStyle}" />
+                <ToggleButton Grid.Row="3" Grid.Column="1" IsChecked="{Binding NetworkScriptRootEnabled}" Style="{StaticResource ToggleSwitchStyle}" />
                 
                 <!-- Copy Log File To Network -->
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="Copy Log File To Network:" Style="{StaticResource FieldLabelStyle}" />
-                <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding CopyLogFileToNetwork}" Style="{StaticResource CheckBoxStyle}" />
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Copy Log File To Network:" Style="{StaticResource FieldLabelStyle}" />
+                <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding CopyLogFileToNetwork}" Style="{StaticResource CheckBoxStyle}" />
                 
                 <!-- Roam Files -->
-                <TextBlock Grid.Row="4" Grid.Column="0" Text="Roam Files:" Style="{StaticResource FieldLabelStyle}" />
-                <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding RoamFiles}" Style="{StaticResource CheckBoxStyle}" />
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="Roam Files:" Style="{StaticResource FieldLabelStyle}" />
+                <CheckBox Grid.Row="5" Grid.Column="1" IsChecked="{Binding RoamFiles}" Style="{StaticResource CheckBoxStyle}" />
                 
                 <!-- Network Log File -->
-                <TextBlock Grid.Row="5" Grid.Column="0" Text="Network Log File:" Style="{StaticResource FieldLabelStyle}" />
-                <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding NetworkLogFile, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource FieldValueStyle}" />
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="Network Log File:" Style="{StaticResource FieldLabelStyle}" />
+                <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding NetworkLogFile, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource FieldValueStyle}" />
                 
                 <!-- Network Roam Folder -->
-                <TextBlock Grid.Row="6" Grid.Column="0" Text="Network Roam Folder:" Style="{StaticResource FieldLabelStyle}" />
-                <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding NetworkRoamFolder, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource FieldValueStyle}" />
+                <TextBlock Grid.Row="7" Grid.Column="0" Text="Network Roam Folder:" Style="{StaticResource FieldLabelStyle}" />
+                <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding NetworkRoamFolder, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource FieldValueStyle}" />
                 
                 <!-- Skip File Ops -->
-                <TextBlock Grid.Row="7" Grid.Column="0" Text="Skip File Operations:" Style="{StaticResource FieldLabelStyle}" />
-                <CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding SkipFileOps}" Style="{StaticResource CheckBoxStyle}" />
+                <TextBlock Grid.Row="8" Grid.Column="0" Text="Skip File Operations:" Style="{StaticResource FieldLabelStyle}" />
+                <CheckBox Grid.Row="8" Grid.Column="1" IsChecked="{Binding SkipFileOps}" Style="{StaticResource CheckBoxStyle}" />
                 
                 <!-- Skip Drive Ops -->
-                <TextBlock Grid.Row="8" Grid.Column="0" Text="Skip Drive Operations:" Style="{StaticResource FieldLabelStyle}" />
-                <CheckBox Grid.Row="8" Grid.Column="1" IsChecked="{Binding SkipDriveOps}" Style="{StaticResource CheckBoxStyle}" />
+                <TextBlock Grid.Row="9" Grid.Column="0" Text="Skip Drive Operations:" Style="{StaticResource FieldLabelStyle}" />
+                <CheckBox Grid.Row="9" Grid.Column="1" IsChecked="{Binding SkipDriveOps}" Style="{StaticResource CheckBoxStyle}" />
                 
                 <!-- Skip Registry Ops -->
-                <TextBlock Grid.Row="9" Grid.Column="0" Text="Skip Registry Operations:" Style="{StaticResource FieldLabelStyle}" />
-                <CheckBox Grid.Row="9" Grid.Column="1" IsChecked="{Binding SkipRegOps}" Style="{StaticResource CheckBoxStyle}" />
+                <TextBlock Grid.Row="10" Grid.Column="0" Text="Skip Registry Operations:" Style="{StaticResource FieldLabelStyle}" />
+                <CheckBox Grid.Row="10" Grid.Column="1" IsChecked="{Binding SkipRegOps}" Style="{StaticResource CheckBoxStyle}" />
                 
                 <!-- Skip Roam Ops -->
-                <TextBlock Grid.Row="10" Grid.Column="0" Text="Skip Roam Operations:" Style="{StaticResource FieldLabelStyle}" />
-                <CheckBox Grid.Row="10" Grid.Column="1" IsChecked="{Binding SkipRoamOps}" Style="{StaticResource CheckBoxStyle}" />
+                <TextBlock Grid.Row="11" Grid.Column="0" Text="Skip Roam Operations:" Style="{StaticResource FieldLabelStyle}" />
+                <CheckBox Grid.Row="11" Grid.Column="1" IsChecked="{Binding SkipRoamOps}" Style="{StaticResource CheckBoxStyle}" />
             </Grid>
         </ScrollViewer>
         
