@@ -3,7 +3,7 @@
 ## 1. Overview and Goals
 
 ### Primary Goals:
-- Create a dedicated tool for editing EndpointPilot's 4 JSON configuration files
+- Establish a dedicated tool for editing EndpointPilot's 4 configuration-directive JSON files
 - Provide a user-friendly interface for IT Admins with basic technical skills
 - Prevent JSON syntax errors and validate against schema files
 - Allow easy addition, modification, and removal of entries
@@ -17,13 +17,13 @@
 
 ## 2. Technology Selection
 
-After analyzing the requirements, I recommend using **WPF (Windows Presentation Foundation)** with **.NET 6** for the following reasons:
+We're going to initially use **WPF (Windows Presentation Foundation)** with **.NET 8+** for the following reasons:
 
 1. **Modern UI Capabilities**: WPF provides better UI design flexibility than WinForms
 2. **MVVM Architecture**: Supports clean separation of UI and business logic
 3. **Data Binding**: Powerful data binding capabilities for JSON objects
 4. **Styling and Templating**: Better customization of UI elements
-5. **Long-term Support**: .NET 6 is an LTS release with support until November 2024
+5. **Long-term Support**: .NET 9 assures this app would function for a long time to come.
 
 ## 3. Application Architecture
 
@@ -188,15 +188,15 @@ classDiagram
 
 ### Schema Validation
 
-- Use `Newtonsoft.Json.Schema` for JSON schema validation
+- Using `Newtonsoft.Json.Schema` for JSON schema validation
 - Load schema files at application startup
 - Validate JSON objects before saving
 - Provide detailed validation error messages
 
 ### File Operations
 
-- Use `System.IO` for file operations
-- Create backups before saving
+- Using `System.IO` for file operations
+- Create backup of JSON file before saving
 - Handle file locking and access issues
 - Support relative and absolute paths
 
@@ -217,18 +217,17 @@ classDiagram
 - Implement operation management (add/edit/remove)
 - Enhance validation with field-level feedback
 
-### Phase 3: Advanced Features and Refinement
-- Implement templates
-- Add bulk operations
-- Develop comparison functionality
+### Phase 3: Advanced Features and Refinement (coming later)
+- Implement templates for new JSON files
+- Consider adding bulk operations
+- Maybe develop comparison functionality
 - Refine UI/UX based on testing
-- Add context-sensitive help
+- Possibly add context-sensitive help
 - Comprehensive error handling
 
-### Phase 4: Testing and Deployment
+### Phase 4: Testing and Refinement for mature Deployment
 - Unit testing
 - Integration testing
-- User acceptance testing
 - Packaging and deployment
 - Documentation
 
@@ -236,10 +235,10 @@ classDiagram
 
 ### For IT Admins with Basic Skills:
 - Minimize exposure to JSON syntax
-- Use familiar terminology (registry keys, file paths, etc.)
+- Use familiar IT admin terminology (registry keys, file paths, etc.)
 - Provide clear visual feedback for validation
 - Include helpful descriptions and examples
-- Prevent common mistakes through UI design
+- Prevent common mistakes through UI design / validation
 - Confirm destructive actions (delete, overwrite)
 
 ### UI/UX Principles:
@@ -295,17 +294,17 @@ classDiagram
 
 ### Development Environment:
 - Visual Studio 2022
-- .NET 6 SDK
+- .NET 9 SDK
 - NuGet packages:
   - Newtonsoft.Json
   - Newtonsoft.Json.Schema
-  - MaterialDesignThemes (for modern UI)
+  - MaterialDesignThemes (for current style UI)
 
 ### Deployment Requirements:
 - Windows 10/11
-- .NET 6 Runtime
+- .NET 9 Runtime
 - Local file system access
-- Administrator privileges (optional, for certain registry operations)
+- Administrator privileges (optional, for certain operations)
 
 ## 11. Risks and Mitigation
 
@@ -317,14 +316,12 @@ classDiagram
 | User resistance to new tool | Medium | Intuitive UI, documentation, training |
 | Data corruption | High | Automatic backups, validation before save |
 
-## 12. Next Steps
+## 12. Initial Steps (DONE)
 
 1. Set up WPF project structure
 2. Implement core data models and JSON handling
 3. Create the main application UI
 4. Implement the CONFIG editor
 5. Add schema validation
-6. Develop the operation editors
-7. Add advanced features
-8. Test and refine
-9. Package for deployment
+6. Test and refine
+7. Package for deployment
