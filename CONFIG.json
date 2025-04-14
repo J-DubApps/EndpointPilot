@@ -1,8 +1,8 @@
 {
   "OrgName": "Company Name",
   "Refresh_Interval": 900,
-  "NetworkScriptRootEnabled": false,
   "NetworkScriptRootPath": "\\\\servername\\SHARE\\PS-EPilot\\",
+  "NetworkScriptRootEnabled": true,
   "HttpsScriptRootEnabled": false,
   "HttpsScriptRootPath": "https://servername/SHARE/PS-EPilot/",
   "CopyLogFileToNetwork": false,
