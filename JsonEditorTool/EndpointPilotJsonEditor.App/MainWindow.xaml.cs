@@ -41,12 +41,8 @@ namespace EndpointPilotJsonEditor.App
             if (dialog.ShowDialog() == true)
             {
                 // Get the directory path from the selected file path
-                string? directoryPath = System.IO.Path.GetDirectoryName(dialog.FileName); // Make directoryPath nullable
-                if (directoryPath != null) // Check for null before assigning
-                {
-                    _viewModel.WorkingDirectory = directoryPath;
-                }
-                // Optional: Add an else block here to handle the case where directoryPath is null (e.g., show an error message)
+                string directoryPath = System.IO.Path.GetDirectoryName(dialog.FileName);
+                _viewModel.WorkingDirectory = directoryPath;
             }
         }
     }

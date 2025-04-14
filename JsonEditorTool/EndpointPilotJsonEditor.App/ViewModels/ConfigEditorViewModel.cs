@@ -20,7 +20,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         /// <summary>
         /// Occurs when the status changes
         /// </summary>
-        public event EventHandler<StatusChangedEventArgs>? StatusChanged; // Make nullable
+        public event EventHandler<StatusChangedEventArgs> StatusChanged;
 
         /// <summary>
         /// Gets or sets the organization name
@@ -75,75 +75,6 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 }
             }
         }
-
-        /// <summary>
-        /// Gets or sets whether the network script root is enabled
-        /// </summary>
-        public bool NetworkScriptRootEnabled
-        {
-            get => _config.NetworkScriptRootEnabled;
-            set
-            {
-                if (_config.NetworkScriptRootEnabled != value)
-                {
-                    _config.NetworkScriptRootEnabled = value;
-                    OnPropertyChanged(); // Notify change for this property
-
-                    // Mutually exclusive logic
-                    if (value && HttpsScriptRootEnabled)
-                    {
-                        HttpsScriptRootEnabled = false; // This setter will call OnPropertyChanged for HttpsScriptRootEnabled
-                    }
-
-                    IsModified = true;
-                    ValidateAsync();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets whether the HTTPS script root is enabled
-        /// </summary>
-        public bool HttpsScriptRootEnabled
-        {
-            get => _config.HttpsScriptRootEnabled;
-            set
-            {
-                if (_config.HttpsScriptRootEnabled != value)
-                {
-                    _config.HttpsScriptRootEnabled = value;
-                    OnPropertyChanged(); // Notify change for this property
-
-                    // Mutually exclusive logic
-                    if (value && NetworkScriptRootEnabled)
-                    {
-                        NetworkScriptRootEnabled = false; // This setter will call OnPropertyChanged for NetworkScriptRootEnabled
-                    }
-
-                    IsModified = true;
-                    ValidateAsync();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the HTTPS script root path
-        /// </summary>
-        public string HttpsScriptRootPath
-        {
-            get => _config.HttpsScriptRootPath;
-            set
-            {
-                if (_config.HttpsScriptRootPath != value)
-                {
-                    _config.HttpsScriptRootPath = value;
-                    OnPropertyChanged();
-                    IsModified = true;
-                    ValidateAsync();
-                }
-            }
-        }
-
 
         /// <summary>
         /// Gets or sets whether to copy log files to network location
@@ -347,30 +278,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
 
                 if (result.IsValid)
                 {
-                    // Custom validation logic after schema validation passes
-                    bool customValidationPassed = true;
-                    string customErrorMessage = string.Empty;
-
-                    if (NetworkScriptRootEnabled && (string.IsNullOrWhiteSpace(NetworkScriptRootPath) || !NetworkScriptRootPath.StartsWith("\\\\")))
-                    {
-                        customValidationPassed = false;
-                        customErrorMessage = "Network Script Root Path must start with '\\\\' when enabled.";
-                    }
-                    else if (HttpsScriptRootEnabled && (string.IsNullOrWhiteSpace(HttpsScriptRootPath) || !HttpsScriptRootPath.StartsWith("https://", StringComparison.OrdinalIgnoreCase)))
-                    {
-                        customValidationPassed = false;
-                        customErrorMessage = "HTTPS Script Root Path must start with 'https://' when enabled.";
-                    }
-
-                    if (customValidationPassed)
-                    {
-                        OnStatusChanged("Configuration is valid", false);
-                    }
-                    else
-                    {
-                        IsValid = false; // Set IsValid to false due to custom validation failure
-                        OnStatusChanged($"Configuration is invalid: {customErrorMessage}", true);
-                    }
+                    OnStatusChanged("Configuration is valid", false);
                 }
                 else
                 {

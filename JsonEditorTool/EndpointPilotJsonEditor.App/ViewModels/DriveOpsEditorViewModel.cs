@@ -36,7 +36,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.DriveLetter = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -66,14 +66,12 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     }
                 }
 
-                // Ensure normalizedValue is not null before assigning
-                string nonNullNormalizedValue = normalizedValue ?? string.Empty;
-                if (SetProperty(ref _drivePath, nonNullNormalizedValue) && SelectedOperation != null)
+                if (SetProperty(ref _drivePath, normalizedValue) && SelectedOperation != null)
                 {
-                    SelectedOperation.DrivePath = nonNullNormalizedValue;
+                    SelectedOperation.DrivePath = normalizedValue;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -91,7 +89,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.Reconnect = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -109,7 +107,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.Delete = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -127,7 +125,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.Hidden = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -145,7 +143,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.TargetingType = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -163,7 +161,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.Target = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -181,7 +179,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.Comment1 = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -199,7 +197,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.Comment2 = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -223,32 +221,18 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         public DriveOpsEditorViewModel(IEnumerable<DriveOperation> operations, JsonFileService jsonFileService, SchemaValidationService schemaValidationService)
             : base(operations, jsonFileService, schemaValidationService)
         {
-            // Initialize backing fields for properties bound to the selected item details
-            _driveLetter = string.Empty;
-            _drivePath = string.Empty;
-            _targetingType = string.Empty;
-            _target = string.Empty;
-            _comment1 = string.Empty;
-            _comment2 = string.Empty;
-
             // Set the selected operation if there are any operations
             if (Operations.Any())
             {
-                // Use ?. to safely access FirstOrDefault result which could be null
-                SelectedOperation = Operations.FirstOrDefault();
+                SelectedOperation = Operations.First();
             }
-            // Trigger property updates if an item was selected
-            if (SelectedOperation != null)
-            {
-                 OnPropertyChanged(nameof(SelectedOperation)); // Manually trigger update for initial selection
-            }
-            Validate(); // Call initial validation (now synchronous)
+            ValidateAsync(); // Call initial validation after full initialization
         }
 
         /// <summary>
         /// Updates the property values when the selected operation changes
         /// </summary>
-        protected override void OnPropertyChanged(string? propertyName = null) // Make propertyName nullable
+        protected override void OnPropertyChanged(string propertyName = null)
         {
             base.OnPropertyChanged(propertyName);
 
@@ -275,7 +259,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                         SelectedOperation.DrivePath = normalizedPath;
                     }
                 }
-                _drivePath = normalizedPath ?? string.Empty; // Ensure non-null assignment
+                _drivePath = normalizedPath;
                 
                 _reconnect = SelectedOperation.Reconnect;
                 _delete = SelectedOperation.Delete;
@@ -334,7 +318,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
             Operations.Add(newOperation);
             SelectedOperation = newOperation;
             IsModified = true;
-            Validate();
+            ValidateAsync();
         }
 
         /// <summary>
@@ -366,7 +350,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 {
                     Id = newId.ToString("D3"),
                     DriveLetter = SelectedOperation.DriveLetter,
-                    DrivePath = normalizedPath ?? string.Empty, // Ensure non-null assignment
+                    DrivePath = normalizedPath,
                     Reconnect = SelectedOperation.Reconnect,
                     Delete = SelectedOperation.Delete,
                     Hidden = SelectedOperation.Hidden,
@@ -379,22 +363,19 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 Operations.Add(newOperation);
                 SelectedOperation = newOperation;
                 IsModified = true;
-                Validate();
+                ValidateAsync();
             }
         }
 
         /// <summary>
         /// Validates the operations
         /// </summary>
-        protected override void Validate() // Change to void, remove async
+        protected override async Task ValidateAsync()
         {
             // Skip validation during editing to prevent regex errors while typing
             // Only validate when saving
-            // This validation is intentionally minimal during editing.
-            // Full validation happens in PerformFullValidationAsync before saving.
-            IsValid = true; // Assume valid during editing unless PerformFullValidationAsync fails
-            // Optionally clear status or set a generic "Editing..." message
-            // OnStatusChanged("Editing...", false);
+            IsValid = true;
+            OnStatusChanged("Validation will be performed when saving", false);
         }
 
         /// <summary>
@@ -509,7 +490,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 }
 
                 IsModified = false;
-                Validate(); // Call synchronous version
+                ValidateAsync();
                 OnStatusChanged("Drive operations reloaded successfully", false);
             }
             catch (Exception ex)

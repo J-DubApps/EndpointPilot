@@ -9,9 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Revert to letting NuGet resolve latest compatible version, remove exact constraint -->
-    <PackageReference Include="MaterialDesignThemes" Version="5.2.1" PrivateAssets="none" />
-    <PackageReference Include="MaterialDesignColors" Version="5.2.1" PrivateAssets="none" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Newtonsoft.Json.Schema" Version="4.0.1" />
   </ItemGroup>

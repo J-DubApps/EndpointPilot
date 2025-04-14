@@ -15,18 +15,18 @@ namespace EndpointPilotJsonEditor.App.ViewModels
     {
         private readonly JsonFileService _jsonFileService;
         private readonly SchemaValidationService _schemaValidationService;
-        private ViewModelBase? _currentEditor; // Make nullable
-        private string _statusMessage = string.Empty; // Initialize
+        private ViewModelBase _currentEditor;
+        private string _statusMessage;
         private bool _isStatusError;
         private string _workingDirectory;
 
         /// <summary>
         /// Gets or sets the current editor ViewModel
         /// </summary>
-        public ViewModelBase? CurrentEditor // Return nullable type
+        public ViewModelBase CurrentEditor
         {
             get => _currentEditor;
-            set => SetProperty(ref _currentEditor, value); // Set nullable type
+            set => SetProperty(ref _currentEditor, value);
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         /// <summary>
         /// Event raised when the user wants to browse for a directory
         /// </summary>
-        public event Action? BrowseDirectoryRequested; // Make nullable
+        public event Action BrowseDirectoryRequested;
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class
@@ -217,7 +217,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         /// </summary>
         /// <param name="sender">The sender</param>
         /// <param name="e">The event args</param>
-        private void OnEditorStatusChanged(object? sender, StatusChangedEventArgs e) // Make sender nullable
+        private void OnEditorStatusChanged(object sender, StatusChangedEventArgs e)
         {
             SetStatus(e.Message, e.IsError);
         }

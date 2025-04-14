@@ -18,14 +18,14 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         protected readonly JsonFileService _jsonFileService;
         protected readonly SchemaValidationService _schemaValidationService;
         protected ObservableCollection<T> _operations;
-        protected T? _selectedOperation; // Make nullable
+        protected T _selectedOperation;
         protected bool _isModified;
         protected bool _isValid;
 
         /// <summary>
         /// Occurs when the status changes
         /// </summary>
-        public event EventHandler<StatusChangedEventArgs>? StatusChanged; // Make nullable
+        public event EventHandler<StatusChangedEventArgs> StatusChanged;
 
         /// <summary>
         /// Gets or sets the operations
@@ -39,10 +39,10 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         /// <summary>
         /// Gets or sets the selected operation
         /// </summary>
-        public T? SelectedOperation // Return nullable type
+        public T SelectedOperation
         {
             get => _selectedOperation;
-            set => SetProperty(ref _selectedOperation, value); // Set nullable type
+            set => SetProperty(ref _selectedOperation, value);
         }
 
         /// <summary>
@@ -111,14 +111,13 @@ namespace EndpointPilotJsonEditor.App.ViewModels
             _schemaValidationService = schemaValidationService;
 
             AddOperationCommand = new RelayCommand(_ => AddOperation());
-            // Pass null check predicate directly
-            RemoveOperationCommand = new RelayCommand(_ => RemoveOperation(), _ => SelectedOperation is not null);
-            DuplicateOperationCommand = new RelayCommand(_ => DuplicateOperation(), _ => SelectedOperation is not null);
-            MoveUpCommand = new RelayCommand(_ => MoveUp(), _ => CanMoveUp()); // CanMoveUp already checks for null
-            MoveDownCommand = new RelayCommand(_ => MoveDown(), _ => CanMoveDown()); // CanMoveDown already checks for null
+            RemoveOperationCommand = new RelayCommand(_ => RemoveOperation(), _ => SelectedOperation != null);
+            DuplicateOperationCommand = new RelayCommand(_ => DuplicateOperation(), _ => SelectedOperation != null);
+            MoveUpCommand = new RelayCommand(_ => MoveUp(), _ => CanMoveUp());
+            MoveDownCommand = new RelayCommand(_ => MoveDown(), _ => CanMoveDown());
             SaveCommand = new RelayCommand(_ => SaveAsync(), _ => IsModified && IsValid);
             ReloadCommand = new RelayCommand(_ => ReloadAsync());
-            // Validate(); // Removed from base constructor
+            // ValidateAsync(); // Removed from base constructor
         }
 
         /// <summary>
@@ -131,27 +130,21 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         /// </summary>
         protected virtual void RemoveOperation()
         {
-            // RelayCommand's CanExecute ensures SelectedOperation is not null here,
-            // but we add a check for extra safety and to satisfy compiler analysis.
-            if (SelectedOperation is not null)
+            if (SelectedOperation != null)
             {
                 var index = Operations.IndexOf(SelectedOperation);
-                if (index >= 0) // Ensure item was found before removing/selecting next
-                {
-                    Operations.Remove(SelectedOperation);
+                Operations.Remove(SelectedOperation);
                 IsModified = true;
-                Validate();
+                ValidateAsync();
 
                 // Select the next operation, or the last one if we removed the last operation
-                    // Select the next operation, or the last one if we removed the last operation
-                    if (Operations.Count > 0)
-                    {
-                        SelectedOperation = Operations[Math.Min(index, Operations.Count - 1)];
-                    }
-                    else
-                    {
-                        SelectedOperation = null;
-                    }
+                if (Operations.Count > 0)
+                {
+                    SelectedOperation = Operations[Math.Min(index, Operations.Count - 1)];
+                }
+                else
+                {
+                    SelectedOperation = null;
                 }
             }
         }
@@ -168,11 +161,10 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         {
             if (CanMoveUp())
             {
-                // CanMoveUp ensures SelectedOperation is not null and index > 0
-                var index = Operations.IndexOf(SelectedOperation!); // Use null-forgiving as CanMoveUp checks null
+                var index = Operations.IndexOf(SelectedOperation);
                 Operations.Move(index, index - 1);
                 IsModified = true;
-                Validate();
+                ValidateAsync();
             }
         }
 
@@ -183,11 +175,10 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         {
             if (CanMoveDown())
             {
-                // CanMoveDown ensures SelectedOperation is not null and index is valid
-                var index = Operations.IndexOf(SelectedOperation!); // Use null-forgiving as CanMoveDown checks null
+                var index = Operations.IndexOf(SelectedOperation);
                 Operations.Move(index, index + 1);
                 IsModified = true;
-                Validate();
+                ValidateAsync();
             }
         }
 
@@ -224,7 +215,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         /// <summary>
         /// Validates the operations
         /// </summary>
-        protected abstract void Validate(); // Change to void to match derived classes
+        protected abstract Task ValidateAsync();
 
         /// <summary>
         /// Saves the operations

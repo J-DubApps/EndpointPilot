@@ -39,7 +39,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.SourceFilename = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -57,7 +57,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.DestinationFilename = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -75,7 +75,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.SourcePath = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -93,7 +93,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.DestinationPath = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -111,7 +111,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.Overwrite = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -129,7 +129,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.CopyOnce = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -147,7 +147,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.ExistCheckLocation = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -165,7 +165,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.ExistCheck = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -183,7 +183,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.DeleteFile = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -201,7 +201,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.TargetingType = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -219,7 +219,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.Target = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -237,7 +237,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.Comment1 = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -255,7 +255,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     SelectedOperation.Comment2 = value;
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
-                    Validate();
+                    ValidateAsync();
                 }
             }
         }
@@ -274,34 +274,18 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         public FileOpsEditorViewModel(IEnumerable<FileOperation> operations, JsonFileService jsonFileService, SchemaValidationService schemaValidationService)
             : base(operations, jsonFileService, schemaValidationService)
         {
-            // Initialize backing fields
-            _sourceFilename = string.Empty;
-            _destinationFilename = string.Empty;
-            _sourcePath = string.Empty;
-            _destinationPath = string.Empty;
-            _existCheckLocation = string.Empty;
-            _targetingType = string.Empty;
-            _target = string.Empty;
-            _comment1 = string.Empty;
-            _comment2 = string.Empty;
-
             // Set the selected operation if there are any operations
             if (Operations.Any())
             {
-                SelectedOperation = Operations.FirstOrDefault();
+                SelectedOperation = Operations.First();
             }
-             // Trigger property updates if an item was selected
-            if (SelectedOperation != null)
-            {
-                 OnPropertyChanged(nameof(SelectedOperation)); // Manually trigger update for initial selection
-            }
-            Validate(); // Call initial validation (now synchronous)
+            ValidateAsync(); // Call initial validation after full initialization
         }
 
         /// <summary>
         /// Updates the property values when the selected operation changes
         /// </summary>
-        protected override void OnPropertyChanged(string? propertyName = null) // Make propertyName nullable
+        protected override void OnPropertyChanged(string propertyName = null)
         {
             base.OnPropertyChanged(propertyName);
 
@@ -358,7 +342,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
             Operations.Add(newOperation);
             SelectedOperation = newOperation;
             IsModified = true;
-            Validate();
+            ValidateAsync();
         }
 
         /// <summary>
@@ -390,22 +374,19 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 Operations.Add(newOperation);
                 SelectedOperation = newOperation;
                 IsModified = true;
-                Validate();
+                ValidateAsync();
             }
         }
 
         /// <summary>
         /// Validates the operations
         /// </summary>
-        protected override void Validate() // Change to void, remove async
+        protected override async Task ValidateAsync()
         {
             // Skip validation during editing to prevent errors while typing
             // Only validate when saving
-            // This validation is intentionally minimal during editing.
-            // Full validation happens in PerformFullValidationAsync before saving.
-            IsValid = true; // Assume valid during editing unless PerformFullValidationAsync fails
-             // Optionally clear status or set a generic "Editing..." message
-            // OnStatusChanged("Editing...", false);
+            IsValid = true;
+            OnStatusChanged("Validation will be performed when saving", false);
         }
 
         /// <summary>
@@ -496,7 +477,7 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 }
 
                 IsModified = false;
-                Validate(); // Call synchronous version
+                ValidateAsync();
                 OnStatusChanged("File operations reloaded successfully", false);
             }
             catch (Exception ex)

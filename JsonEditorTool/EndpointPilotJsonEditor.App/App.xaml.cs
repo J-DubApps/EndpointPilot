@@ -36,8 +36,5 @@ namespace EndpointPilotJsonEditor.App
                 args.Handled = true;
             };
         }
-
-
-        // Removed OnStartup override - resources will be loaded via App.xaml
     }
 }
