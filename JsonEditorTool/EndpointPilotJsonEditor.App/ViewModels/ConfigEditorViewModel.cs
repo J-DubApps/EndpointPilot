@@ -350,7 +350,30 @@ namespace EndpointPilotJsonEditor.App.ViewModels
 
                 if (result.IsValid)
                 {
-                    OnStatusChanged("Configuration is valid", false);
+                    // Custom validation logic after schema validation passes
+                    bool customValidationPassed = true;
+                    string customErrorMessage = string.Empty;
+
+                    if (NetworkScriptRootEnabled && (string.IsNullOrWhiteSpace(NetworkScriptRootPath) || !NetworkScriptRootPath.StartsWith("\\\\")))
+                    {
+                        customValidationPassed = false;
+                        customErrorMessage = "Network Script Root Path must start with '\\\\' when enabled.";
+                    }
+                    else if (HttpsScriptRootEnabled && (string.IsNullOrWhiteSpace(HttpsScriptRootPath) || !HttpsScriptRootPath.StartsWith("https://", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        customValidationPassed = false;
+                        customErrorMessage = "HTTPS Script Root Path must start with 'https://' when enabled.";
+                    }
+
+                    if (customValidationPassed)
+                    {
+                        OnStatusChanged("Configuration is valid", false);
+                    }
+                    else
+                    {
+                        IsValid = false; // Set IsValid to false due to custom validation failure
+                        OnStatusChanged($"Configuration is invalid: {customErrorMessage}", true);
+                    }
                 }
                 else
                 {
