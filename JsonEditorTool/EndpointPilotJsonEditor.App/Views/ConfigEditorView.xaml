@@ -28,11 +28,7 @@
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
 
-        <!-- Style for ToggleSwitch -->
-        <Style x:Key="ToggleSwitchStyle" TargetType="ToggleButton"> <!-- Removed BasedOn temporarily -->
-            <Setter Property="Margin" Value="0,5,0,0" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
+        <!-- Removed ToggleSwitchStyle -->
     </UserControl.Resources>
     
     <Grid Margin="20">
@@ -84,7 +80,7 @@
 
                 <!-- Network Script Root Enabled -->
                 <TextBlock Grid.Row="3" Grid.Column="0" Text="Network Script Root Enabled:" Style="{StaticResource FieldLabelStyle}" />
-                <ToggleButton Grid.Row="3" Grid.Column="1" IsChecked="{Binding NetworkScriptRootEnabled}" Style="{StaticResource ToggleSwitchStyle}" />
+                <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding NetworkScriptRootEnabled}" Style="{StaticResource CheckBoxStyle}" />
                 
                 <!-- Copy Log File To Network -->
                 <TextBlock Grid.Row="4" Grid.Column="0" Text="Copy Log File To Network:" Style="{StaticResource FieldLabelStyle}" />
