@@ -44,7 +44,7 @@ See [**here**](https://github.com/J-DubApps/EndpointPilot?tab=BSD-3-Clause-1-ov-
 - [X] Add support for PowerShell Core (*can be optionally locked to 5.1 via simple modification to launcher script*).
 - [ ] Explore System-mode endpoint Config Mgmt scenarios for "MGMT" helper scripts (currently EndpointPilot *only* supports *User-mode* profile config use-cases, no SYSTEM or Admin mode operations are currently supported).
 - [ ] If System-mode operation scenarios prove securely-feasible, explore developing a System Agent option to offer elevated rights config options.
-**Full Roadmap is** [***here***](https://github.com/J-DubApps/EndpointPilot/blob/main/ProjectPlan.md) 
+**Full Roadmap is** [***here***](https://github.com/J-DubApps/EndpointPilot/blob/main/PlanningDocs/ProjectPlan.md) 
 <br />
 <p align="center">
     <img src="https://github.com/J-DubApps/EndpointPilot/blob/main/images/EndpointPilot.png" width="400" height="600" />
