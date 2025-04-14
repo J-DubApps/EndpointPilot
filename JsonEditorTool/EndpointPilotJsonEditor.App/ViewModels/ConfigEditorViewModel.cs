@@ -87,7 +87,14 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 if (_config.NetworkScriptRootEnabled != value)
                 {
                     _config.NetworkScriptRootEnabled = value;
-                    OnPropertyChanged();
+                    OnPropertyChanged(); // Notify change for this property
+
+                    // Mutually exclusive logic
+                    if (value && HttpsScriptRootEnabled)
+                    {
+                        HttpsScriptRootEnabled = false; // This setter will call OnPropertyChanged for HttpsScriptRootEnabled
+                    }
+
                     IsModified = true;
                     ValidateAsync(); // Note: We might need to adjust async/await later
                 }
@@ -106,7 +113,14 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 if (_config.HttpsScriptRootEnabled != value)
                 {
                     _config.HttpsScriptRootEnabled = value;
-                    OnPropertyChanged();
+                    OnPropertyChanged(); // Notify change for this property
+
+                    // Mutually exclusive logic
+                    if (value && NetworkScriptRootEnabled)
+                    {
+                        NetworkScriptRootEnabled = false; // This setter will call OnPropertyChanged for NetworkScriptRootEnabled
+                    }
+
                     IsModified = true;
                     ValidateAsync(); // Note: We might need to adjust async/await later
                 }
