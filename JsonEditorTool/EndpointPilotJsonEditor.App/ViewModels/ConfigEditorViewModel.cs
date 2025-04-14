@@ -92,6 +92,8 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     ValidateAsync(); // Note: We might need to adjust async/await later
                 }
             }
+        }
+
 
         /// <summary>
         /// Gets or sets whether the HTTPS script root is enabled
