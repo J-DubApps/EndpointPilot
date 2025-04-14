@@ -1,7 +1,7 @@
 # Detailed Plan for Creating MGMT-Functions.psd1 Manifest File
 
 ## 1. Overview
-A PowerShell module manifest (.psd1) file is a PowerShell data file that contains metadata about a module. It describes the module's contents and requirements, and determines how the module is processed.
+A PowerShell module manifest (.psd1) file exists for the MGMT-Functions.psm1 module file.  It contains metadata about the module, describing the module's contents and requirements.  It also determines how the module is processed.
 
 ## 2. Key Components to Include
 
@@ -31,9 +31,9 @@ A PowerShell module manifest (.psd1) file is a PowerShell data file that contain
 
 ## 3. Implementation Steps
 
-1. Create a new file named `MGMT-Functions.psd1` in the same directory as `MGMT-Functions.psm1`
+1. Created a new file named `MGMT-Functions.psd1` in the same directory as `MGMT-Functions.psm1`
 2. Generate a new GUID for the module
-3. Populate the manifest file with the metadata outlined above
+3. Populated a manifest file with the metadata outlined above
 4. Ensure the manifest file is properly formatted according to PowerShell standards
 5. Test the manifest file to ensure it works correctly with the module
 
@@ -106,7 +106,7 @@ A PowerShell module manifest (.psd1) file is a PowerShell data file that contain
 
 ## 6. Testing the Manifest
 
-After creating the manifest file, we should test it to ensure it works correctly:
-1. Import the module using `Import-Module MGMT-Functions`
-2. Verify that all exported functions and aliases are available
-3. Test each function to ensure it works as expected
+After creating the manifest file, I (J-DubApps) will test it via:
+1. Importing the module using `Import-Module MGMT-Functions`
+2. Verifying that all exported functions and aliases are available
+3. Testing each function to ensure it works as expected
