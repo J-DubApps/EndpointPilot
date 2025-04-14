@@ -242,7 +242,7 @@ If ($HttpsScriptRootEnabled -eq $true) {
     # nothing for now
 }
 
-# $ClientName = "McKool Smith"
+# $ClientName = "Test Company"
 # $Refresh_Interval = 900 #Seconds
 # $NetworkScriptRootPath = "\\servername\SHARE\PS-Epilot\"
 # $CopyLogFileToNetwork = $false #Set to $true to copy the log file to the network

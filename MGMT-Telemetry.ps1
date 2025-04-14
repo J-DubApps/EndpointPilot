@@ -399,13 +399,13 @@ If ($isVM -eq $false) {
 	if ($freeSpaceGB -lt 55) {
 		WriteLog ""
 		WriteLog "Low Disk Space detected on $env:computername.  $freeSpaceGB GB free on C: drive."
-		"$freeSpaceGB GB free on C: drive. User Downloads folder size has been logged to the log found at: Logon_Script_RunLogs" | out-file "\\mckoolsmith.law\dfs\SOURCE\Tools\FlagFiles\Logon_Script_RunLogs\Free_Space_Reports\Under_50gb\$env:UserName-on-$env:computername.log"
+		"$freeSpaceGB GB free on C: drive. User Downloads folder size has been logged to the log found at: Logon_Script_RunLogs" | out-file $LogFile -Append
 		$LowDiskSpace = $True
 	}
  elseif ($freeSpaceGB -lt 105) {
 		WriteLog ""
 		WriteLog "Low Disk Space detected on $env:computername.  $freeSpaceGB GB free on C: drive."
-		"$freeSpaceGB GB free on C: drive. User Downloads folder size has been logged to the log found at: Logon_Script_RunLogs" | out-file "\\mckoolsmith.law\dfs\SOURCE\Tools\FlagFiles\Logon_Script_RunLogs\Free_Space_Reports\Under_100gb\$env:UserName-on-$env:computername.log"
+		"$freeSpaceGB GB free on C: drive. User Downloads folder size has been logged to the log found at: Logon_Script_RunLogs" | out-file $LogFile -Append
 		$LowDiskSpace = $True
 	}
 	else {
