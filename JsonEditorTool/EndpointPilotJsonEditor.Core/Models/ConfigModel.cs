@@ -27,6 +27,13 @@ namespace EndpointPilotJsonEditor.Core.Models
         public string NetworkScriptRootPath { get; set; } = string.Empty;
 
         /// <summary>
+        /// Whether the network script root is enabled
+        /// </summary>
+        [JsonProperty("NetworkScriptRootEnabled")]
+        public bool NetworkScriptRootEnabled { get; set; } = false;
+
+
+        /// <summary>
         /// Whether to copy log files to network location
         /// </summary>
         [JsonProperty("CopyLogFileToNetwork")]

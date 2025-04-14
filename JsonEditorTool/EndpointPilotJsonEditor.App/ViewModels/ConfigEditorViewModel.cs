@@ -77,6 +77,25 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         }
 
         /// <summary>
+        /// Gets or sets whether the network script root is enabled
+        /// </summary>
+        public bool NetworkScriptRootEnabled
+        {
+            get => _config.NetworkScriptRootEnabled;
+            set
+            {
+                if (_config.NetworkScriptRootEnabled != value)
+                {
+                    _config.NetworkScriptRootEnabled = value;
+                    OnPropertyChanged();
+                    IsModified = true;
+                    ValidateAsync(); // Note: We might need to adjust async/await later
+                }
+            }
+        }
+
+
+        /// <summary>
         /// Gets or sets whether to copy log files to network location
         /// </summary>
         public bool CopyLogFileToNetwork
