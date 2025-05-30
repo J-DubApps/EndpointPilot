@@ -1,0 +1,12 @@
+{
+  "name": "EndpointPilot Dev Container",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-vscode.powershell"]
+    }
+  },
+  "onCreateCommand": "./setup.sh"
+}
