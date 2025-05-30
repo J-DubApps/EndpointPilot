@@ -1,5 +1,5 @@
 # .devcontainer/Dockerfile
-FROM mcr.microsoft.com/powershell:7.4.1-alpine-3.18
+FROM mcr.microsoft.com/powershell:7.5.1-alpine-3.20
 
 # Install necessary tools
 RUN apk add --no-cache curl bash util-linux
