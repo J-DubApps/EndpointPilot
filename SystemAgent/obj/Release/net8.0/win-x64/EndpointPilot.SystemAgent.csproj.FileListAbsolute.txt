@@ -1,0 +1,6 @@
+C:\Users\julianwest\GitHub\PS-MANAGE\SystemAgent\obj\Release\net8.0\win-x64\EndpointPilot.SystemAgent.csproj.AssemblyReference.cache
+C:\Users\julianwest\GitHub\PS-MANAGE\SystemAgent\obj\Release\net8.0\win-x64\EndpointPilot.SystemAgent.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\julianwest\GitHub\PS-MANAGE\SystemAgent\obj\Release\net8.0\win-x64\EndpointPilot.SystemAgent.AssemblyInfoInputs.cache
+C:\Users\julianwest\GitHub\PS-MANAGE\SystemAgent\obj\Release\net8.0\win-x64\EndpointPilot.SystemAgent.AssemblyInfo.cs
+C:\Users\julianwest\GitHub\PS-MANAGE\SystemAgent\obj\Release\net8.0\win-x64\EndpointPilot.SystemAgent.csproj.CoreCompileInputs.cache
+C:\Users\julianwest\GitHub\PS-MANAGE\SystemAgent\obj\Release\net8.0\win-x64\EndpointPilot.SystemAgent.sourcelink.json
