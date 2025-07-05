@@ -57,7 +57,7 @@
     *   Develop JSON schemas for validation to prevent errors from malformed directive files.
     *   Explore tooling or UI (like the mentioned .NET app) to simplify JSON editing and reduce errors.
 *   **PowerShell Core Support:** Plan the transition/support for PowerShell 7+ as per the roadmap. Identify necessary code changes (cmdlet compatibility, etc.).
-*   **System-Mode Agent:** Detail the plan for exploring system-level operations. Define use cases, security model, implementation approach (e.g., separate agent, elevated task).
+*   **System-Mode Agent:** Detail the plan for exploring system-level operations. Define use cases, security model, implementation approach (e.g., separate agent, elevated task). See the detailed [**System Agent Architecture Plan**](System-Agent-Plan.md).
 *   **Code Maintainability:** Refactor `MGMT-SHARED.ps1` if it becomes too large. Ensure consistent coding style and add more inline documentation/comments.
 *   **Documentation:** Expand `README.md` or create separate documentation detailing the JSON schema for each directive file, script parameters, and deployment steps.
 *   **Hybrid Join State Detection:** Investigate using `dsregcmd /status` or similar methods to reliably detect the endpoint's join state (AD-joined, Entra ID-joined, Hybrid-joined). Adapt script logic (e.g., fetching computer identity, applying conditional configurations) based on the detected state to reduce reliance on purely AD-based lookups (`adsisearcher`).
@@ -79,6 +79,7 @@
     *   [ ] Implement code signing for scripts.
     *   [ ] Implement Hybrid Join State detection and adapt script logic.
 *   **Phase 3 (Long-Term):**
+    *   [X] Design System-Mode agent architecture.
     *   [ ] Research and prototype System-Mode agent/operations.
     *   [ ] Refine architecture based on feedback and usage patterns.
     *   [ ] Explore advanced targeting options (e.g., based on AD/Entra group, WMI filters).

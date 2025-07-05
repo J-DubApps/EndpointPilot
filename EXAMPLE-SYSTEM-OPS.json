@@ -1,0 +1,47 @@
+{
+  "$schema": "./SYSTEM-OPS.schema.json",
+  "operations": [
+    {
+      "id": "Install-7Zip-x64",
+      "operationType": "installMsi",
+      "comment": "Install 7-Zip for all users from an HTTPS source.",
+      "parameters": {
+        "sourcePath": "https://www.7-zip.org/a/7z2107-x64.msi",
+        "arguments": "/quiet /norestart",
+        "expectedVersion": "21.07.0.0",
+        "checksum": "fce6352ce35538679127f97aa631d712a6785329410507579324a34a85069344"
+      }
+    },
+    {
+      "id": "Set-EndpointPilot-AgentVersion",
+      "operationType": "setRegistryValue",
+      "comment": "Set the agent version in a system-wide registry key.",
+      "parameters": {
+        "path": "HKLM\\Software\\EndpointPilot",
+        "name": "AgentVersion",
+        "value": "1.0.0",
+        "regType": "string"
+      }
+    },
+    {
+      "id": "Ensure-Spooler-Running",
+      "operationType": "manageService",
+      "comment": "Ensure the Print Spooler service is running and set to automatic.",
+      "parameters": {
+        "serviceName": "Spooler",
+        "state": "running",
+        "startupType": "automatic"
+      }
+    },
+    {
+      "id": "Copy-Corp-Branding-Image",
+      "operationType": "copyFile",
+      "comment": "Copy a corporate branding image to a shared location.",
+      "parameters": {
+        "sourcePath": "https://example.com/logos/corporate-wallpaper.jpg",
+        "destinationPath": "C:\\ProgramData\\CorporateBranding\\wallpaper.jpg",
+        "overwrite": true
+      }
+    }
+  ]
+}

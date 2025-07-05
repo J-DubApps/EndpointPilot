@@ -169,6 +169,7 @@ Remove-Item -Path $zipFilePath -Force
 $programDataPath = [Environment]::GetFolderPath('CommonApplicationData')
 $baseInstallPath = Join-Path -Path $programDataPath -ChildPath "EndpointPilot"
 $jsonEditorToolPath = Join-Path -Path $baseInstallPath -ChildPath "JsonEditorTool"
+$agentInstallPath = Join-Path -Path $env:ProgramFiles -ChildPath "EndpointPilot System Agent"
 
 # --- Start Main Installation ---
 try {
@@ -180,6 +181,9 @@ if (-not (Test-Path -Path $baseInstallPath)) {
 }
 if (-not (Test-Path -Path $jsonEditorToolPath)) {
     New-Item -Path $jsonEditorToolPath -ItemType Directory -Force | Out-Null
+}
+if (-not (Test-Path -Path $agentInstallPath)) {
+    New-Item -Path $agentInstallPath -ItemType Directory -Force | Out-Null
 }
 
 # Install JsonEditorTool
@@ -194,6 +198,46 @@ if (Test-Path -Path $jsonEditorSourcePath) {
 } else {
     Write-Warning "JsonEditorTool source path not found: $jsonEditorSourcePath"
     WriteLog "WARNING: JsonEditorTool source path not found: $jsonEditorSourcePath"
+}
+
+# Install System Agent Service
+Write-Host "Installing EndpointPilot System Agent..." -ForegroundColor Cyan
+WriteLog "Installing EndpointPilot System Agent..."
+$agentSourcePath = Join-Path -Path $stagingSourcePath -ChildPath "SystemAgent\publish"
+if (Test-Path -Path $agentSourcePath) {
+    # Copy files
+    Copy-Item -Path "$agentSourcePath\*" -Destination $agentInstallPath -Recurse -Force
+    Write-Host "System Agent files installed to $agentInstallPath" -ForegroundColor Green
+    WriteLog "System Agent files installed to $agentInstallPath"
+
+    # Create and Start Service
+    $serviceExe = Join-Path -Path $agentInstallPath -ChildPath "EndpointPilot.SystemAgent.exe"
+    if (Test-Path $serviceExe) {
+        Write-Host "Creating and starting the Windows Service..."
+        WriteLog "Creating and starting the Windows Service..."
+        try {
+            if (Get-Service -Name "EndpointPilotSystemAgent" -ErrorAction SilentlyContinue) {
+                Write-Host "Service already exists. Removing it before reinstalling." -ForegroundColor Yellow
+                WriteLog "Service already exists. Removing it before reinstalling."
+                Stop-Service -Name "EndpointPilotSystemAgent" -Force -ErrorAction SilentlyContinue
+                Get-Service -Name "EndpointPilotSystemAgent" | Remove-Service -Force -ErrorAction Stop
+                Start-Sleep -Seconds 5 # Give time for service to be removed
+            }
+            New-Service -Name "EndpointPilotSystemAgent" -BinaryPathName $serviceExe -DisplayName "EndpointPilot System Agent" -Description "Provides system-level configuration and management for EndpointPilot." -StartupType Automatic -Credential "NT AUTHORITY\SYSTEM" -ErrorAction Stop
+            Start-Service -Name "EndpointPilotSystemAgent" -ErrorAction Stop
+            Write-Host "System Agent service created and started successfully." -ForegroundColor Green
+            WriteLog "System Agent service created and started successfully."
+        } catch {
+            Write-Error "Failed to create or start the System Agent service. Error: $($_.Exception.Message)"
+            WriteLog "ERROR: Failed to create or start the System Agent service. Error: $($_.Exception.Message)"
+        }
+    } else {
+        Write-Warning "System Agent executable not found at '$serviceExe'. Cannot create service."
+        WriteLog "WARNING: System Agent executable not found at '$serviceExe'. Cannot create service."
+    }
+} else {
+    Write-Warning "System Agent source path not found: $agentSourcePath"
+    WriteLog "WARNING: System Agent source path not found: $agentSourcePath"
 }
 
 # Install script files
@@ -270,6 +314,20 @@ if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 ```$programDataPath = [Environment]::GetFolderPath('CommonApplicationData')
 ```$baseInstallPath = Join-Path -Path ```$programDataPath -ChildPath "EndpointPilot"
 ```$jsonEditorToolPath = Join-Path -Path ```$baseInstallPath -ChildPath "JsonEditorTool"
+
+# Remove System Agent Service
+if (Get-Service -Name "EndpointPilotSystemAgent" -ErrorAction SilentlyContinue) {
+    Write-Host "Stopping and removing EndpointPilot System Agent service..." -ForegroundColor Cyan
+    Stop-Service -Name "EndpointPilotSystemAgent" -Force -ErrorAction SilentlyContinue
+    Get-Service -Name "EndpointPilotSystemAgent" | Remove-Service -Force
+}
+
+# Remove agent installation directory
+```$agentInstallPath = Join-Path -Path ```$env:ProgramFiles -ChildPath "EndpointPilot System Agent"
+if (Test-Path -Path ```$agentInstallPath) {
+    Write-Host "Removing System Agent directory..." -ForegroundColor Cyan
+    Remove-Item -Path ```$agentInstallPath -Recurse -Force
+}
 
 # Remove desktop shortcut if it exists
 ```$shortcutPath = "```$env:PUBLIC\Desktop\EndpointPilot JSON Editor.lnk"

@@ -1,0 +1,217 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EndpointPilot System Agent Operations",
+  "description": "Schema for system-level operations executed by the EndpointPilot System Agent.",
+  "type": "object",
+  "properties": {
+    "operations": {
+      "type": "array",
+      "description": "An array of system-level operations to be executed.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "A unique identifier for the operation."
+          },
+          "operationType": {
+            "type": "string",
+            "description": "The type of operation to perform.",
+            "enum": [
+              "installMsi",
+              "setRegistryValue",
+              "manageService",
+              "copyFile"
+            ]
+          },
+          "comment": {
+            "type": "string",
+            "description": "A comment describing the purpose of the operation."
+          },
+          "parameters": {
+            "type": "object",
+            "description": "The parameters for the specified operationType."
+          }
+        },
+        "required": [
+          "id",
+          "operationType",
+          "parameters"
+        ]
+      }
+    }
+  },
+  "required": [
+    "operations"
+  ],
+  "definitions": {
+    "installMsiParams": {
+      "type": "object",
+      "properties": {
+        "sourcePath": {
+          "type": "string",
+          "format": "uri",
+          "description": "A URI (HTTPS or local file path) to the .msi file."
+        },
+        "arguments": {
+          "type": "string",
+          "description": "Command-line arguments for the MSI installer.",
+          "default": "/quiet /norestart"
+        },
+        "expectedVersion": {
+          "type": "string",
+          "description": "The product version to check for to determine if installation is necessary."
+        },
+        "checksum": {
+          "type": "string",
+          "description": "A SHA256 checksum of the installer file to verify its integrity."
+        }
+      },
+      "required": [
+        "sourcePath"
+      ]
+    },
+    "setRegistryValueParams": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "The full registry key path. Must start with HKLM\\\\.",
+          "pattern": "^HKLM\\\\"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the value to set."
+        },
+        "value": {
+          "type": "string",
+          "description": "The data to store in the value."
+        },
+        "regType": {
+          "type": "string",
+          "description": "The type of registry value.",
+          "enum": [
+            "string",
+            "expandString",
+            "dword",
+            "qword"
+          ]
+        }
+      },
+      "required": [
+        "path",
+        "name",
+        "value",
+        "regType"
+      ]
+    },
+    "manageServiceParams": {
+      "type": "object",
+      "properties": {
+        "serviceName": {
+          "type": "string",
+          "description": "The short name of the service (e.g., 'Spooler')."
+        },
+        "state": {
+          "type": "string",
+          "description": "The desired state of the service.",
+          "enum": [
+            "running",
+            "stopped"
+          ]
+        },
+        "startupType": {
+          "type": "string",
+          "description": "The desired startup type for the service.",
+          "enum": [
+            "automatic",
+            "manual",
+            "disabled"
+          ]
+        }
+      },
+      "required": [
+        "serviceName"
+      ]
+    },
+    "copyFileParams": {
+      "type": "object",
+      "properties": {
+        "sourcePath": {
+          "type": "string",
+          "format": "uri",
+          "description": "A URI (HTTPS or local file path) to the source file."
+        },
+        "destinationPath": {
+          "type": "string",
+          "description": "The full path, including filename, for the destination."
+        },
+        "overwrite": {
+          "type": "boolean",
+          "description": "Whether to overwrite the file if it exists.",
+          "default": false
+        }
+      },
+      "required": [
+        "sourcePath",
+        "destinationPath"
+      ]
+    }
+  },
+  "if": {
+    "properties": {
+      "operationType": {
+        "const": "installMsi"
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "parameters": {
+        "$ref": "#/definitions/installMsiParams"
+      }
+    }
+  },
+  "if": {
+    "properties": {
+      "operationType": {
+        "const": "setRegistryValue"
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "parameters": {
+        "$ref": "#/definitions/setRegistryValueParams"
+      }
+    }
+  },
+  "if": {
+    "properties": {
+      "operationType": {
+        "const": "manageService"
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "parameters": {
+        "$ref": "#/definitions/manageServiceParams"
+      }
+    }
+  },
+  "if": {
+    "properties": {
+      "operationType": {
+        "const": "copyFile"
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "parameters": {
+        "$ref": "#/definitions/copyFileParams"
+      }
+    }
+  }
+}
