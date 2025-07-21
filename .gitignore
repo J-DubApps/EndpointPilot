@@ -28,3 +28,4 @@ DRIVE-OPS.json.bak
 !JsonEditorTool/publish-arm64/*.dll
 !JsonEditorTool/publish-arm64/*.exe
 *.cache
+claude.md
