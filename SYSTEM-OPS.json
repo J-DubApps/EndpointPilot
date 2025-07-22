@@ -1,0 +1,35 @@
+{
+  "operations": [
+    {
+      "id": "set-registry-example",
+      "operationType": "setRegistryValue",
+      "comment": "Example registry setting for corporate policy",
+      "parameters": {
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
+        "name": "WUServer",
+        "value": "https://wsus.example.com",
+        "regType": "string"
+      }
+    },
+    {
+      "id": "manage-service-example", 
+      "operationType": "manageService",
+      "comment": "Ensure Windows Update service is set to automatic and running",
+      "parameters": {
+        "serviceName": "wuauserv",
+        "state": "running",
+        "startupType": "automatic"
+      }
+    },
+    {
+      "id": "copy-corporate-cert",
+      "operationType": "copyFile",
+      "comment": "Deploy corporate root certificate to system location",
+      "parameters": {
+        "sourcePath": "https://files.example.com/certs/corporate-root.cer",
+        "destinationPath": "C:\\Windows\\Temp\\corporate-root.cer",
+        "overwrite": true
+      }
+    }
+  ]
+}

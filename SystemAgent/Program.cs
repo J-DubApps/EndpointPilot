@@ -1,4 +1,5 @@
 using EndpointPilot.SystemAgent;
+using EndpointPilot.SystemAgent.Services;
 using Serilog;
 
 // Configure the logger
@@ -30,6 +31,12 @@ try
         })
         .ConfigureServices(services =>
         {
+            // Register all services
+            services.AddSingleton<IPowerShellExecutor, PowerShellExecutor>();
+            services.AddSingleton<ISystemOperationsService, SystemOperationsService>();
+            services.AddSingleton<ISchedulerService, SchedulerService>();
+            
+            // Register the main worker service
             services.AddHostedService<AgentWorker>();
         })
         .UseSerilog()
