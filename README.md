@@ -9,6 +9,9 @@
 > This repo isn't currently accepting code contributions. It's public and open source to show progress and
 > enable feedback. Once I get it to a feature-complete state, I may start taking code contributions.
 
+> [!WARNING]
+> This solution is ramping toward a 1.0 Beta Release and is NOT remotely ready for use on ANY live production PC Endpoints! You have been warned!
+
 **EndpointPilot** *will be* a PowerShell-based autonoumous Windows Endpoint Configuration solution for PCs operating in an AD, Intune, or a NinjaOne-managed context.  At first it will only optimize user profiles on managed Windows Endpoints, in Office and Remote Work scenarios. It functions a lot like a logon script, but runs locally via a Scheduled Task-and by default operates under the current user's privilege level.  EndpointPilot is driven by ***x-OPS.JSON*** directive files, which govern actions that the configuration script takes, and the solution includes a Json Editor Tool for managing each ***x-OPS.JSON*** JSON directive file.  
 
 ### EndpointPilot addresses the following use-case scenarios:
@@ -49,3 +52,18 @@ See [**here**](https://github.com/J-DubApps/EndpointPilot?tab=BSD-3-Clause-1-ov-
 <p align="center">
     <img src="https://github.com/J-DubApps/EndpointPilot/blob/main/images/EndpointPilot.png" width="400" height="600" />
 </p>
+
+---
+
+## Disclaimer
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
