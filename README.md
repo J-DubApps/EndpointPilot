@@ -6,8 +6,8 @@
 
 
 > [!NOTE]
-> This repo isn't accepting code contributions. It's public and open source to show progress and
-> enable feedback. Once I get it to a feature complete state, I can start taking code contributions.
+> This repo isn't currently accepting code contributions. It's public and open source to show progress and
+> enable feedback. Once I get it to a feature-complete state, I may start taking code contributions.
 
 **EndpointPilot** *will be* a PowerShell-based autonoumous Windows Endpoint Configuration solution for PCs operating in an AD, Intune, or a NinjaOne-managed context.  At first it will only optimize user profiles on managed Windows Endpoints, in Office and Remote Work scenarios. It functions a lot like a logon script, but runs locally via a Scheduled Task-and by default operates under the current user's privilege level.  EndpointPilot is driven by ***x-OPS.JSON*** directive files, which govern actions that the configuration script takes, and the solution includes a Json Editor Tool for managing each ***x-OPS.JSON*** JSON directive file.  
 
@@ -29,7 +29,7 @@ EndpointPilot can be set to execute as a Windows Scheduled Task at configured "r
 
 ### Pre-Requisites:
 
-Your users need to be granted rights to at *least* **create** Scheduled Tasks on their Windows PC Endpoints (this right is granted in GPO or Intune CSP).  
+Until we finish a System Agent solution for EndpointPilot, your users need to be granted rights to at *least* **create** Scheduled Tasks on their Windows PC Endpoints (this right is granted in GPO or Intune CSP).  
 If your IT security policies forbid Scheduled Task creation privilege, see EndpointPilot-Deploy.PDF for alternate deployment methods.
 
 
