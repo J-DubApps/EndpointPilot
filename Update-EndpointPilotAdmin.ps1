@@ -1,3 +1,5 @@
+#Requires -RunAsAdministrator
+
 <# 
 .SYNOPSIS
     Updater for EndpointPilot
