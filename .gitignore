@@ -29,3 +29,4 @@ DRIVE-OPS.json.bak
 !JsonEditorTool/publish-arm64/*.exe
 *.cache
 claude.md
+claude-last-session.md
