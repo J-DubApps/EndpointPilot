@@ -245,10 +245,7 @@ public class SchedulerService : ISchedulerService
             }
 
             var configJson = await File.ReadAllTextAsync(configPath);
-            var config = System.Text.Json.JsonSerializer.Deserialize<EndpointPilotConfig>(configJson, new System.Text.Json.JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+            var config = Newtonsoft.Json.JsonConvert.DeserializeObject<EndpointPilotConfig>(configJson);
 
             _logger.LogDebug("Configuration loaded successfully");
             return config;

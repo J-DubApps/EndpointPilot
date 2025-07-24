@@ -1,7 +1,8 @@
-using System.Text.Json;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using Microsoft.Win32;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using EndpointPilot.SystemAgent.Models;
 
 namespace EndpointPilot.SystemAgent.Services;
@@ -42,10 +43,7 @@ public class SystemOperationsService : ISystemOperationsService
             }
 
             var configJson = await File.ReadAllTextAsync(_systemOpsFilePath, cancellationToken);
-            var config = JsonSerializer.Deserialize<SystemOperationsConfig>(configJson, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+            var config = JsonConvert.DeserializeObject<SystemOperationsConfig>(configJson);
 
             if (config?.Operations == null)
             {
@@ -178,10 +176,7 @@ public class SystemOperationsService : ISystemOperationsService
 
             // Validate JSON structure
             var content = await File.ReadAllTextAsync(filePath);
-            var config = JsonSerializer.Deserialize<SystemOperationsConfig>(content, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+            var config = JsonConvert.DeserializeObject<SystemOperationsConfig>(content);
 
             if (config?.Operations == null)
             {

@@ -130,6 +130,7 @@ EndpointPilot System Agent (Windows Service)
     - Microsoft.Extensions.Hosting.WindowsServices
     - Microsoft.PowerShell.SDK
     - System.Management.Automation
+    - Newtonsoft.Json (standardized JSON library)
   - Service Configuration: Configured for Windows Service deployment
 
 ## Security Model

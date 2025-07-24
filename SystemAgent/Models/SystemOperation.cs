@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace EndpointPilot.SystemAgent.Models;
 
@@ -7,16 +7,16 @@ namespace EndpointPilot.SystemAgent.Models;
 /// </summary>
 public class SystemOperation
 {
-    [JsonPropertyName("id")]
+    [JsonProperty("id")]
     public string Id { get; set; } = string.Empty;
 
-    [JsonPropertyName("operationType")]
+    [JsonProperty("operationType")]
     public string OperationType { get; set; } = string.Empty;
 
-    [JsonPropertyName("comment")]
+    [JsonProperty("comment")]
     public string? Comment { get; set; }
 
-    [JsonPropertyName("parameters")]
+    [JsonProperty("parameters")]
     public Dictionary<string, object> Parameters { get; set; } = new();
 }
 
@@ -25,7 +25,7 @@ public class SystemOperation
 /// </summary>
 public class SystemOperationsConfig
 {
-    [JsonPropertyName("operations")]
+    [JsonProperty("operations")]
     public List<SystemOperation> Operations { get; set; } = new();
 }
 
