@@ -140,6 +140,30 @@ function Install-SystemAgentService {
         WriteLog "Copying service files to: $installPath"
         Copy-Item -Path "$PublishPath\*" -Destination $installPath -Recurse -Force
         
+        # Copy configuration files to parent EndpointPilot directory
+        $endpointPilotPath = "$env:ProgramData\EndpointPilot"
+        if (!(Test-Path $endpointPilotPath)) {
+            WriteLog "Creating EndpointPilot directory: $endpointPilotPath"
+            New-Item -Path $endpointPilotPath -ItemType Directory -Force | Out-Null
+        }
+        
+        WriteLog "Copying configuration files to: $endpointPilotPath"
+        $configFiles = @("CONFIG.json", "SYSTEM-OPS.json", "MAIN.PS1")
+        foreach ($file in $configFiles) {
+            $sourcePath = Join-Path $PSScriptRoot $file
+            if (Test-Path $sourcePath) {
+                $destPath = Join-Path $endpointPilotPath $file
+                if (!(Test-Path $destPath)) {
+                    Copy-Item -Path $sourcePath -Destination $destPath -Force
+                    WriteLog "Copied: $file"
+                } else {
+                    WriteLog "Configuration file already exists (preserving): $file" "WARNING"
+                }
+            } else {
+                WriteLog "Configuration file not found: $file" "WARNING"
+            }
+        }
+        
         # Set secure permissions on installation directory
         WriteLog "Setting secure permissions on installation directory"
         $acl = Get-Acl $installPath
@@ -305,7 +329,10 @@ try {
             WriteLog "EndpointPilot System Agent installation completed successfully!"
             WriteLog ""
             WriteLog "Next Steps:"
-            WriteLog "1. Configure SYSTEM-OPS.json in: $env:ProgramData\EndpointPilot\"
+            WriteLog "1. Review/customize configuration files in: $env:ProgramData\EndpointPilot\"
+            WriteLog "   - CONFIG.json: General EndpointPilot settings"
+            WriteLog "   - SYSTEM-OPS.json: System-level operations"
+            WriteLog "   - MAIN.PS1: User-mode operations script"
             WriteLog "2. Monitor service logs at: $env:ProgramData\EndpointPilot\Agent.log"
             WriteLog "3. Check Windows Event Logs for 'EndpointPilot System Agent' source"
             WriteLog ""

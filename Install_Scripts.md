@@ -36,9 +36,10 @@ This document provides comprehensive documentation for the EndpointPilot install
    - Verifies build output
 
 3. **Directory Setup**
-   - Creates `%PROGRAMDATA%\EndpointPilot\SystemAgent`
-   - Copies service binaries
-   - Copies configuration files (CONFIG.json, SYSTEM-OPS.json)
+   - Creates `%PROGRAMDATA%\EndpointPilot\SystemAgent` for service binaries
+   - Creates `%PROGRAMDATA%\EndpointPilot` for configuration files
+   - Copies service binaries to SystemAgent subdirectory
+   - Copies configuration files (CONFIG.json, SYSTEM-OPS.json, MAIN.PS1) to main directory
    - Sets secure ACLs (SYSTEM and Administrators only)
 
 4. **Service Installation**
