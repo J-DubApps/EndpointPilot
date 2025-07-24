@@ -27,7 +27,9 @@
 param(
     [string]$BuildConfiguration = "Release",
     [string]$ServiceName = "EndpointPilot System Agent",
-    [switch]$Force
+    [switch]$Force,
+    [ValidateSet("win-x64", "win-arm64")]
+    [string]$RuntimeIdentifier = "win-x64"
 )
 
 # Enable strict mode
@@ -48,6 +50,12 @@ function WriteLog {
     Write-Host "[$timestamp] [$Level] $Message"
 }
 
+# Auto-detect architecture if not specified
+if ($RuntimeIdentifier -eq "win-x64" -and $env:PROCESSOR_ARCHITECTURE -eq "ARM64") {
+    WriteLog "ARM64 architecture detected, switching to win-arm64 build"
+    $RuntimeIdentifier = "win-arm64"
+}
+
 function Test-DotNetRuntime {
     try {
         $dotnetVersion = & dotnet --version 2>$null
@@ -65,17 +73,20 @@ function Test-DotNetRuntime {
 }
 
 function Build-SystemAgent {
-    param([string]$Configuration)
+    param(
+        [string]$Configuration,
+        [string]$RuntimeId
+    )
     
     try {
-        WriteLog "Building System Agent with configuration: $Configuration"
+        WriteLog "Building System Agent with configuration: $Configuration for $RuntimeId"
         
         $projectPath = Join-Path $PSScriptRoot "SystemAgent\EndpointPilot.SystemAgent.csproj"
         if (!(Test-Path $projectPath)) {
             throw "System Agent project file not found: $projectPath"
         }
         
-        $publishPath = Join-Path $PSScriptRoot "SystemAgent\bin\$Configuration\net8.0\win-x64\publish"
+        $publishPath = Join-Path $PSScriptRoot "SystemAgent\bin\$Configuration\net8.0-windows\$RuntimeId\publish"
         
         # Clean previous build
         if (Test-Path $publishPath) {
@@ -85,7 +96,7 @@ function Build-SystemAgent {
         
         # Build and publish
         WriteLog "Publishing System Agent..."
-        & dotnet publish $projectPath -c $Configuration -r win-x64 --self-contained false -o $publishPath
+        & dotnet publish $projectPath -c $Configuration -r $RuntimeId --self-contained false -o $publishPath
         
         if ($LASTEXITCODE -ne 0) {
             throw "Build failed with exit code: $LASTEXITCODE"
@@ -312,7 +323,7 @@ try {
     }
     
     # Build the System Agent
-    $publishPath = Build-SystemAgent -Configuration $BuildConfiguration
+    $publishPath = Build-SystemAgent -Configuration $BuildConfiguration -RuntimeId $RuntimeIdentifier
     
     # Install the service
     $installed = Install-SystemAgentService -PublishPath $publishPath -Name $ServiceName -ForceReinstall $Force

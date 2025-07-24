@@ -22,6 +22,7 @@ This document provides comprehensive documentation for the EndpointPilot install
 | BuildConfiguration | String | Release | Build configuration (Release or Debug) |
 | Force | Switch | False | Force installation even if service exists |
 | SkipBuild | Switch | False | Skip the build process (use existing binaries) |
+| RuntimeIdentifier | String | win-x64 | Target architecture (win-x64 or win-arm64) |
 
 #### Installation Process
 
@@ -31,8 +32,9 @@ This document provides comprehensive documentation for the EndpointPilot install
    - Validates SystemAgent project exists
 
 2. **Build Process** (unless -SkipBuild)
+   - Auto-detects ARM64 architecture and switches build target
    - Cleans previous build artifacts
-   - Builds SystemAgent project for x64
+   - Builds SystemAgent project for specified architecture (x64 or ARM64)
    - Verifies build output
 
 3. **Directory Setup**
@@ -67,6 +69,12 @@ This document provides comprehensive documentation for the EndpointPilot install
 
 # Install without rebuilding
 .\Install-SystemAgent.ps1 -SkipBuild
+
+# Install for ARM64 architecture
+.\Install-SystemAgent.ps1 -RuntimeIdentifier win-arm64
+
+# Auto-detected ARM64 build (will detect automatically)
+.\Install-SystemAgent.ps1  # On ARM64 system, automatically uses win-arm64
 ```
 
 #### Security Features
