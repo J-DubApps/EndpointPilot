@@ -11,7 +11,7 @@ DRIVE-OPS.json.bak
 *.dll
 *.exe
 *.vsidx
-# Folders to ignore
+# JsonEditorTool Folders to ignore
 /JsonEditorTool/.vs/
 /JsonEditorTool/.vs
 /JsonEditorTool/EndpointPilotJsonEditor.App/bin/Debug/
@@ -27,6 +27,14 @@ DRIVE-OPS.json.bak
 !JsonEditorTool/publish/*.exe
 !JsonEditorTool/publish-arm64/*.dll
 !JsonEditorTool/publish-arm64/*.exe
+
+# SystemAgent Folders to ignore
+/SystemAgent/.vs/
+/SystemAgent/.vs
+/SystemAgent/bin/Debug/
+/SystemAgent/obj/Debug/
+/SystemAgent/EndpointPilotJsonEditor.Core/obj/Debug/
+/SystemAgent/obj/Release/
 
 # Allow .dll and .exe files in SystemAgent/bin folders (pre-built binaries)
 !SystemAgent/bin/win-x64/*.dll
