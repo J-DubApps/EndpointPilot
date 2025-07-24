@@ -30,3 +30,4 @@ DRIVE-OPS.json.bak
 *.cache
 claude.md
 claude-last-session.md
+claude-last-session*.md
