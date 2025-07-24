@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document provides comprehensive documentation for the EndpointPilot installation scripts, focusing on the System Agent installation and uninstallation processes.
+This document provides comprehensive documentation for the EndpointPilot installation scripts, covering both the System Agent and JsonEditorTool installation processes.
 
 ## System Agent Installation Scripts
 
@@ -295,6 +295,110 @@ powershell.exe -ExecutionPolicy Bypass -File Install-SystemAgent.ps1 -Force
 - Deploy scripts as scheduled tasks
 - Use -Force for unattended installation
 - Parse output for monitoring
+
+## JsonEditorTool Installation Scripts
+
+### Install-JsonEditorTool.ps1
+
+**Purpose**: Automates the build, installation, and configuration of the EndpointPilot JsonEditorTool WPF application.
+
+#### Synopsis
+```powershell
+.\Install-JsonEditorTool.ps1 [-BuildConfiguration <String>] [-InstallLocation <String>] [-RuntimeIdentifier <String>] [-UsePreBuilt] [-Force] [-CreateDesktopShortcut]
+```
+
+#### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| BuildConfiguration | String | Release | Build configuration (Release or Debug) |
+| InstallLocation | String | ProgramData | Installation location (ProgramData or Desktop) |
+| RuntimeIdentifier | String | win-x64 | Target architecture (win-x64 or win-arm64) |
+| UsePreBuilt | Switch | False | Use pre-built binaries from JsonEditorTool/bin folder |
+| Force | Switch | False | Force reinstallation even if application exists |
+| CreateDesktopShortcut | Switch | False | Create a desktop shortcut for the application |
+
+#### Installation Process
+
+1. **Prerequisites Check**
+   - Verifies Administrator privileges
+   - Checks for .NET 9 Runtime (recommended)
+   - Auto-detects ARM64 architecture if needed
+
+2. **Build Process** (unless -UsePreBuilt)
+   - Builds JsonEditorTool WPF application
+   - Supports both x64 and ARM64 architectures
+   - Verifies build output and dependencies
+
+3. **Installation Setup**
+   - **ProgramData**: Installs to `%PROGRAMDATA%\EndpointPilot\JsonEditorTool`
+   - **Desktop**: Installs to `%USERPROFILE%\Desktop\EndpointPilot-JsonEditorTool`
+   - Sets appropriate file permissions
+   - Copies all application dependencies
+
+4. **Post-Installation**
+   - Creates desktop shortcut (if requested)
+   - Performs installation validation
+   - Displays usage instructions
+
+#### Usage Examples
+
+```powershell
+# Standard installation to ProgramData
+.\Install-JsonEditorTool.ps1
+
+# Install to Desktop with shortcut using pre-built binaries
+.\Install-JsonEditorTool.ps1 -UsePreBuilt -InstallLocation Desktop -CreateDesktopShortcut
+
+# Install ARM64 version with force reinstall
+.\Install-JsonEditorTool.ps1 -RuntimeIdentifier win-arm64 -Force
+```
+
+### Build-JsonEditorTool.ps1
+
+**Purpose**: Builds pre-compiled binaries for both x64 and ARM64 architectures.
+
+#### Synopsis
+```powershell
+.\Build-JsonEditorTool.ps1 [-BuildConfiguration <String>] [-Architecture <String>] [-OutputToLegacy]
+```
+
+#### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| BuildConfiguration | String | Release | Build configuration (Release or Debug) |
+| Architecture | String | both | Target architecture (win-x64, win-arm64, or both) |
+| OutputToLegacy | Switch | False | Also copy to existing publish/publish-arm64 folders |
+
+#### Usage Examples
+
+```powershell
+# Build both architectures
+.\Build-JsonEditorTool.ps1
+
+# Build only ARM64 with legacy output
+.\Build-JsonEditorTool.ps1 -Architecture win-arm64 -OutputToLegacy
+```
+
+## JsonEditorTool Features
+
+The JsonEditorTool provides a graphical interface for managing EndpointPilot JSON configuration files:
+
+### Supported Configuration Files
+- **CONFIG.json** - General EndpointPilot settings
+- **FILE-OPS.json** - File operations (copy, move, create, delete)
+- **REG-OPS.json** - Registry operations and modifications
+- **DRIVE-OPS.json** - Network drive mappings
+- **ROAM-OPS.json** - Roaming profile configurations
+- **SYSTEM-OPS.json** - System-level operations for System Agent
+
+### Key Features
+- **Visual JSON Editing** with schema validation
+- **Material Design UI** for intuitive user experience
+- **Real-time Validation** against EndpointPilot schemas
+- **Automatic Backups** before saving changes
+- **Cross-Architecture Support** (x64 and ARM64)
 
 ## Version History
 
