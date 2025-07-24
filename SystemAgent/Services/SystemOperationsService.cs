@@ -282,14 +282,14 @@ public class SystemOperationsService : ISystemOperationsService
             if (string.IsNullOrEmpty(path) || string.IsNullOrEmpty(name) || value == null || string.IsNullOrEmpty(regType))
             {
                 result.Error = "path, name, value, and regType parameters are required for setRegistryValue operation";
-                return;
+                return Task.CompletedTask;
             }
 
             // Ensure path starts with HKLM (security constraint)
             if (!path.StartsWith("HKLM\\", StringComparison.OrdinalIgnoreCase))
             {
                 result.Error = "Registry path must start with HKLM\\ for system operations";
-                return;
+                return Task.CompletedTask;
             }
 
             var keyPath = path.Substring(5); // Remove "HKLM\" prefix
@@ -300,7 +300,7 @@ public class SystemOperationsService : ISystemOperationsService
             if (key == null)
             {
                 result.Error = $"Failed to create or open registry key: {path}";
-                return;
+                return Task.CompletedTask;
             }
 
             object regValue = regType.ToLowerInvariant() switch
