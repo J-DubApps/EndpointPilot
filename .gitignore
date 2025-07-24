@@ -27,6 +27,12 @@ DRIVE-OPS.json.bak
 !JsonEditorTool/publish/*.exe
 !JsonEditorTool/publish-arm64/*.dll
 !JsonEditorTool/publish-arm64/*.exe
+
+# Allow .dll and .exe files in SystemAgent/bin folders (pre-built binaries)
+!SystemAgent/bin/win-x64/*.dll
+!SystemAgent/bin/win-x64/*.exe
+!SystemAgent/bin/win-arm64/*.dll
+!SystemAgent/bin/win-arm64/*.exe
 *.cache
 claude.md
 claude-last-session.md

@@ -23,6 +23,7 @@ This document provides comprehensive documentation for the EndpointPilot install
 | Force | Switch | False | Force installation even if service exists |
 | SkipBuild | Switch | False | Skip the build process (use existing binaries) |
 | RuntimeIdentifier | String | win-x64 | Target architecture (win-x64 or win-arm64) |
+| UsePreBuilt | Switch | False | Use pre-built binaries from SystemAgent/bin folder |
 
 #### Installation Process
 
@@ -75,6 +76,12 @@ This document provides comprehensive documentation for the EndpointPilot install
 
 # Auto-detected ARM64 build (will detect automatically)
 .\Install-SystemAgent.ps1  # On ARM64 system, automatically uses win-arm64
+
+# Use pre-built binaries (no compilation needed)
+.\Install-SystemAgent.ps1 -UsePreBuilt
+
+# Use pre-built ARM64 binaries specifically
+.\Install-SystemAgent.ps1 -UsePreBuilt -RuntimeIdentifier win-arm64
 ```
 
 #### Security Features

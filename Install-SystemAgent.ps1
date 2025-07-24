@@ -17,11 +17,20 @@
 .PARAMETER Force
     Force reinstallation even if the service already exists.
 
+.PARAMETER RuntimeIdentifier
+    Target architecture (win-x64 or win-arm64). Auto-detected if not specified.
+
+.PARAMETER UsePreBuilt
+    Use pre-built binaries from SystemAgent/bin folder instead of building from source.
+
 .EXAMPLE
     .\Install-SystemAgent.ps1
     
 .EXAMPLE
     .\Install-SystemAgent.ps1 -BuildConfiguration Debug -Force
+
+.EXAMPLE
+    .\Install-SystemAgent.ps1 -UsePreBuilt -RuntimeIdentifier win-arm64
 #>
 
 param(
@@ -29,7 +38,8 @@ param(
     [string]$ServiceName = "EndpointPilot System Agent",
     [switch]$Force,
     [ValidateSet("win-x64", "win-arm64")]
-    [string]$RuntimeIdentifier = "win-x64"
+    [string]$RuntimeIdentifier = "win-x64",
+    [switch]$UsePreBuilt
 )
 
 # Enable strict mode
@@ -111,6 +121,30 @@ function Build-SystemAgent {
         return $publishPath
     } catch {
         WriteLog "Build failed: $($_.Exception.Message)" "ERROR"
+        throw
+    }
+}
+
+function Get-PreBuiltBinaries {
+    param([string]$RuntimeId)
+    
+    try {
+        WriteLog "Using pre-built binaries for: $RuntimeId"
+        
+        $preBuiltPath = Join-Path $PSScriptRoot "SystemAgent\bin\$RuntimeId"
+        if (!(Test-Path $preBuiltPath)) {
+            throw "Pre-built binaries not found: $preBuiltPath"
+        }
+        
+        $exePath = Join-Path $preBuiltPath "EndpointPilot.SystemAgent.exe"
+        if (!(Test-Path $exePath)) {
+            throw "Pre-built executable not found: $exePath"
+        }
+        
+        WriteLog "Found pre-built binaries: $exePath"
+        return $preBuiltPath
+    } catch {
+        WriteLog "Pre-built binaries failed: $($_.Exception.Message)" "ERROR"
         throw
     }
 }
@@ -322,8 +356,12 @@ try {
         throw ".NET Runtime is required to run the System Agent"
     }
     
-    # Build the System Agent
-    $publishPath = Build-SystemAgent -Configuration $BuildConfiguration -RuntimeId $RuntimeIdentifier
+    # Get binaries (either build or use pre-built)
+    if ($UsePreBuilt) {
+        $publishPath = Get-PreBuiltBinaries -RuntimeId $RuntimeIdentifier
+    } else {
+        $publishPath = Build-SystemAgent -Configuration $BuildConfiguration -RuntimeId $RuntimeIdentifier
+    }
     
     # Install the service
     $installed = Install-SystemAgentService -PublishPath $publishPath -Name $ServiceName -ForceReinstall $Force
