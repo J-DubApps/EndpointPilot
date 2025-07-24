@@ -270,7 +270,7 @@ public class SystemOperationsService : ISystemOperationsService
         }
     }
 
-    private async Task ProcessSetRegistryValueAsync(SystemOperation operation, SystemOperationResult result, CancellationToken cancellationToken)
+    private Task ProcessSetRegistryValueAsync(SystemOperation operation, SystemOperationResult result, CancellationToken cancellationToken)
     {
         try
         {
@@ -331,6 +331,8 @@ public class SystemOperationsService : ISystemOperationsService
             result.Error = $"Exception setting registry value: {ex.Message}";
             _logger.LogError(ex, "Exception setting registry value");
         }
+        
+        return Task.CompletedTask;
     }
 
     private async Task ProcessManageServiceAsync(SystemOperation operation, SystemOperationResult result, CancellationToken cancellationToken)
