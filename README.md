@@ -7,10 +7,10 @@
 
 > [!NOTE]
 > This repo isn't currently accepting code contributions. It's public and open source to show progress and
-> enable feedback. Once I get it to a feature-complete state, I may start taking code contributions.
+> enable feedback for summer '25 soft launch. Once I get it to a feature-complete state, I plan to accept input and contributions.
 
 > [!WARNING]
-> This solution is ramping toward a 1.0 Beta Release and is NOT remotely ready for use on ANY live production PC Endpoints! You have been warned!
+> This solution is ramping toward a 1.0 Beta Release and is ***NOT*** remotely ready for use on ANY live production PC Endpoints! You have been warned!
 
 **EndpointPilot** *will be* a PowerShell-based autonoumous Windows Endpoint Configuration solution for PCs operating in an AD, Intune, or a NinjaOne-managed context.  At first it will only optimize user profiles on managed Windows Endpoints, in Office and Remote Work scenarios. It functions a lot like a logon script, but runs locally via a Scheduled Task-and by default operates under the current user's privilege level.  EndpointPilot is driven by ***x-OPS.JSON*** directive files, which govern actions that the configuration script takes, and the solution includes a Json Editor Tool for managing each ***x-OPS.JSON*** JSON directive file.  
 
@@ -20,7 +20,7 @@
 2. Where timely settings-placement needs to occur outside of the logon/restart process, independent of Corporate VPN or Intune-visibility status.
 3. Hybrid Domain-Joined PCs where Intune Configuration Profiles/CSP or Active Directory GPP settings are not always feasible, or need to occur at a higher cadence than default.
 
-EndpointPilot runs locally on the PC endpoint itself, as a repeating Scheduled Task, so it does not require line-of-sight to a Domain Controller NETLOGON share or a Logon Script GPO. Its runtime components are staged onto a PC endpoint under each user's profile at %LOCALAPPDATA%\EndpointPilot (C:\Users\Username\AppData\Local\EndpointPilot).  See [Roadmap](#roadmap) for system-agent (run as SYSTEM) plans.
+EndpointPilot runs locally on the PC endpoint itself, as a repeating Scheduled Task, so it does not require line-of-sight to a Domain Controller NETLOGON share or a Logon Script GPO. Its runtime components (primarily PowerShell and JSON files) are staged onto a PC endpoint under each user's profile at %LOCALAPPDATA%\EndpointPilot (C:\Users\Username\AppData\Local\EndpointPilot).  See [Roadmap](#roadmap) for system-agent (run as SYSTEM) plans.
 
 EndpointPilot's running config and common operations stored in ***three*** (3) *JSON*-formatted ***directive files***.  The key-value pairs in the directive files are processed similar in concept to "*Playbooks*", but are simpler in design and function.  
 
