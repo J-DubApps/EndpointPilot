@@ -1,0 +1,44 @@
+{
+  "name": "EndpointPilot Dev - Windows",
+  "dockerFile": "Dockerfile",
+  "build": {
+    "args": {
+      "VARIANT": "windowsservercore-ltsc2022"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.powershell",
+        "ms-azuretools.vscode-docker",
+        "github.vscode-pull-request-github",
+        "redhat.vscode-yaml",
+        "yzhang.markdown-all-in-one"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.windows": "PowerShell",
+        "terminal.integrated.profiles.windows": {
+          "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell"
+          },
+          "Windows PowerShell": {
+            "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+          }
+        },
+        "files.eol": "\r\n",
+        "editor.formatOnSave": true,
+        "powershell.codeFormatting.preset": "OTBS"
+      }
+    }
+  },
+  "features": {},
+  "mounts": [
+    "source=${localEnv:USERPROFILE}\\.ssh,target=C:\\Users\\ContainerUser\\.ssh,type=bind,readonly"
+  ],
+  "postCreateCommand": "powershell -ExecutionPolicy Bypass -File .\\setup.ps1",
+  "remoteUser": "ContainerUser",
+  "workspaceFolder": "C:\\workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=C:\\workspace,type=bind,consistency=cached",
+  "runArgs": ["--isolation=hyperv"]
+}

@@ -1,12 +1,14 @@
 {
   "name": "EndpointPilot Dev Container",
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
   "customizations": {
     "vscode": {
-      "extensions": ["ms-vscode.powershell"]
+      "extensions": [
+        "ms-vscode.powershell"
+      ]
     }
   },
-  "onCreateCommand": "./setup.sh"
+  "postCreateCommand": "echo 'Please use .devcontainer/linux or .devcontainer/windows for platform-specific containers'"
 }

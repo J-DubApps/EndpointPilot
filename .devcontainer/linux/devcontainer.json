@@ -1,0 +1,46 @@
+{
+  "name": "EndpointPilot Dev - Linux",
+  "dockerFile": "Dockerfile",
+  "build": {
+    "args": {
+      "VARIANT": "7.4-ubuntu-22.04",
+      "INSTALL_NODE": "false"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.powershell",
+        "ms-azuretools.vscode-docker",
+        "github.vscode-pull-request-github",
+        "timonwong.shellcheck",
+        "redhat.vscode-yaml",
+        "yzhang.markdown-all-in-one"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "pwsh",
+        "powershell.powerShellDefaultVersion": "PowerShell",
+        "files.eol": "\n",
+        "editor.formatOnSave": true,
+        "powershell.codeFormatting.preset": "OTBS"
+      }
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "moby": true,
+      "installDockerBuildx": true
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/azure-cli:1": {}
+  },
+  "mounts": [
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,readonly",
+    "source=endpointpilot-bashhistory,target=/commandhistory,type=volume"
+  ],
+  "postCreateCommand": "chmod +x ./setup.sh && ./setup.sh",
+  "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}",
+  "remoteUser": "vscode",
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+}
