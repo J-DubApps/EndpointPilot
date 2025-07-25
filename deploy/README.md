@@ -413,3 +413,175 @@ The JsonEditorTool provides a graphical interface for managing EndpointPilot JSO
 - Update detection and automation
 - Configuration migration support
 - ARM64 platform support
+
+## Uninstallation Scripts
+
+EndpointPilot provides comprehensive uninstallation scripts to cleanly remove all components and configurations.
+
+### Uninstall-SystemAgent.ps1
+
+**Purpose**: Removes the EndpointPilot System Agent Windows Service and optionally removes installation files.
+
+#### Synopsis
+```powershell
+.\Uninstall-SystemAgent.ps1 [-ServiceName <String>] [-RemoveFiles] [-Force]
+```
+
+#### Parameters
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| ServiceName | String | "EndpointPilot System Agent" | Name of the Windows service to remove |
+| RemoveFiles | Switch | False | Remove installation files after uninstalling service |
+| Force | Switch | False | Force removal even if service is running |
+
+#### Examples
+```powershell
+# Basic service removal (preserves files)
+.\Uninstall-SystemAgent.ps1
+
+# Complete removal including files
+.\Uninstall-SystemAgent.ps1 -RemoveFiles -Force
+```
+
+### Uninstall-JsonEditorTool.ps1
+
+**Purpose**: Removes the EndpointPilot JsonEditorTool WPF application from the system.
+
+#### Synopsis
+```powershell
+.\Uninstall-JsonEditorTool.ps1 [-InstallLocation <String>] [-RemoveShortcuts] [-Force]
+```
+
+#### Parameters
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| InstallLocation | String | "All" | Installation location to remove (ProgramData, Desktop, or All) |
+| RemoveShortcuts | Switch | False | Remove desktop shortcuts created during installation |
+| Force | Switch | False | Force removal even if files are in use |
+
+#### Examples
+```powershell
+# Remove all installations and shortcuts
+.\Uninstall-JsonEditorTool.ps1 -RemoveShortcuts
+
+# Remove only ProgramData installation
+.\Uninstall-JsonEditorTool.ps1 -InstallLocation ProgramData
+
+# Force remove Desktop installation
+.\Uninstall-JsonEditorTool.ps1 -InstallLocation Desktop -Force
+```
+
+### Uninstall-EndpointPilot.ps1
+
+**Purpose**: Removes EndpointPilot Core Scripts from system-wide installation (%PROGRAMDATA%).
+
+#### Synopsis
+```powershell
+.\Uninstall-EndpointPilot.ps1 [-RemoveUserData] [-RemoveScheduledTasks] [-Force] [-KeepLogs]
+```
+
+#### Parameters
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| RemoveUserData | Switch | False | Remove user-specific configuration files and data |
+| RemoveScheduledTasks | Switch | False | Remove EndpointPilot scheduled tasks for all users |
+| Force | Switch | False | Force removal even if files are in use |
+| KeepLogs | Switch | False | Preserve log files during uninstallation |
+
+#### Examples
+```powershell
+# Basic core scripts removal (preserves user data and logs)
+.\Uninstall-EndpointPilot.ps1
+
+# Complete removal including scheduled tasks and user data
+.\Uninstall-EndpointPilot.ps1 -RemoveUserData -RemoveScheduledTasks
+
+# Safe removal preserving logs
+.\Uninstall-EndpointPilot.ps1 -Force -KeepLogs
+```
+
+### Uninstall-EndpointPilotAdmin.ps1
+
+**Purpose**: Removes complete EndpointPilot Admin installation (Core Scripts + JsonEditorTool + optionally System Agent).
+
+#### Synopsis
+```powershell
+.\Uninstall-EndpointPilotAdmin.ps1 [-RemoveUserData] [-RemoveScheduledTasks] [-RemoveShortcuts] [-Force] [-KeepLogs] [-ComponentsOnly]
+```
+
+#### Parameters
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| RemoveUserData | Switch | False | Remove user-specific configuration files and data |
+| RemoveScheduledTasks | Switch | False | Remove EndpointPilot scheduled tasks for all users |
+| RemoveShortcuts | Switch | False | Remove desktop shortcuts created during installation |
+| Force | Switch | False | Force removal even if files are in use |
+| KeepLogs | Switch | False | Preserve log files during uninstallation |
+| ComponentsOnly | Switch | False | Remove only Core Scripts and JsonEditorTool, preserve System Agent |
+
+#### Examples
+```powershell
+# Complete admin installation removal
+.\Uninstall-EndpointPilotAdmin.ps1 -RemoveUserData -RemoveScheduledTasks -RemoveShortcuts
+
+# Remove components but preserve System Agent
+.\Uninstall-EndpointPilotAdmin.ps1 -ComponentsOnly
+
+# Safe removal preserving data
+.\Uninstall-EndpointPilotAdmin.ps1 -Force -KeepLogs
+```
+
+## Uninstallation Strategy
+
+### Component Dependencies
+
+EndpointPilot consists of several components that can be installed and removed independently:
+
+```
+EndpointPilot Ecosystem
+├── Core Scripts (MAIN.PS1, CONFIG.json, etc.)
+├── JsonEditorTool (WPF Application)
+├── System Agent (Windows Service)
+└── User Data (Scheduled Tasks, Shortcuts, Logs)
+```
+
+### Recommended Uninstall Order
+
+1. **Complete Removal**: Use `Uninstall-EndpointPilotAdmin.ps1` with full options
+2. **Selective Removal**: 
+   - Remove System Agent: `Uninstall-SystemAgent.ps1 -RemoveFiles`
+   - Remove JsonEditorTool: `Uninstall-JsonEditorTool.ps1 -RemoveShortcuts`  
+   - Remove Core Scripts: `Uninstall-EndpointPilot.ps1 -RemoveScheduledTasks`
+
+### Safety Features
+
+All uninstall scripts include:
+- **Configuration Backups**: Automatic backup of important configuration files
+- **Process Termination**: Graceful shutdown of running processes with force fallback
+- **Comprehensive Logging**: Detailed logs of all uninstall operations
+- **Component Discovery**: Automatic detection of installed components
+- **Rollback Safety**: Preserve critical data by default unless explicitly requested
+- **Summary Reports**: Clear summary of what was removed and what remains
+
+### Troubleshooting Uninstallation
+
+**Common Issues:**
+```powershell
+# Files in use - force removal
+.\Uninstall-EndpointPilotAdmin.ps1 -Force
+
+# Permission denied - ensure Administrator
+# Run PowerShell as Administrator, then retry
+
+# Service won't stop - force kill processes
+.\Uninstall-SystemAgent.ps1 -Force -RemoveFiles
+```
+
+**Verification:**
+```powershell
+# Check for remaining components
+Get-Service "*EndpointPilot*"                    # Windows Services
+Get-ScheduledTask "*EndpointPilot*"              # Scheduled Tasks  
+Test-Path "$env:ProgramData\EndpointPilot"       # Installation Files
+Test-Path "$env:LOCALAPPDATA\EndpointPilot"      # User Data
+```

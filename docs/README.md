@@ -18,20 +18,23 @@
 ### Pre-Requisites:
 
 Until we finish a System Agent solution for EndpointPilot, your users need to be granted rights to at *least* **create** Scheduled Tasks on their Windows PC Endpoints (this right is granted in GPO or Intune CSP).  
-If your IT security policies forbid Scheduled Task creation privilege, see EndpointPilot-Deploy.PDF for alternate deployment methods.
-
 
 ### Licensing: 
 
 See [**here**](https://github.com/J-DubApps/EndpointPilot?tab=BSD-3-Clause-1-ov-file#) for BSD-3 License info.
 
+### Documentation
+
+| Component | Documentation | Description |
+|-----------|---------------|-------------|
+| **System Agent** | [SystemAgent.md](../SystemAgent/SystemAgent.md) | Windows Service for system-level operations and SYSTEM-mode configuration management |
+| **JsonEditorTool** | [JsonEditorTool README](../JsonEditorTool/bin/README.md) | WPF application for editing EndpointPilot JSON directive files with validation |
+| **Deployment Scripts** | [Deploy README](../deploy/README.md) | Installation, update, and uninstallation scripts with comprehensive documentation |
+
  <a id="roadmap"></a>
 
 #### Roadmap:
-
-- [X] Add support for PowerShell Core (*can be optionally locked to 5.1 via simple modification to launcher script*).
-- [ ] Explore System-mode endpoint Config Mgmt scenarios for "MGMT" helper scripts (currently EndpointPilot *only* supports *User-mode* profile config use-cases, no SYSTEM or Admin mode operations are currently supported).
-- [ ] If System-mode operation scenarios prove securely-feasible, explore developing a System Agent option to offer elevated rights config options.
+.
 **Full Roadmap is** [***here***](https://github.com/J-DubApps/EndpointPilot/blob/main/PlanningDocs/ProjectPlan.md) 
 <br />
 <p align="center">
