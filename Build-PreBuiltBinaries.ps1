@@ -168,8 +168,8 @@ try {
     
     WriteLog ""
     WriteLog "Usage:"
-    WriteLog "  .\Install-SystemAgent.ps1 -UsePreBuilt"
-    WriteLog "  .\Install-SystemAgent.ps1 -UsePreBuilt -RuntimeIdentifier win-arm64"
+    WriteLog "  .\deploy\Install-SystemAgent.ps1 -UsePreBuilt"
+    WriteLog "  .\deploy\Install-SystemAgent.ps1 -UsePreBuilt -RuntimeIdentifier win-arm64"
     
 } catch {
     WriteLog "Pre-built binaries generation failed: $($_.Exception.Message)" "ERROR"

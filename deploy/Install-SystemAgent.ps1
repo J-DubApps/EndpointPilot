@@ -46,12 +46,13 @@ param(
 Set-StrictMode -Version 3.0
 $ErrorActionPreference = "Stop"
 
-# Import required functions
-if (Test-Path ".\MGMT-Functions.psm1") {
-    Import-Module ".\MGMT-Functions.psm1" -Force
+# Import required functions from parent directory
+$parentPath = Split-Path -Parent $PSScriptRoot
+if (Test-Path (Join-Path $parentPath "MGMT-Functions.psm1")) {
+    Import-Module (Join-Path $parentPath "MGMT-Functions.psm1") -Force
 }
-if (Test-Path ".\MGMT-SHARED.ps1") {
-    . ".\MGMT-SHARED.ps1"
+if (Test-Path (Join-Path $parentPath "MGMT-SHARED.ps1")) {
+    . (Join-Path $parentPath "MGMT-SHARED.ps1")
 }
 
 function WriteLog {
@@ -91,12 +92,13 @@ function Build-SystemAgent {
     try {
         WriteLog "Building System Agent with configuration: $Configuration for $RuntimeId"
         
-        $projectPath = Join-Path $PSScriptRoot "SystemAgent\EndpointPilot.SystemAgent.csproj"
+        $parentPath = Split-Path -Parent $PSScriptRoot
+        $projectPath = Join-Path $parentPath "SystemAgent\EndpointPilot.SystemAgent.csproj"
         if (!(Test-Path $projectPath)) {
             throw "System Agent project file not found: $projectPath"
         }
         
-        $publishPath = Join-Path $PSScriptRoot "SystemAgent\bin\$Configuration\net8.0-windows\$RuntimeId\publish"
+        $publishPath = Join-Path $parentPath "SystemAgent\bin\$Configuration\net8.0-windows\$RuntimeId\publish"
         
         # Clean previous build
         if (Test-Path $publishPath) {
@@ -131,7 +133,8 @@ function Get-PreBuiltBinaries {
     try {
         WriteLog "Using pre-built binaries for: $RuntimeId"
         
-        $preBuiltPath = Join-Path $PSScriptRoot "SystemAgent\bin\$RuntimeId"
+        $parentPath = Split-Path -Parent $PSScriptRoot
+        $preBuiltPath = Join-Path $parentPath "SystemAgent\bin\$RuntimeId"
         if (!(Test-Path $preBuiltPath)) {
             throw "Pre-built binaries not found: $preBuiltPath"
         }
@@ -193,9 +196,10 @@ function Install-SystemAgentService {
         }
         
         WriteLog "Copying configuration files to: $endpointPilotPath"
+        $parentPath = Split-Path -Parent $PSScriptRoot
         $configFiles = @("CONFIG.json", "SYSTEM-OPS.json", "MAIN.PS1")
         foreach ($file in $configFiles) {
-            $sourcePath = Join-Path $PSScriptRoot $file
+            $sourcePath = Join-Path $parentPath $file
             if (Test-Path $sourcePath) {
                 $destPath = Join-Path $endpointPilotPath $file
                 if (!(Test-Path $destPath)) {

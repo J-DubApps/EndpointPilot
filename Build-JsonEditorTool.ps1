@@ -199,8 +199,8 @@ try {
     
     WriteLog ""
     WriteLog "Usage:"
-    WriteLog "  .\Install-JsonEditorTool.ps1 -UsePreBuilt"
-    WriteLog "  .\Install-JsonEditorTool.ps1 -UsePreBuilt -RuntimeIdentifier win-arm64"
+    WriteLog "  .\deploy\Install-JsonEditorTool.ps1 -UsePreBuilt"
+    WriteLog "  .\deploy\Install-JsonEditorTool.ps1 -UsePreBuilt -RuntimeIdentifier win-arm64"
     
 } catch {
     WriteLog "JsonEditorTool pre-built binaries generation failed: $($_.Exception.Message)" "ERROR"

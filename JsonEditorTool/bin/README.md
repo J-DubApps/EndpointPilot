@@ -40,13 +40,13 @@ The EndpointPilot JsonEditorTool is a WPF-based graphical application that provi
 
 ```powershell
 # Install to ProgramData with auto-architecture detection
-.\Install-JsonEditorTool.ps1 -UsePreBuilt
+..\deploy\Install-JsonEditorTool.ps1 -UsePreBuilt
 
 # Install to Desktop with desktop shortcut
-.\Install-JsonEditorTool.ps1 -UsePreBuilt -InstallLocation Desktop -CreateDesktopShortcut
+..\deploy\Install-JsonEditorTool.ps1 -UsePreBuilt -InstallLocation Desktop -CreateDesktopShortcut
 
 # Force specific architecture with pre-built binaries
-.\Install-JsonEditorTool.ps1 -UsePreBuilt -RuntimeIdentifier win-arm64
+..\deploy\Install-JsonEditorTool.ps1 -UsePreBuilt -RuntimeIdentifier win-arm64
 ```
 
 ### Manual Installation
@@ -106,7 +106,7 @@ If you prefer to build from source:
 .\Build-JsonEditorTool.ps1 -Architecture win-arm64
 
 # Build and install directly
-.\Install-JsonEditorTool.ps1 -RuntimeIdentifier win-x64
+..\deploy\Install-JsonEditorTool.ps1 -RuntimeIdentifier win-x64
 ```
 
 ## Architecture Differences

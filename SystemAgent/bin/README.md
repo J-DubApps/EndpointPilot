@@ -27,14 +27,14 @@ This directory contains pre-compiled binaries of the EndpointPilot System Agent 
 
 ```powershell
 # Use pre-built x64 binaries (auto-detected on x64 systems)
-.\Install-SystemAgent.ps1 -UsePreBuilt
+..\deploy\Install-SystemAgent.ps1 -UsePreBuilt
 
 # Use pre-built ARM64 binaries (auto-detected on ARM64 systems)  
-.\Install-SystemAgent.ps1 -UsePreBuilt
+..\deploy\Install-SystemAgent.ps1 -UsePreBuilt
 
 # Force specific architecture with pre-built binaries
-.\Install-SystemAgent.ps1 -UsePreBuilt -RuntimeIdentifier win-arm64
-.\Install-SystemAgent.ps1 -UsePreBuilt -RuntimeIdentifier win-x64
+..\deploy\Install-SystemAgent.ps1 -UsePreBuilt -RuntimeIdentifier win-arm64
+..\deploy\Install-SystemAgent.ps1 -UsePreBuilt -RuntimeIdentifier win-x64
 ```
 
 ### Manual Installation
@@ -67,8 +67,8 @@ If you prefer to build from source:
 
 ```powershell
 # Build both architectures
-.\Install-SystemAgent.ps1 -RuntimeIdentifier win-x64
-.\Install-SystemAgent.ps1 -RuntimeIdentifier win-arm64
+..\deploy\Install-SystemAgent.ps1 -RuntimeIdentifier win-x64
+..\deploy\Install-SystemAgent.ps1 -RuntimeIdentifier win-arm64
 
 # Or build without installing
 dotnet publish SystemAgent/EndpointPilot.SystemAgent.csproj -c Release -r win-x64 --self-contained false

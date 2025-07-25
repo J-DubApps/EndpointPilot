@@ -94,12 +94,13 @@ function Build-JsonEditorTool {
     try {
         WriteLog "Building JsonEditorTool with configuration: $Configuration for $RuntimeId"
         
-        $projectPath = Join-Path $PSScriptRoot "JsonEditorTool\EndpointPilotJsonEditor.App\EndpointPilotJsonEditor.App.csproj"
+        $parentPath = Split-Path -Parent $PSScriptRoot
+        $projectPath = Join-Path $parentPath "JsonEditorTool\EndpointPilotJsonEditor.App\EndpointPilotJsonEditor.App.csproj"
         if (!(Test-Path $projectPath)) {
             throw "JsonEditorTool project file not found: $projectPath"
         }
         
-        $publishPath = Join-Path $PSScriptRoot "JsonEditorTool\bin\$Configuration\net9.0-windows\$RuntimeId\publish"
+        $publishPath = Join-Path $parentPath "JsonEditorTool\bin\$Configuration\net9.0-windows\$RuntimeId\publish"
         
         # Clean previous build
         if (Test-Path $publishPath) {
@@ -134,7 +135,8 @@ function Get-PreBuiltBinaries {
     try {
         WriteLog "Using pre-built binaries for: $RuntimeId"
         
-        $preBuiltPath = Join-Path $PSScriptRoot "JsonEditorTool\bin\$RuntimeId"
+        $parentPath = Split-Path -Parent $PSScriptRoot
+        $preBuiltPath = Join-Path $parentPath "JsonEditorTool\bin\$RuntimeId"
         if (!(Test-Path $preBuiltPath)) {
             throw "Pre-built binaries not found: $preBuiltPath"
         }
