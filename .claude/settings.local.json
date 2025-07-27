@@ -3,7 +3,9 @@
     "allow": [
       "WebFetch(domain:www.contributor-covenant.org)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "WebFetch(domain:ethicalsource.dev)"
+      "WebFetch(domain:ethicalsource.dev)",
+      "Bash(find:*)",
+      "Bash(ls:*)"
     ],
     "deny": []
   }
