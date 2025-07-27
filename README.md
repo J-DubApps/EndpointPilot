@@ -7,7 +7,7 @@
 
 > [!NOTE]
 > This repo isn't currently accepting code contributions. It's public and open source to show progress and
-> enable feedback for summer '25 soft launch. Once I get it to a feature-complete state, I plan to accept input and contributions.
+> enable feedback for summer '25 soft launch. Once I get it to a feature-complete state, I plan to accept input and contributions.  Once that begins, see [CONTRIBUTING.md](https://github.com/J-DubApps/EndpointPilot/CONTRIBUTING.md)
 
 > [!WARNING]
 > This solution is ramping toward a 1.0 Beta Release and is ***NOT*** remotely ready for use on ANY live production scenarios. Do NOT install onto your prod PC Endpoints! You have been warned!
