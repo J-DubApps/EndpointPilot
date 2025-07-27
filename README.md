@@ -10,7 +10,7 @@
 > enable feedback for summer '25 soft launch. Once I get it to a feature-complete state, I plan to accept input and contributions.
 
 > [!WARNING]
-> This solution is ramping toward a 1.0 Beta Release and is ***NOT*** remotely ready for use on ANY live production PC Endpoints! You have been warned!
+> This solution is ramping toward a 1.0 Beta Release and is ***NOT*** remotely ready for use on ANY live production scenarios. Do NOT install onto your prod PC Endpoints! You have been warned!
 
 **EndpointPilot** (under development summer 2025) is a PowerShell-based autonoumous Windows Endpoint ***Configuration Management*** solution for PCs operating in an AD, Intune, or a NinjaOne-managed context.  At first it will only offer Config Mgmt of user profiles on managed Windows Endpoints, in Office and Remote-Work scenarios. It functions a lot like a logon script, but runs locally via Agent (or Scheduled Task, in some configurations).  EndpointPilot's PowerShell code is directed by ***x-OPS.JSON*** directive files, which tells EP's scripts what to do (each line within each **x-OPS.JSON*** govern the actions each config sript undertakes).  A Json Editor GUI Tool is included for managing ***x-OPS.JSON*** JSON directive file.  **Think of *EP* as an alternative to [GPO/GPP](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-policy/group-policy-processing) or [Intune Policy CSP](https://learn.microsoft.com/en-us/windows/client-management/mdm/policy-configuration-service-provider).  Because *EP* operates on the PC *independent* of an Endpoint's AD, Intune, or NinjaOne status -- it can be a great add-on for use with those environments.
 
