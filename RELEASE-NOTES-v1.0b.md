@@ -8,57 +8,62 @@
 
 ## Overview
 
-EndpointPilot v1.0b represents the first public beta release of our PowerShell-based Windows endpoint configuration solution. This release introduces a modern alternative to traditional logon scripts, designed specifically for hybrid and remote work environments where network connectivity to domain controllers cannot be guaranteed.
+EndpointPilot v1.0b represents the first public beta release of a PowerShell-based Windows endpoint configuration solution, written by Julian West. This release introduces a modern alternative to traditional logon scripts, designed specifically for hybrid and remote work environments where network connectivity to domain controllers cannot be guaranteed. This ensures configuration consistency across hybrid and remote work environments regardless of network connectivity or VPN status.
 
-EndpointPilot operates autonomously via scheduled tasks, executing configuration management independently of Active Directory, Microsoft Intune, or NinjaOne connectivity status. This "better than a logon script" approach ensures consistent endpoint configuration regardless of VPN status or network availability.
+Built specifically for Microsoft Intune and NinjaOne managed Windows endpoints, EndpointPilot provides IT administrators with a JSON-driven, modular approach to endpoint configuration that scales from small deployments to enterprise-wide implementations.  The author is aiming for a simple "better than a logon script" approach, ensuring consistent endpoint configuration regardless of VPN status or network availability.
 
 ## What's New in v1.0b
 
-### Core Platform Features
-
+### Core PowerShell Framework
+- **Modular Architecture**: Separate helper scripts for different operation types, with standardized error handling.  Complete implementation of the ENDPOINT-PILOT.PS1 → MAIN.PS1 → Helper Scripts workflow
 - **JSON-Driven Configuration Management**: Complete configuration system using directive files (FILE-OPS.json, REG-OPS.json, DRIVE-OPS.json, ROAM-OPS.json)
-- **Modular Architecture**: Separate helper scripts for different operation types with standardized error handling
-- **Cross-Platform PowerShell Support**: Compatible with both PowerShell 5.1 (Windows PowerShell) and PowerShell 7+ (Core)
-- **Multi-Architecture Support**: Native support for both x64 and ARM64 Windows systems
-- **Scheduled Task Automation**: Configurable refresh intervals (default: 120 minutes) with logon event triggers
+- **PowerShell Compatibility**: Full support for both PowerShell 5.1 (Windows PowerShell) and PowerShell 7+ (Core)
+- **Multi-Architecture Support**: Native support for both x64 and ARM64 Windows systems, with automatic x64/ARM64 detection with x86 blocking for modern endpoint support
+- **JSON Schema Validation**: Comprehensive schemas for all configuration and directive files
 
 ### JsonEditorTool GUI Application
 
-- **Comprehensive JSON Editor**: WPF-based .NET application for managing all EndpointPilot configuration files
+- **Comprehensive JSON Editor**: WPF-based .NET application for user-friendly managing of all EndpointPilot configuration files.  Edit FILE-OPS, REG-OPS, DRIVE-OPS, and ROAM-OPS configurations.
 - **Schema Validation**: Real-time validation against JSON schemas to prevent configuration errors
 - **Multi-Platform Binaries**: Pre-compiled binaries available for both x64 and ARM64 architectures
 - **Material Design UI**: Modern, intuitive interface built with Material Design for WPF
 - **Integrated Help System**: Context-sensitive help and tooltips for all configuration options
 
+### Operational Components
+- **File Operations**: Complete file copy, move, and deletion functionality with permissions handling
+- **Registry Operations**: Registry key and value management with safety validations
+- **Drive Mapping**: Network drive configuration and management (framework ready)
+- **Roaming Profile Support**: Profile folder synchronization capabilities (framework ready)
+
 ### System Agent Framework (Preview)
 
 - **System-Level Operations**: C# Windows Service foundation for elevated operations (planned for future releases)
-- **SYSTEM-OPS Schema**: Complete JSON schema definition for system-level configuration tasks
+- **SYSTEM-OPS Schema**: Complete JSON schema definition for system-level operations
 - **Service Architecture**: Built on .NET 8+ Worker Service pattern for reliability and performance
+- **Privilege Escalation Path**: Framework for secure elevation (under development)
 
 ### Installation and Deployment
 
-- **Flexible Installation Options**: Support for both user-mode and administrative installation scenarios
-- **GitHub Integration**: Automated download and staging capabilities from GitHub repositories
+- **Dual Installation Modes**: User-mode and administrative installation scripts
+- **GitHub Integration**: Download capability from repository releases
 - **Intune/NinjaOne Ready**: Prepared for enterprise deployment through Microsoft Intune (.intunewin) and NinjaOne packaging
-- **Network Share Support**: Optional network-based configuration file synchronization
+- **Network Share Support**: Optional network-based configuration file synchronization (for Active Directory environments)
 
 ## System Requirements
 
 ### Minimum Requirements
 
-- **Operating System**: Windows 10 Enterprise or Windows 11 Enterprise
+- **Operating System**: Windows 10 Enterprise (Build 1903+) or Windows 11 Enterprise 
 - **PowerShell**: PowerShell 5.1 or higher (PowerShell 7+ recommended)
-- **Architecture**: x64 or ARM64 (x86/32-bit explicitly not supported)
-- **User Privileges**: Scheduled task creation rights (until System Agent implementation)
-- **Disk Space**: 50MB for core components, additional 100MB for JsonEditorTool
+- **Memory**: 8GB+ RAM
+- **User Privileges**: Scheduled task creation rights (for non System Agent implementations)
+- **Network**: Internet connectivity for initial deployment from Intune or NinjaOne, or LAN connectivity in AD evnironments (offline operation supported)
+- **Disk Space**: 50MB for core components, additional 100MB for JsonEditorTool on Sysadmin machines.
 
-### Recommended Configuration
-
-- **Operating System**: Windows 11 Enterprise (latest version)
-- **PowerShell**: PowerShell 7.4 or higher
-- **Memory**: 4GB RAM minimum, 8GB recommended for JsonEditorTool
-- **Network**: Intermittent connectivity for configuration updates (not required for operation)
+### Enterprise Prerequisites
+- Active Directory or Azure AD domain join
+- Group Policy or Intune management capability
+- PowerShell execution policy allowing signed scripts (recommended)
 
 ## Installation Guide
 
@@ -93,7 +98,7 @@ The JsonEditorTool requires separate installation and can be deployed system-wid
 
 Pre-compiled binaries are available for both x64 and ARM64 architectures in the `JsonEditorTool/publish/` and `JsonEditorTool/publish-arm64/` directories.
 
-## Configuration Schema
+## Configuration Schema and Examples
 
 ### Primary Configuration Files
 
@@ -204,7 +209,7 @@ System-level operations schema for future System Agent implementation:
 ]
 ```
 
-## Core Components
+## Core Components Overview
 
 ### PowerShell Scripts
 
@@ -218,6 +223,10 @@ Primary orchestrator that:
 - Calls appropriate helper scripts based on configuration
 - Manages execution flow and error handling
 
+#### Utility Modules and Scripts
+- **MGMT-Functions.psm1**: Core utility functions including InGroup (user group membership checking), registry access, and Test-Path validation etc
+- **MGMT-SHARED.ps1**: Shared variables, logging functions (WriteLog), and common configuration loading
+
 #### Helper Scripts
 - **MGMT-FileOps.ps1**: Processes FILE-OPS.json directives
 - **MGMT-RegOps.ps1**: Handles REG-OPS.json operations (placeholder in v1.0b)
@@ -230,7 +239,7 @@ Primary orchestrator that:
 - **MGMT-Functions.psm1**: Core utility functions including InGroup, Get-Permission, Test-Path validation
 - **MGMT-SHARED.ps1**: Shared variables, logging functions (WriteLog), and common configurations
 
-### JSON Schema Validation
+### JSON Schema Files & Validation
 
 All configuration files include comprehensive JSON schema validation:
 - **CONFIG.schema.json**: Validates global configuration structure
