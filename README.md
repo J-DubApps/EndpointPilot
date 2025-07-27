@@ -18,7 +18,7 @@
 
 1. Hybrid/Remote staff needing persistent sysadmin settings on their Windows PC endpoints, even when they infrequently restart.
 2. Where timely settings-placement needs to occur outside of the logon/restart process, independent of Corporate VPN or Intune-visibility status.
-3. Hybrid Domain-Joined PCs where Intune Configuration Profiles/CSP or Active Directory GPP settings are not always feasible, or need to occur at a higher cadence than default.
+3. Hybrid Domain-Joined PCs where Intune Configuration Profiles/CSP or Active Directory GPP settings are not always feasible, or need to occur at a different cadence than default.
 4. GPO/GPP-processing is slow over a cloud-based VPN. 
 
 EndpointPilot runs locally on the PC endpoint itself, as a repeating Scheduled Task, so it does not require line-of-sight to a Domain Controller NETLOGON share or a Logon Script GPO. Its runtime components (primarily PowerShell and JSON files) are staged onto a PC endpoint under each user's profile at %LOCALAPPDATA%\EndpointPilot (C:\Users\Username\AppData\Local\EndpointPilot).  See [Roadmap](#roadmap) for system-agent (run as SYSTEM) plans.
