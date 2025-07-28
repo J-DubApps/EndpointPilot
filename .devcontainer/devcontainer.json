@@ -3,12 +3,47 @@
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspace",
+  
+  // Configure tool-specific properties.
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-vscode.powershell"
-      ]
+        "ms-vscode.powershell",
+        "ms-azuretools.vscode-docker",
+        "github.vscode-pull-request-github",
+        "timonwong.shellcheck",
+        "redhat.vscode-yaml",
+        "yzhang.markdown-all-in-one"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "pwsh",
+        "powershell.powerShellDefaultVersion": "PowerShell",
+        "files.eol": "\n",
+        "editor.formatOnSave": true,
+        "powershell.codeFormatting.preset": "OTBS"
+      }
     }
   },
-  "postCreateCommand": "echo 'Please use .devcontainer/linux or .devcontainer/windows for platform-specific containers'"
+  
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  "forwardPorts": [1433],
+  
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "chmod +x .devcontainer/linux/setup.sh && .devcontainer/linux/setup.sh",
+  
+  // Use 'postStartCommand' to run commands after the container starts.
+  "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}",
+  
+  // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+  "remoteUser": "vscode",
+  
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "moby": true,
+      "installDockerBuildx": true
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/azure-cli:1": {}
+  }
 }
