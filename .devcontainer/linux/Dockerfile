@@ -1,10 +1,8 @@
 # Multi-platform PowerShell image selection
 ARG VARIANT="7.4-ubuntu-22.04"
-ARG TARGETPLATFORM
-ARG BUILDPLATFORM
 
-# Use platform-specific base image to avoid emulation issues
-FROM --platform=$TARGETPLATFORM mcr.microsoft.com/powershell:${VARIANT}
+# Use multi-arch base image - Docker will automatically select the correct platform
+FROM mcr.microsoft.com/powershell:${VARIANT}
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
