@@ -2,6 +2,10 @@
 ._.DS_Store
 **/.DS_Store
 **/._.DS_Store
+/.vscode
+.vscode
+.claude
+/.claude
 # Ignore json.bak files
 REG-OPS.json.bak
 FILE-OPS.json.bak
@@ -51,4 +55,6 @@ DRIVE-OPS.json.bak
 claude.md
 claude-last-session.md
 claude-last-session*.md
+roocode-last-session.md
+roocode-last-session*.md
 Switch-DevContainer.ps1
