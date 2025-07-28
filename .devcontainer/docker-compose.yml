@@ -8,10 +8,9 @@ services:
       args:
         VARIANT: "7.4-ubuntu-22.04"
         INSTALL_NODE: "false"
-      # Force platform specification for consistency
-      platforms:
-        - linux/arm64
-        - linux/amd64
+        # Explicitly set platform args for cross-platform compatibility
+        BUILDPLATFORM: "linux/arm64"
+        TARGETPLATFORM: "linux/arm64"
     
     volumes:
       - ..:/workspace:cached
@@ -20,12 +19,6 @@ services:
     
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
-    
-    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
-    network_mode: service:db
-    
-    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
-    # (Adding the "ports" property to this file will not forward from a Codespace.)
     
     user: vscode
     
@@ -37,19 +30,6 @@ services:
     
     # Increase shared memory for better PowerShell performance
     shm_size: 1gb
-    
-  db:
-    # Use SQL Server with ARM64 support
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    platform: linux/amd64  # SQL Server currently requires x86_64
-    restart: unless-stopped
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong@Passw0rd
-      - MSSQL_PID=Developer
-    
-    # Add "forwardPorts": ["1433"] to **devcontainer.json** to forward MSSQL locally.
-    # (Adding the "ports" property to this file will not forward from a Codespace.)
 
 volumes:
   endpointpilot-bashhistory:

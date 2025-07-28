@@ -1,8 +1,11 @@
-# Multi-platform PowerShell image selection
+# Multi-platform PowerShell image selection with explicit ARG declarations
 ARG VARIANT="7.4-ubuntu-22.04"
+ARG BUILDPLATFORM
+ARG TARGETPLATFORM
 
-# Use multi-arch base image - Docker will automatically select the correct platform
-FROM mcr.microsoft.com/powershell:${VARIANT}
+# Handle platform specification more robustly
+# Default to linux/arm64 if TARGETPLATFORM is not set
+FROM --platform=${TARGETPLATFORM:-linux/arm64} mcr.microsoft.com/powershell:${VARIANT}
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
@@ -56,8 +59,6 @@ RUN pwsh -NoProfile -Command " \
         Install-Module -Name PlatyPS -Scope AllUsers -Force -ErrorAction Stop; \
         Write-Host 'Installing InvokeBuild...'; \
         Install-Module -Name InvokeBuild -Scope AllUsers -Force -ErrorAction Stop; \
-        Write-Host 'Installing PSWindowsUpdate...'; \
-        Install-Module -Name PSWindowsUpdate -Scope AllUsers -Force -SkipPublisherCheck -ErrorAction Stop; \
         Write-Host 'Installing ConsoleGuiTools...'; \
         Install-Module -Name Microsoft.PowerShell.ConsoleGuiTools -Scope AllUsers -Force -ErrorAction Stop; \
         Write-Host 'All modules installed successfully'; \

@@ -4,14 +4,6 @@
   "service": "app",
   "workspaceFolder": "/workspace",
   
-  // Build options for ARM64 compatibility
-  "build": {
-    "args": {
-      "BUILDPLATFORM": "linux/arm64",
-      "TARGETPLATFORM": "linux/arm64"
-    }
-  },
-  
   // Configure tool-specific properties.
   "customizations": {
     "vscode": {
@@ -33,9 +25,6 @@
     }
   },
   
-  // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  "forwardPorts": [1433],
-  
   // Use 'postCreateCommand' to run commands after the container is created.
   "postCreateCommand": "chmod +x .devcontainer/linux/setup.sh && .devcontainer/linux/setup.sh",
   
@@ -53,14 +42,5 @@
     },
     "ghcr.io/devcontainers/features/github-cli:1": {},
     "ghcr.io/devcontainers/features/azure-cli:1": {}
-  },
-  
-  // Container runtime options for better ARM64 performance
-  "runArgs": [
-    "--platform=linux/arm64"
-  ],
-  
-  // Increase timeout for slower ARM64 builds
-  "initializeCommand": "echo 'Starting ARM64-optimized build...'",
-  "containerTimeout": 300000
+  }
 }

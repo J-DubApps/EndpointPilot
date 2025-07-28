@@ -8,10 +8,9 @@ EndpointPilot uses dual development containers to support both cross-platform de
 
 **We have three different .devcontainer configurations** that serve different purposes:
 
-1. **Main devcontainer.json + docker-compose.yml**: General development with database support
-   - Multi-service setup with SQL Server
-   - Useful for testing database interactions
-   - Ideal for complex development scenarios and CI/CD pipeline testing
+1. **Main devcontainer.json + docker-compose.yml**: General development environment
+   - Single-service setup for PowerShell development
+   - Ideal for general development and CI/CD pipeline testing
 
 2. **Linux subfolder (.devcontainer/linux/)**: Cross-platform PowerShell development on macOS/Linux
    - PowerShell Core development with mocked Windows cmdlets
@@ -26,7 +25,7 @@ EndpointPilot uses dual development containers to support both cross-platform de
 ### Development Workflow
 - I use the Linux container on my Mac for the most development
 - I switch to Windows container when testing Windows-specific features (requires Windows host or VM)
-- And I use the main compose setup when you need database functionality
+- And I use the main compose setup for general development scenarios
 
 This gives EndpointPilot devs maximum flexibility in both macOS and Windows development environments.
 
