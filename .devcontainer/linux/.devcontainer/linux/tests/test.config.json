@@ -1,0 +1,19 @@
+{
+    "platform": "linux",
+    "testEnvironments": {
+        "local": {
+            "type": "linux-mock",
+            "description": "Local Linux mocked environment",
+            "mockModules": ["EndpointPilotMocks"]
+        },
+        "container": {
+            "type": "linux-container",
+            "description": "Containerized Linux tests"
+        },
+        "remote-windows": {
+            "type": "windows-vm",
+            "description": "Remote Windows VM tests from Linux",
+            "targets": []
+        }
+    }
+}
