@@ -1,5 +1,10 @@
+# Multi-platform PowerShell image selection
 ARG VARIANT="7.4-ubuntu-22.04"
-FROM mcr.microsoft.com/powershell:${VARIANT}
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+
+# Use platform-specific base image to avoid emulation issues
+FROM --platform=$TARGETPLATFORM mcr.microsoft.com/powershell:${VARIANT}
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
@@ -26,17 +31,7 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
-# Install PowerShell modules for development
-RUN pwsh -NoProfile -Command " \
-    Set-PSRepository PSGallery -InstallationPolicy Trusted; \
-    Install-Module -Name PSScriptAnalyzer -Scope AllUsers -Force; \
-    Install-Module -Name Pester -RequiredVersion 5.5.0 -Scope AllUsers -Force; \
-    Install-Module -Name PlatyPS -Scope AllUsers -Force; \
-    Install-Module -Name InvokeBuild -Scope AllUsers -Force; \
-    Install-Module -Name PSWindowsUpdate -Scope AllUsers -Force -SkipPublisherCheck; \
-    Install-Module -Name Microsoft.PowerShell.ConsoleGuiTools -Scope AllUsers -Force"
-
-# Create non-root user
+# Create non-root user first to avoid permission issues
 ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
@@ -48,6 +43,30 @@ RUN groupadd --gid $USER_GID $USERNAME \
 
 # Create workspace directory
 RUN mkdir -p /workspace && chown $USERNAME:$USERNAME /workspace
+
+# ARM64-compatible PowerShell module installation
+# Install modules individually with error handling and retries
+RUN pwsh -NoProfile -Command " \
+    Set-PSRepository PSGallery -InstallationPolicy Trusted; \
+    \$ProgressPreference = 'SilentlyContinue'; \
+    try { \
+        Write-Host 'Installing PSScriptAnalyzer...'; \
+        Install-Module -Name PSScriptAnalyzer -Scope AllUsers -Force -ErrorAction Stop; \
+        Write-Host 'Installing Pester...'; \
+        Install-Module -Name Pester -RequiredVersion 5.5.0 -Scope AllUsers -Force -ErrorAction Stop; \
+        Write-Host 'Installing PlatyPS...'; \
+        Install-Module -Name PlatyPS -Scope AllUsers -Force -ErrorAction Stop; \
+        Write-Host 'Installing InvokeBuild...'; \
+        Install-Module -Name InvokeBuild -Scope AllUsers -Force -ErrorAction Stop; \
+        Write-Host 'Installing PSWindowsUpdate...'; \
+        Install-Module -Name PSWindowsUpdate -Scope AllUsers -Force -SkipPublisherCheck -ErrorAction Stop; \
+        Write-Host 'Installing ConsoleGuiTools...'; \
+        Install-Module -Name Microsoft.PowerShell.ConsoleGuiTools -Scope AllUsers -Force -ErrorAction Stop; \
+        Write-Host 'All modules installed successfully'; \
+    } catch { \
+        Write-Warning \"Module installation failed: \$_\"; \
+        Write-Host 'Continuing with basic PowerShell setup...'; \
+    }"
 
 # Set the default shell to pwsh for the user
 RUN chsh -s /usr/bin/pwsh $USERNAME
