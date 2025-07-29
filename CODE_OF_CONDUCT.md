@@ -1,10 +1,32 @@
 # Contributor Covenant Code of Conduct
 
-## Our Pledge
+## Our Committment & Pledge
 
 We pledge to make our community welcoming, safe, and equitable for all.
 
 We are committed to fostering an environment that respects and promotes the dignity, rights, and contributions of all individuals, regardless of characteristics including race, ethnicity, caste, color, age, physical characteristics, neurodiversity, disability, sex or gender, gender identity or expression, sexual orientation, language, philosophy or religion, national or social origin, socio-economic position, level of education, or other status. The same privileges of participation are extended to everyone who participates in good faith and in accordance with this Covenant.
+
+## 🎯 Our Standards
+
+### Positive Behavior ✅
+
+Examples of behavior that contributes to a positive environment:
+
+- **Be respectful** and considerate in communication
+- **Welcome newcomers** and help them get started  
+- **Focus on constructive feedback** that helps improve the project
+- **Acknowledge different experiences** and skill levels
+- **Accept responsibility** for mistakes and learn from them
+- **Prioritize community benefit** over individual gains
+- **Show empathy** towards other community members
+
+## 📋 Our Responsibilities
+
+### Project Maintainers
+- **Clarify standards** of acceptable behavior
+- **Take corrective action** in response to inappropriate behavior
+- **Remove, edit, or reject** contributions that don't align with this Code of Conduct
+- **Temporarily or permanently ban** contributors for behaviors deemed harmful
 
 ## Encouraged Behaviors
 
@@ -20,18 +42,23 @@ With these considerations in mind, we agree to behave mindfully toward each othe
 6. Committing to **repairing harm** when it occurs.
 7. Behaving in other ways that promote and sustain the **well-being of our community**.
 
-## Restricted Behaviors
+### Unacceptable Behavior ❌
 
-We agree to restrict the following behaviors in our community. Instances, threats, and promotion of these behaviors are violations of this Code of Conduct:
+We agree to restrict the following behaviors in our community. Instances, threats, and promotion of the behaviors listed below are violations of this Code of Conduct.
 
-1. **Harassment.** Violating explicitly expressed boundaries or engaging in unnecessary personal attention after any clear request to stop.
-2. **Character attacks.** Making insulting, demeaning, or pejorative comments directed at a community member or group of people.
-3. **Stereotyping or discrimination.** Characterizing anyone's personality or behavior on the basis of immutable identities or traits.
-4. **Sexualization.** Behaving in a way that would reasonably cause anyone to fear for their safety from sexualized violence or unwanted sexual attention.
-5. **Undermining participation.** Persistently disrupting, obstructing, or undermining another's opportunities to participate.
-6. **Privacy violations.** Sharing private content, personally identifying information, or contact information without permission.
-7. **Breaches of confidentiality.** Sharing information obtained through a confidential process without appropriate authorization.
-8. **Other harmful conduct.** Behaving in any way that causes or threatens physical, emotional, psychological, financial, or reputational harm.
+Examples of unacceptable behavior:
+
+- **Harassment or discrimination** of any kind
+- **Trolling, insulting, or derogatory** comments
+- **Personal or political attacks** on individuals
+- **Character attacks.** Making insulting, demeaning, or pejorative comments directed at a community member or group of people
+- **Stereotyping or discrimination.** Characterizing anyone's personality or behavior on the basis of immutable identities or traits
+- **Publishing others' private information** without permission
+- **Breaches of confidentiality.** Sharing information obtained through a confidential process without appropriate authorization
+- **Sexual language or imagery** and unwelcome sexual attention
+- **Professional misconduct** or abuse of authority
+- **Undermining participation.** Persistently disrupting, obstructing, or undermining another's opportunities to participate
+- **Other conduct** which could reasonably be considered inappropriate
 
 ## Reporting Instructions
 
@@ -46,7 +73,14 @@ We encourage you to report violations as soon as possible. In your report, pleas
 - Dates and locations of the incident
 - Any supporting documentation or evidence
 
-## Enforcement
+## 🚨 Enforcement
+
+We believe in education over punishment when possible:
+
+- **First-time violations** often receive guidance rather than penalties
+- **Mentorship opportunities** for those who want to improve
+- **Clear explanations** of why certain behavior is problematic
+- **Resources and support** for understanding inclusive practices
 
 Community leaders are responsible for clarifying the standards of acceptable behavior and are expected to take appropriate and fair corrective action in response to any instances of unacceptable behavior.
 
@@ -86,7 +120,40 @@ This Code of Conduct applies within all community spaces, and also applies when 
 
 This Code of Conduct also applies to actions taken outside of these spaces that affect the health and safety of community members.
 
-## Attribution
+## 💬 Guidelines for Healthy Discussion
+
+### Technical Discussions
+- **Stay focused** on the technical aspects of issues
+- **Provide context** for your suggestions and feedback
+- **Be specific** about problems and proposed solutions
+- **Acknowledge trade-offs** in different approaches
+
+### Code Reviews
+- **Focus on the code**, not the person
+- **Explain the "why"** behind your suggestions
+- **Suggest improvements** rather than just pointing out problems
+- **Be patient** with less experienced contributors
+
+### Community Support
+- **Answer questions helpfully** without condescension
+- **Share knowledge freely** and encourage learning
+- **Direct people to resources** when you can't help directly
+- **Celebrate successes** and acknowledge good contributions
+
+### Project Leadership
+For questions about this Code of Conduct or its enforcement:
+- Create a GitHub Discussion with the "community" label
+- Email project maintainers directly
+- Check the [Contributing Guide](CONTRIBUTING.md) for additional guidance
+
+## 📞 Contact Information
+
+### Conduct Team
+- **Email**: `JDub.writes.some.code@gmail.com`
+- **Response time**: 48 hours avg, 72 hours maximum
+- **Anonymous reporting**: Available upon request
+
+## Attribution & 🙏 Acknowledgments
 
 This Code of Conduct is adapted from the [Contributor Covenant][homepage], version 3.0,
 available at https://www.contributor-covenant.org/version/3/0/code_of_conduct/
@@ -95,3 +162,23 @@ available at https://www.contributor-covenant.org/version/3/0/code_of_conduct/
 
 For answers to common questions about this code of conduct, see the FAQ at
 https://www.contributor-covenant.org/faq. Translations are available at https://www.contributor-covenant.org/translations.
+
+## 📚 Additional Resources
+
+### Learning About Inclusive Communities
+- [Open Source Guide: Building Welcoming Communities](https://opensource.guide/building-community/)
+- [GitHub's Community Guidelines](https://docs.github.com/en/site-policy/github-terms/github-community-guidelines)
+- [Mozilla Community Participation Guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/)
+
+### Bystander Intervention
+- **Speak up** when you see inappropriate behavior
+- **Support** those who are being harassed or excluded
+- **Report issues** even if you're not directly affected
+- **Help create** an environment where everyone feels welcome
+
+---
+
+**Last Updated**: July 2025  
+**Next Review**: January 2026
+
+Thank you for helping make the EndpointPilot Framework a welcoming space for all developers! 🚀
