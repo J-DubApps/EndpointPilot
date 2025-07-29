@@ -6,6 +6,7 @@
 .vscode
 .claude
 /.claude
+.superclaude-metadata.json
 # Ignore json.bak files
 REG-OPS.json.bak
 FILE-OPS.json.bak
