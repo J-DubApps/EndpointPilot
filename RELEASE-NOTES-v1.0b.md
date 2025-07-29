@@ -1,6 +1,6 @@
 # EndpointPilot v1.0b Release Notes
 
-**Release Date:** July 27, 2025  
+**Release Date:** September 01, 2025  
 **Release Type:** Beta Release  
 **Target Audience:** IT Administrators, Security Teams, Technical Decision Makers
 
@@ -8,11 +8,13 @@
 
 ## Overview
 
-EndpointPilot v1.0b represents the first public beta release of a PowerShell-based Windows endpoint configuration solution, written by Julian West. This release introduces a modern alternative to traditional logon scripts, designed specifically for hybrid and remote work environments where network connectivity to domain controllers cannot be guaranteed. This ensures configuration consistency across hybrid and remote work environments regardless of network connectivity or VPN status.
+EndpointPilot v1.0b represents the first public beta release of a PowerShell-based Windows endpoint configuration solution, written by Julian West. This release introduces a modern alternative to traditional logon scripts, designed specifically for hybrid and remote work environments where network connectivity to domain controllers cannot be guaranteed.  
+
+This beta release delivers a test-ready framework capable of demonstrating resilient automation of Windows PC Endpoint configuration management.  Once production-ready, EndpointPilot can ensure configuration consistency across hybrid and remote work environments -- regardless of network connectivity or VPN status.
 
 Built specifically for Microsoft Intune and NinjaOne managed Windows endpoints, EndpointPilot provides IT administrators with a JSON-driven, modular approach to endpoint configuration that scales from small deployments to enterprise-wide implementations.  The author is aiming for a simple "better than a logon script" approach, ensuring consistent endpoint configuration regardless of VPN status or network availability.
 
-## What's New in v1.0b
+## What's New in Version 1.0b
 
 ### Core PowerShell Framework
 - **Modular Architecture**: Separate helper scripts for different operation types, with standardized error handling.  Complete implementation of the ENDPOINT-PILOT.PS1 → MAIN.PS1 → Helper Scripts workflow
@@ -187,28 +189,6 @@ Network drive mapping and management operations:
 ]
 ```
 
-### Advanced Configuration
-
-#### SYSTEM-OPS.json (Preview)
-System-level operations schema for future System Agent implementation:
-
-```json
-[
-  {
-    "id": "Install-Software-Example",
-    "operation": "install_msi",
-    "comment": "Install example software package",
-    "msi_path": "\\\\server\\software\\Example.msi",
-    "install_args": "/quiet /norestart",
-    "success_codes": [0, 3010],
-    "targeting": {
-      "type": "group",
-      "target": "IT-Administrators"
-    }
-  }
-]
-```
-
 ## Core Components Overview
 
 ### PowerShell Scripts
@@ -246,15 +226,37 @@ All configuration files include comprehensive JSON schema validation:
 - **FILE-OPS.schema.json**: Ensures file operation syntax correctness
 - **REG-OPS.schema.json**: Validates registry operation definitions
 - **DRIVE-OPS.schema.json**: Confirms drive mapping configuration
-- **SYSTEM-OPS.schema.json**: Future system operations validation
+- **SYSTEM-OPS.schema.json**: Future system operations validation (preview)
 
 Schema validation can be performed using the included `Validate-JsonSchema.ps1` script or through the JsonEditorTool interface.
+
+### Advanced Configuration
+
+#### SYSTEM-OPS.json (Preview)
+System-level operations schema for future System Agent implementation:
+
+```json
+[
+  {
+    "id": "Install-Software-Example",
+    "operation": "install_msi",
+    "comment": "Install example software package",
+    "msi_path": "\\\\server\\software\\Example.msi",
+    "install_args": "/quiet /norestart",
+    "success_codes": [0, 3010],
+    "targeting": {
+      "type": "group",
+      "target": "IT-Administrators"
+    }
+  }
+]
+```
 
 ## Known Issues and Limitations
 
 ### Current Beta Limitations
 
-1. **User-Mode Operation Only**: This beta release operates exclusively in user context. System-level operations requiring elevated privileges are not yet supported.
+1. **User-Mode Operation Only**: This beta release operates exclusively in user context as of July 2025 dev sprint cycle.  System-level operations requiring elevated privileges are not yet supported, but a preview for SYSTEM operations (via agent) is included with this release.
 
 2. **Helper Script Placeholders**: MGMT-RegOps.ps1 and MGMT-DriveOps.ps1 are currently placeholder implementations. Full functionality will be available in the release version.
 
@@ -266,7 +268,7 @@ Schema validation can be performed using the included `Validate-JsonSchema.ps1` 
 
 ### Technical Considerations
 
-1. **JSON File Security**: Configuration files are stored in user-accessible locations (%LOCALAPPDATA%). Production deployments should consider file system ACL restrictions.
+1. **JSON File Security**: Configuration files are stored in user-accessible locations (%LOCALAPPDATA%). Production deployments may need to consider file system ACL restrictions, to comply with any internal security.  Currently a Windows endpoint with proper managed BitLocker encryption of the system (we only support Enterprise edition of Windows -- for this reason) is generally secure; however, we must allow JSON files to be visible to users in our current framework design.
 
 2. **Network Dependency**: While EndpointPilot operates offline, initial configuration synchronization may require network access to UNC paths or HTTPS endpoints.
 
@@ -379,10 +381,9 @@ EndpointPilot v1.0b is provided under the BSD-3-Clause license. While community 
 
 ### Long-Term Objectives
 
-- **Windows Pro Support**: Expand OS compatibility beyond Enterprise editions
+- **Windows Pro Support**: Expand OS compatibility beyond Enterprise editions (likely will involve some measure of security introduced to JSON directive files, or future database support)
 - **PowerShell DSC Integration**: Optional DSC compliance reporting
 - **Cloud Configuration**: Direct integration with cloud-based configuration sources
-- **Mobile Device Extension**: Extend concepts to mobile device management scenarios
 
 ## Security Considerations
 
@@ -390,7 +391,7 @@ EndpointPilot v1.0b is provided under the BSD-3-Clause license. While community 
 
 - **User Context Operation**: All operations execute within user privilege boundaries
 - **File System Security**: Configuration files inherit user profile ACLs
-- **Network Communication**: Optional HTTPS support for configuration retrieval
+- **Network Communication**: Optional HTTPS support for configuration retrieval (coming in 1.1)
 - **Script Signing**: Prepared for code signing in production environments
 
 ### Future Security Enhancements
@@ -424,16 +425,29 @@ EndpointPilot v1.0b is provided under the BSD-3-Clause license. While community 
 
 ---
 
+## License and Legal
+
+EndpointPilot v1.0b is released under the BSD-3-Clause License. See the LICENSE file in the repository for complete terms and conditions.
+
+## Acknowledgments
+
+This release represents significant community feedback and testing from early adopters in enterprise environments. Special thanks to the PowerShell community for best practices guidance and the Microsoft Intune team for deployment pattern recommendations.
+
+---
+
 ## Version Information
 
 **Version**: 1.0b  
-**Build Date**: July 27, 2025  
+**Build Date**: September 01, 2025  
 **Git Commit**: Latest commit hash at release time  
 **License**: BSD-3-Clause  
 **Supported Platforms**: Windows 10/11 Enterprise (x64, ARM64)
 
 ---
 
-**Important Notice**: This is a beta release intended for testing and evaluation purposes. While EndpointPilot v1.0b includes comprehensive functionality, it should not be deployed to production environments without thorough testing and validation in your specific environment.
+**Important Notice**: This is a beta release intended for testing and evaluation purposes in non-production environments. While stableand functional, we recommend thorough testing before deploying EndpointPilot v1.0b to production endpoints. Please report any issues via the GitHub repository issue tracker.
 
 For the latest updates, documentation, and support resources, visit the official EndpointPilot repository at [https://github.com/J-DubApps/EndpointPilot](https://github.com/J-DubApps/EndpointPilot).
+
+
+**Next Release Target**: System Agent implementation (Q4 2025)
