@@ -52,10 +52,13 @@ DRIVE-OPS.json.bak
 !JsonEditorTool/bin/win-arm64/*.dll
 !JsonEditorTool/bin/win-arm64/*.exe
 *.cache
-claude.md
+CLAUDE.md
+GEMINI.md
 claude-last-session.md
 claude-last-session*.md
-claude-log-review.md
+gemini-last-session.md
+gemini-last-session*.md
+gemini-log-review.md
 roocode-last-session.md
 roocode-last-session*.md
 Switch-DevContainer.ps1
