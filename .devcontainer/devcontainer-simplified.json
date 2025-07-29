@@ -1,0 +1,65 @@
+{
+    "name": "EndpointPilot Dev (Simplified)",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "app",
+    "workspaceFolder": "/workspace",
+    
+    // Use a simplified build to avoid QEMU issues
+    "build": {
+        "dockerfile": "linux/Dockerfile.simplified",
+        "context": ".."
+    },
+
+    // Features to add to the dev container
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {
+            "moby": true,
+            "installDockerBuildx": true,
+            "version": "latest"
+        },
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/devcontainers/features/azure-cli:1": {}
+    },
+
+    // Install PowerShell modules after container creation
+    "postCreateCommand": "/usr/local/bin/install-ps-modules.sh",
+    
+    // VS Code extensions
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.powershell",
+                "ms-azuretools.vscode-docker",
+                "github.vscode-pull-request-github",
+                "ms-vscode.azure-account",
+                "redhat.vscode-yaml",
+                "ms-vscode-remote.remote-containers"
+            ],
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "pwsh",
+                "terminal.integrated.profiles.linux": {
+                    "pwsh": {
+                        "path": "pwsh",
+                        "icon": "terminal-powershell"
+                    }
+                },
+                "powershell.powerShellAdditionalExePaths": {
+                    "PowerShell": "/usr/bin/pwsh"
+                }
+            }
+        }
+    },
+
+    // Forward ports
+    "forwardPorts": [],
+
+    // Environment variables
+    "remoteEnv": {
+        "TZ": "UTC",
+        "POWERSHELL_TELEMETRY_OPTOUT": "1",
+        "DOTNET_CLI_TELEMETRY_OPTOUT": "1"
+    },
+
+    // User configuration
+    "remoteUser": "vscode"
+}
