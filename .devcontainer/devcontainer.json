@@ -1,5 +1,5 @@
 {
-  "name": "EndpointPilot Dev Container",
+  "name": "EndpointPilot Dev Container - ARM64 Native",
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspace",

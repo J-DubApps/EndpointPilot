@@ -6,12 +6,8 @@ services:
       context: ./linux
       dockerfile: Dockerfile
       args:
-        VARIANT: "7.4-ubuntu-22.04"
+        VARIANT: "8.0-bookworm-slim-arm64v8"
         INSTALL_NODE: "false"
-        # Explicitly set platform args for cross-platform compatibility
-        BUILDPLATFORM: "linux/arm64"
-        TARGETPLATFORM: "linux/arm64"
-    platform: linux/arm64
     
     volumes:
       - ..:/workspace:cached
