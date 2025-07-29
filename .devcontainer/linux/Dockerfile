@@ -45,27 +45,9 @@ RUN groupadd --gid $USER_GID $USERNAME \
 # Create workspace directory
 RUN mkdir -p /workspace && chown $USERNAME:$USERNAME /workspace
 
-# ARM64-compatible PowerShell module installation
-# Install modules individually with error handling and retries
-RUN pwsh -NoProfile -Command " \
-    Set-PSRepository PSGallery -InstallationPolicy Trusted; \
-    \$ProgressPreference = 'SilentlyContinue'; \
-    try { \
-        Write-Host 'Installing PSScriptAnalyzer...'; \
-        Install-Module -Name PSScriptAnalyzer -Scope AllUsers -Force -ErrorAction Stop; \
-        Write-Host 'Installing Pester...'; \
-        Install-Module -Name Pester -RequiredVersion 5.5.0 -Scope AllUsers -Force -ErrorAction Stop; \
-        Write-Host 'Installing PlatyPS...'; \
-        Install-Module -Name PlatyPS -Scope AllUsers -Force -ErrorAction Stop; \
-        Write-Host 'Installing InvokeBuild...'; \
-        Install-Module -Name InvokeBuild -Scope AllUsers -Force -ErrorAction Stop; \
-        Write-Host 'Installing ConsoleGuiTools...'; \
-        Install-Module -Name Microsoft.PowerShell.ConsoleGuiTools -Scope AllUsers -Force -ErrorAction Stop; \
-        Write-Host 'All modules installed successfully'; \
-    } catch { \
-        Write-Warning \"Module installation failed: \$_\"; \
-        Write-Host 'Continuing with basic PowerShell setup...'; \
-    }"
+# Skip PowerShell module installation during build to avoid QEMU segfault
+# Modules will be installed via postCreateCommand instead
+RUN echo "PowerShell modules will be installed after container creation"
 
 # Set the default shell to pwsh for the user
 RUN chsh -s /usr/bin/pwsh $USERNAME

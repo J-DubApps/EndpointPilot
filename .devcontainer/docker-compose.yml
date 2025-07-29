@@ -11,6 +11,7 @@ services:
         # Explicitly set platform args for cross-platform compatibility
         BUILDPLATFORM: "linux/arm64"
         TARGETPLATFORM: "linux/arm64"
+    platform: linux/arm64
     
     volumes:
       - ..:/workspace:cached

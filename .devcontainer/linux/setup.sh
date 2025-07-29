@@ -18,15 +18,37 @@ mkdir -p .devcontainer/linux/tests/results
 mkdir -p docs/linux
 mkdir -p .build/reports/linux
 
-# Install Linux-specific PowerShell modules
-echo -e "${BLUE}📦 Installing Linux-compatible PowerShell modules...${NC}"
+# Install PowerShell modules (moved from Dockerfile to avoid QEMU segfault)
+echo -e "${BLUE}📦 Installing PowerShell modules...${NC}"
 pwsh -NoProfile -Command "
-    # Linux-specific testing tools
-    Install-Module -Name PSUnixUtils -Force -Scope CurrentUser -ErrorAction SilentlyContinue
-    Install-Module -Name PSLogging -Force -Scope CurrentUser
+    Set-PSRepository PSGallery -InstallationPolicy Trusted
+    \$ProgressPreference = 'SilentlyContinue'
     
-    # Cross-platform compatibility layer
-    Install-Module -Name Microsoft.PowerShell.UnixCompleters -Force -Scope CurrentUser -ErrorAction SilentlyContinue
+    # Core modules that were previously in the Dockerfile
+    try {
+        Write-Host 'Installing PSScriptAnalyzer...'
+        Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force
+        Write-Host 'Installing Pester...'
+        Install-Module -Name Pester -RequiredVersion 5.5.0 -Scope CurrentUser -Force
+        Write-Host 'Installing PlatyPS...'
+        Install-Module -Name PlatyPS -Scope CurrentUser -Force
+        Write-Host 'Installing InvokeBuild...'
+        Install-Module -Name InvokeBuild -Scope CurrentUser -Force
+        Write-Host 'Installing ConsoleGuiTools...'
+        Install-Module -Name Microsoft.PowerShell.ConsoleGuiTools -Scope CurrentUser -Force -ErrorAction SilentlyContinue
+        
+        # Linux-specific testing tools
+        Install-Module -Name PSUnixUtils -Force -Scope CurrentUser -ErrorAction SilentlyContinue
+        Install-Module -Name PSLogging -Force -Scope CurrentUser
+        
+        # Cross-platform compatibility layer
+        Install-Module -Name Microsoft.PowerShell.UnixCompleters -Force -Scope CurrentUser -ErrorAction SilentlyContinue
+        
+        Write-Host 'All modules installed successfully' -ForegroundColor Green
+    } catch {
+        Write-Warning \"Module installation failed: \$_\"
+        Write-Host 'Some modules may not be available' -ForegroundColor Yellow
+    }
 "
 
 # Create Linux-specific mock module
