@@ -40,3 +40,9 @@ See [**here**](https://github.com/J-DubApps/EndpointPilot?tab=BSD-3-Clause-1-ov-
 <p align="center">
     <img src="https://github.com/J-DubApps/EndpointPilot/blob/main/images/EndpointPilot.png" width="400" height="600" />
 </p>
+
+### FAQ
+
+#### 1. Do you plan to offer some kind of integration for MECM, or is this only going to target AD, Intune, or NinjaOne environments?
+
+#### A: **No MECM add-in or integration capabilities are planned**.  Microsoft Endpoint Config Mgr, while a fantastic solution, is approaching 30 years of age.  I have managed several MECM environments back when it was called "SMS" and, later, "SCCM" -- and it's my position that: if you have an MECM environment, you already have an AD.local domain of some sort, and *that* is where EndpointPilot should be deployed if you aren't using the other **EP**-supported endpoint mgmt tools.  MECM is a technology in its *descendency*, while Intune is *ascendant* and where Microsoft is wanting everyone running to MECM to eventually migrate to.
