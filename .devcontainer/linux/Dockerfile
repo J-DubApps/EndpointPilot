@@ -1,32 +1,29 @@
-# ARM64-native .NET SDK with PowerShell
-FROM mcr.microsoft.com/dotnet/sdk:8.0-bookworm-slim-arm64v8
+# ARM64-native .NET SDK with PowerShell on Alpine Linux
+FROM --platform=linux/arm64 mcr.microsoft.com/dotnet/sdk:8.0-alpine3.21-arm64v8
 
-# Avoid warnings by switching to noninteractive
-ENV DEBIAN_FRONTEND=noninteractive
-
-# Install additional OS packages
-RUN apt-get update && apt-get -y install --no-install-recommends \
+# Install additional OS packages using Alpine's apk
+RUN apk update && apk add --no-cache \
     git \
     curl \
     ca-certificates \
     openssh-client \
     jq \
     make \
-    build-essential \
+    build-base \
     python3 \
-    python3-pip \
+    py3-pip \
     sudo \
-    locales \
     vim \
     nano \
-    && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+    bash \
+    shadow \
+    musl-locales \
+    musl-locales-lang
 
-# Generate locale
-RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
-    locale-gen
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
+# Set locale (Alpine handles this differently)
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
 
 # Create non-root user
 ARG USERNAME=vscode
@@ -76,7 +73,7 @@ WORKDIR /workspace
 # Set PowerShell as the default shell
 SHELL ["pwsh", "-NoProfile", "-Command"]
 
-ENV DEBIAN_FRONTEND=dialog
+# Alpine doesn't use DEBIAN_FRONTEND
 
 # Verify architecture
 RUN pwsh -Command "Write-Host 'Architecture:' ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)"
