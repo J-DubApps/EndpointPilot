@@ -14,6 +14,12 @@
 
 **EndpointPilot** (under development summer 2025) **is a PowerShell-based autonoumous Windows PC Endpoint** ***Configuration Management*** **solution for PCs operating in an Active Directory**, **Intune**, **or a NinjaOne-managed context**.  It uses JSON files to define operations like file, registry, and system settings management.  
 
+<br />
+<p align="center">
+    <img src="https://github.com/J-DubApps/EndpointPilot/blob/main/images/EndpointPilot.png" width="100" height="300" />
+</p>
+
+
 At first EndpointPilot will only offer Config Mgmt of user profiles on managed Windows Endpoints during its closed Alpha testing.  EndpointPilot is able to manage settings in either *on-prem* ***Office*** or ***Remote-Work scenarios***. It functions a lot like a logon script, but runs locally via Agent (or Scheduled Task, in some configurations).  EndpointPilot's PowerShell code is directed by ***x-OPS.JSON*** directive files, which tells EP's scripts what to do (each line within each **x-OPS.JSON*** govern the actions each config sript undertakes).  A Json Editor GUI Tool is included for managing ***x-OPS.JSON*** JSON directive file.  **Think of *EP* as an alternative to [GPO/GPP](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-policy/group-policy-processing) or [Intune Policy CSP](https://learn.microsoft.com/en-us/windows/client-management/mdm/policy-configuration-service-provider)**.  Because **EP** operates *independent of* a Windows PC Endpoint's AD, Intune, or NinjaOne status -- so it can be a great config-mgmt add-on for use with those environments.
 
 ### EndpointPilot addresses the following use-case scenarios:
@@ -35,7 +41,7 @@ EndpointPilot can be set to execute as a Windows Scheduled Task at configured "r
 
 ### Pre-Requisites:
 
-Until we finish a System Agent solution for EndpointPilot, your users need to be granted rights to at *least* **create** Scheduled Tasks on their Windows PC Endpoints (this right is granted in GPO or Intune CSP).
+Until we finish a System Agent solution for EndpointPilot, your users need to be granted rights to at *least* **create** Scheduled Tasks on their Windows PC Endpoints (this right is not available by default, and ussually only granted in GPO or Intune CSP -- or registry setting).
 
 
 ### Licensing: 
