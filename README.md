@@ -1,3 +1,6 @@
+---
+updated: 2025-08-19T15:58
+---
 # EndpointPilot
 
 ## _"Better than a Logon Script..."_
