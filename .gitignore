@@ -65,6 +65,9 @@ roocode-last-session*.md
 # claude-memory
 CLAUDE-*
 
+#AI/LLM-Planning-Temp
+LLM-Planning-Temp/*
+
 # Ignore json.bak files
 REG-OPS.json.bak
 FILE-OPS.json.bak
@@ -123,3 +126,4 @@ MANIFEST
 
 # CI/CD Files to Ignore
 Switch-DevContainer.ps1
+
