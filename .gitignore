@@ -68,6 +68,7 @@ CLAUDE-*
 
 #AI/LLM-Planning-Temp
 ai_docs/*
+/docs/ai_context/*
 LLM-Planning-Temp/*
 
 # Ignore json.bak files
