@@ -67,6 +67,7 @@ roocode-last-session*.md
 CLAUDE-*
 
 #AI/LLM-Planning-Temp
+ai_docs/*
 LLM-Planning-Temp/*
 
 # Ignore json.bak files
