@@ -18,7 +18,7 @@
 *   **Execution Flow:**
     ```mermaid
     graph LR
-        A[Scheduled Task / GPO] --> B(ENDPOINT-PILOT.PS1);
+        A[EndpointPilot System Agent] --> B(ENDPOINT-PILOT.PS1);
         B --> C(MAIN.PS1);
         C -- Reads --> D(CONFIG.json);
         C -- Imports --> E(MGMT-Functions.psm1);
