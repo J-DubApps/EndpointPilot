@@ -4,15 +4,26 @@
 **/.DS_Store
 **/._.DS_Store
 
+# Environments
+.env
+.envrc
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# mkdocs documentation
+/site
+
 # Ignore all .dll and .exe files globally
 *.dll
 *.exe
 *.vsidx
 
-
 # C extensions
 *.so
-
 
 # IDE 
 # Visual Studio Code
@@ -28,30 +39,37 @@
 # Built Visual Studio Code Extensions
 *.vsix
 
+# Cursor
+#  Cursor is an AI-powered code editor. `.cursorignore` specifies files/directories to
+#  exclude from AI features like autocomplete and code analysis. Recommended for sensitive data
+#  refer to https://docs.cursor.com/context/ignore-files
+.cursorignore
+.cursorindexingignore
+
 # Coding CLI files to ignnore
-.claude
-/.claude
+.claude/*
+
 .superclaude-metadata.json
 *.cache
 AGENT.md
 AGENTS.md
 CLAUDE.md
 GEMINI.md
-claude-last-session.md
 claude-last-session*.md
-gemini-last-session.md
+codex-last-session*.md
+codex-log-review.md
 gemini-last-session*.md
 gemini-log-review.md
-roocode-last-session.md
 roocode-last-session*.md
 
+# claude-memory
+CLAUDE-*
 
 # Ignore json.bak files
 REG-OPS.json.bak
 FILE-OPS.json.bak
 CONFIG.json.bak
 DRIVE-OPS.json.bak
-
 
 # JsonEditorTool Folders to ignore
 /JsonEditorTool/.vs/
@@ -64,6 +82,7 @@ DRIVE-OPS.json.bak
 /JsonEditorTool/EndpointPilotJsonEditor.Core/bin/Release/
 /JsonEditorTool/EndpointPilotJsonEditor.App/obj/Release/
 /JsonEditorTool/EndpointPilotJsonEditor.Core/obj/Release/
+
 # Allow .dll and .exe files in JsonEditorTool/publish folders
 !JsonEditorTool/publish/*.dll
 !JsonEditorTool/publish/*.exe
@@ -101,7 +120,6 @@ sdist/
 var/
 .installed.cfg
 MANIFEST
-
 
 # CI/CD Files to Ignore
 Switch-DevContainer.ps1
