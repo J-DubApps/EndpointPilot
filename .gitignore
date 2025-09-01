@@ -1,21 +1,58 @@
+# macOS
 .DS_Store
 ._.DS_Store
 **/.DS_Store
 **/._.DS_Store
-/.vscode
-.vscode
+
+# Ignore all .dll and .exe files globally
+*.dll
+*.exe
+*.vsidx
+
+
+# C extensions
+*.so
+
+
+# IDE 
+# Visual Studio Code
+.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+!*.code-workspace
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+# Coding CLI files to ignnore
 .claude
 /.claude
 .superclaude-metadata.json
+*.cache
+AGENT.md
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+claude-last-session.md
+claude-last-session*.md
+gemini-last-session.md
+gemini-last-session*.md
+gemini-log-review.md
+roocode-last-session.md
+roocode-last-session*.md
+
+
 # Ignore json.bak files
 REG-OPS.json.bak
 FILE-OPS.json.bak
 CONFIG.json.bak
 DRIVE-OPS.json.bak
-# Ignore all .dll and .exe files globally
-*.dll
-*.exe
-*.vsidx
+
+
 # JsonEditorTool Folders to ignore
 /JsonEditorTool/.vs/
 /JsonEditorTool/.vs
@@ -52,14 +89,19 @@ DRIVE-OPS.json.bak
 !JsonEditorTool/bin/win-x64/*.exe
 !JsonEditorTool/bin/win-arm64/*.dll
 !JsonEditorTool/bin/win-arm64/*.exe
-*.cache
-CLAUDE.md
-GEMINI.md
-claude-last-session.md
-claude-last-session*.md
-gemini-last-session.md
-gemini-last-session*.md
-gemini-log-review.md
-roocode-last-session.md
-roocode-last-session*.md
+
+# Distribution / packaging
+build/
+dist/
+downloads/
+lib/
+lib64/
+parts/
+sdist/
+var/
+.installed.cfg
+MANIFEST
+
+
+# CI/CD Files to Ignore
 Switch-DevContainer.ps1
