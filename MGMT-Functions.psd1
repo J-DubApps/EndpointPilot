@@ -36,7 +36,8 @@
         'Get-RegistryValue',
         'Get-TextWithin', 
         'Get-DsRegStatusInfo', 
-        'Get-WorkstationUsageStatus', 
+        'Get-WorkstationUsageStatus',
+        'Test-RequiresElevation', 
         
         # Network/Performance Functions
         'Measure-DownloadSpeed', 

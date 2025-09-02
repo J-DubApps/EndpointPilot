@@ -249,6 +249,22 @@ function Get-DsRegStatusInfo {
 		$DsRegStatusInfo
 	}
 }
+
+# Test if an operation requires elevation
+function Test-RequiresElevation {
+    param($operation)
+    
+    # Check explicit admin flag
+    if ($operation.requiresAdmin -eq $true) { return $true }
+    
+    # Auto-detect based on operation type
+    if ($operation.path -like "HKLM*") { return $true }
+    if ($operation.destinationPath -like "$env:ProgramFiles*") { return $true }
+    if ($operation.destinationPath -like "$env:SystemRoot*") { return $true }
+    
+    return $false
+}
+
 # PowerShell function to measure download speed
 function Measure-DownloadSpeed {
     param (
