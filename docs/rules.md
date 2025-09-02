@@ -190,11 +190,11 @@ EndpointPilot is a PowerShell-based Windows endpoint configuration solution desi
 
 ### Schema Requirements
 1. **All JSON files must have corresponding schemas**
-   - CONFIG.json ’ CONFIG.schema.json
-   - FILE-OPS.json ’ FILE-OPS.schema.json
-   - REG-OPS.json ’ REG-OPS.schema.json
-   - DRIVE-OPS.json ’ DRIVE-OPS.schema.json
-   - SYSTEM-OPS.json ’ SYSTEM-OPS.schema.json
+   - CONFIG.json ï¿½ CONFIG.schema.json
+   - FILE-OPS.json ï¿½ FILE-OPS.schema.json
+   - REG-OPS.json ï¿½ REG-OPS.schema.json
+   - DRIVE-OPS.json ï¿½ DRIVE-OPS.schema.json
+   - SYSTEM-OPS.json ï¿½ SYSTEM-OPS.schema.json
 
 2. **Schema Validation**
    - All JSON files must validate against their schemas
@@ -410,7 +410,8 @@ EndpointPilot is a PowerShell-based Windows endpoint configuration solution desi
 
 ### Development Environment Considerations
 1. **macOS Development**
-   - Primary development environment is macOS
+   - Primary PS1 and JSON development on macOS using VS Code
+   - Primary Windows app development on Windows 11 using Visual Studio
    - Use VS Code with PowerShell extension
    - Git operations performed from macOS
 
