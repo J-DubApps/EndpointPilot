@@ -65,6 +65,7 @@ $json | ForEach-Object {
     $existCheckLocation = $_.existCheckLocation
     $existCheck = $_.existCheck
     $deleteFile = $_.deleteFile
+    $requiresAdmin = $_.requiresAdmin
 
     # Construct full file path for each file
     if ($srcfilename -and $sourcePath) {
@@ -76,7 +77,7 @@ $json | ForEach-Object {
 
     try {
         # Delete file if specified in the JSON file
-        if (-not $srcfilename -and $deleteFile -and $deleteFile -eq $true) {
+        if (-not $srcfilename -and $deleteFile -and $deleteFile -eq $true -and $requiresAdmin -eq $true) {
             Remove-Item -Path $destinationFile -Force -ErrorAction Ignore
             return
         }
@@ -84,6 +85,8 @@ $json | ForEach-Object {
     catch {
         WriteLog "ERROR processing file operation (delete check): $_" # Log full exception details
     }
+
+If ($requiresAdmin -eq $true) {
 
     # Perform copy actions specified in the JSON file, for each file
     # Observe the '$copyonce' and '$overwrite' boolean actions
@@ -141,4 +144,5 @@ $json | ForEach-Object {
     catch {
         WriteLog "ERROR processing file operation (copy): $_" # Log full exception details
     }
+  }
 }
