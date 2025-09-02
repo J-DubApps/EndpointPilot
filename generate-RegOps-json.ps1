@@ -20,6 +20,8 @@ $jsonData = @(
         delete          = $false
         targeting_type  = "none"
         target          = "all"
+        requiresAdmin   = $false
+        adminContext    = "auto"
         _comment1       = "This is a registry entry"
         _comment2       = "Secondary Comment"
     },
@@ -33,6 +35,8 @@ $jsonData = @(
         delete          = $false
         targeting_type  = "none"
         target          = "all"
+        requiresAdmin   = $false
+        adminContext    = "auto"
         _comment1       = "This is a registry entry"
         _comment2       = "Secondary Comment"
     },
@@ -46,6 +50,8 @@ $jsonData = @(
         delete          = $false
         targeting_type  = "none"
         target          = "all"
+        requiresAdmin   = $false
+        adminContext    = "auto"
         _comment1       = "This is a registry entry"
         _comment2       = "Secondary Comment"
     }

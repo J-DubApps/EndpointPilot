@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EndpointPilot File Operations",
+  "description": "Schema for EndpointPilot file operations",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": ["integer", "string"],
+        "description": "Unique identifier for the file operation"
+      },
+      "srcfilename": {
+        "type": "string",
+        "description": "Source filename"
+      },
+      "dstfilename": {
+        "type": "string",
+        "description": "Destination filename"
+      },
+      "sourcePath": {
+        "type": "string",
+        "description": "Source directory path"
+      },
+      "destinationPath": {
+        "type": "string",
+        "description": "Destination directory path"
+      },
+      "overwrite": {
+        "type": "boolean",
+        "description": "Whether to overwrite existing files"
+      },
+      "copyonce": {
+        "type": "boolean",
+        "description": "Whether to copy the file only once"
+      },
+      "existCheckLocation": {
+        "type": "string",
+        "description": "Location to check for existence"
+      },
+      "existCheck": {
+        "type": ["boolean", "string", "null"],
+        "description": "Whether to check if file exists"
+      },
+      "deleteFile": {
+        "type": "boolean",
+        "description": "Whether to delete the file"
+      },
+      "targeting_type": {
+        "type": "string",
+        "enum": ["none", "group", "computer", "user"],
+        "description": "Type of targeting to apply"
+      },
+      "target": {
+        "type": "string",
+        "description": "Target for the operation"
+      },
+      "requiresAdmin": {
+        "type": "boolean",
+        "default": false,
+        "description": "Whether this operation requires administrative/SYSTEM privileges"
+      },
+      "adminContext": {
+        "type": "string",
+        "enum": ["user", "system", "auto"],
+        "default": "auto",
+        "description": "Execution context when admin is required"
+      },
+      "_comment1": {
+        "type": "string",
+        "description": "Comment field 1"
+      },
+      "_comment2": {
+        "type": "string",
+        "description": "Comment field 2"
+      }
+    },
+    "required": ["id", "targeting_type", "target"],
+    "additionalProperties": false,
+    "allOf": [
+      {
+        "if": {
+          "properties": {
+            "deleteFile": { "enum": [true] }
+          }
+        },
+        "then": {
+          "required": ["destinationPath", "dstfilename"]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "deleteFile": { "enum": [false, null] }
+          }
+        },
+        "then": {
+          "required": ["srcfilename", "dstfilename", "sourcePath", "destinationPath"]
+        }
+      }
+    ]
+  }
+}

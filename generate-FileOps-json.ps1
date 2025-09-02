@@ -28,6 +28,8 @@ $jsonData = @(
         deleteFile          = $false
         targeting_type      = "none"
         target              = "all"
+        requiresAdmin       = $false
+        adminContext        = "auto"
         _comment1           = "This is File Copy"
         _comment2           = "If existCheckLocation *and* existCheck are not blank, then existCheck must either be yes (check if exist) or no (check if *not* exist)"
     },
@@ -44,6 +46,8 @@ $jsonData = @(
         deleteFile          = $false
         targeting_type      = "none"
         target              = "all"
+        requiresAdmin       = $false
+        adminContext        = "auto"
         _comment1           = "This is a CopyOnce Example, with no Existence Check performed. File will copy once."
         _comment2           = ""
     },
@@ -60,6 +64,8 @@ $jsonData = @(
         deleteFile          = $false
         targeting_type      = "none"
         target              = "all"
+        requiresAdmin       = $false
+        adminContext        = "auto"
         _comment1           = "place comment here"
         _comment2           = ""
     },
@@ -76,6 +82,8 @@ $jsonData = @(
         deleteFile          = $true
         targeting_type      = "none"
         target              = "all"
+        requiresAdmin       = $false
+        adminContext        = "auto"
         _comment1           = "place comment here"
         _comment2           = "place comment here"
     }
