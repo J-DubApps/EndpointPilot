@@ -9,6 +9,8 @@
     "id": "001",
     "targeting_type": "none",
     "target": "all",
+    "requiresAdmin": false,
+    "adminContext": "auto",
     "_comment1": "This is a registry entry",
     "_comment2": "Secondary Comment"
   },
@@ -22,6 +24,8 @@
     "id": "002",
     "targeting_type": "none",
     "target": "all",
+    "requiresAdmin": false,
+    "adminContext": "auto",
     "_comment1": "This is a registry entry",
     "_comment2": "Secondary Comment"
   },
@@ -35,6 +39,8 @@
     "id": "003",
     "targeting_type": "none",
     "target": "all",
+    "requiresAdmin": false,
+    "adminContext": "auto",
     "_comment1": "This is a registry entry",
     "_comment2": "Secondary Comment"
   }

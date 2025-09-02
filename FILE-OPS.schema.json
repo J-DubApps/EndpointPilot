@@ -55,6 +55,17 @@
         "type": "string",
         "description": "Target for the operation"
       },
+      "requiresAdmin": {
+        "type": "boolean",
+        "default": false,
+        "description": "Whether this operation requires administrative/SYSTEM privileges"
+      },
+      "adminContext": {
+        "type": "string",
+        "enum": ["user", "system", "auto"],
+        "default": "auto",
+        "description": "Execution context when admin is required"
+      },
       "_comment1": {
         "type": "string",
         "description": "Comment field 1"

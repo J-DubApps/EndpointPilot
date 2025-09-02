@@ -12,6 +12,8 @@
     "id": "001",
     "targeting_type": "none",
     "target": "all",
+    "requiresAdmin": false,
+    "adminContext": "auto",
     "_comment1": "This is File Copy",
     "_comment2": "If existCheckLocation *and* existCheck are not blank, then existCheck must either be yes (check if exist) or no (check if *not* exist)"
   },
@@ -28,6 +30,8 @@
     "id": "002",
     "targeting_type": "none",
     "target": "all",
+    "requiresAdmin": false,
+    "adminContext": "auto",
     "_comment1": "This is a CopyOnce Example, with no Existence Check performed.  File will copy once.",
     "_comment2": ""
   },
@@ -44,6 +48,8 @@
     "id": "003",
     "targeting_type": "none",
     "target": "all",
+    "requiresAdmin": false,
+    "adminContext": "auto",
     "_comment1": "place comment here",
     "_comment2": ""
   },
@@ -60,6 +66,8 @@
     "id": "004",
     "targeting_type": "none",
     "target": "all",
+    "requiresAdmin": false,
+    "adminContext": "auto",
     "_comment1": "place comment here",
     "_comment2": "place comment here"
   }
