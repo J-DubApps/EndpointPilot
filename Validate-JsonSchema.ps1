@@ -78,7 +78,9 @@ function Validate-AllJsonFiles {
     $filesToValidate = @(
         @{JsonFile = "CONFIG.json"; SchemaFile = "CONFIG.schema.json"},
         @{JsonFile = "FILE-OPS.json"; SchemaFile = "FILE-OPS.schema.json"},
+        @{JsonFile = "FILE-OPS_Admin.json"; SchemaFile = "FILE-OPS_Admin.schema.json"},
         @{JsonFile = "REG-OPS.json"; SchemaFile = "REG-OPS.schema.json"},
+        @{JsonFile = "REG-OPS_Admin.json"; SchemaFile = "REG-OPS_Admin.schema.json"},
         @{JsonFile = "DRIVE-OPS.json"; SchemaFile = "DRIVE-OPS.schema.json"}
     )
     
