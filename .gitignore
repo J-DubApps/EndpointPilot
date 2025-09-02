@@ -64,6 +64,7 @@ venv.bak/
 
 # Coding CLI files to ignnore
 .claude/*
+.agent-os/*
 
 .superclaude-metadata.json
 *.cache
