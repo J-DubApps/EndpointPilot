@@ -68,6 +68,8 @@ venv.bak/
 
 .superclaude-metadata.json
 *.cache
+copilot-instructions.md
+*.instructions.md
 AGENT.md
 AGENTS.md
 CLAUDE.md
