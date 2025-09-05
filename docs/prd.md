@@ -331,7 +331,7 @@ EndpointPilot solves this by running locally on each endpoint, executing configu
 **Title**: Automatic Configuration Application
 **Description**: As a Windows endpoint, I need to automatically apply configuration changes based on JSON directive files so that system settings remain consistent regardless of network connectivity.
 **Acceptance Criteria**:
-- Scheduled task executes ENDPOINT-PILOT.PS1 every 30 minutes
+- System Agent executes ENDPOINT-PILOT.PS1 every 30 minutes
 - System detects and validates architecture (x86-64 or ARM64)
 - MAIN.PS1 orchestrates loading of all helper modules
 - JSON directive files are validated against schemas before processing
@@ -341,8 +341,9 @@ EndpointPilot solves this by running locally on each endpoint, executing configu
 
 ### US-002: JSON Configuration Management
 **Title**: Configuration File Management
-**Description**: As an IT administrator, I need to create and modify JSON configuration files using a schema-validated interface so that I can manage endpoint configurations without syntax errors.
+**Description**: As an IT administrator, I need to create and modify JSON configuration files using a schema-validated interface so that I can leverage standardized PowerShell Scripts to manage endpoint configurations -- without syntax errors.
 **Acceptance Criteria**:
+
 - JSON Editor Tool loads with tabbed interface for different operation types
 - Real-time schema validation prevents invalid configuration entries
 - Save functionality preserves configurations with backup creation
