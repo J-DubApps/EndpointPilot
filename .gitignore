@@ -89,6 +89,7 @@ CLAUDE-*
 ai_docs/*
 /docs/ai_context/*
 LLM-Planning-Temp/*
+jsonbackup/*
 
 # Ignore json.bak files
 REG-OPS.json.bak
