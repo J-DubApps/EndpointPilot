@@ -1,0 +1,38 @@
+[
+  {
+    "id": "001",
+    "srcfilename": "config.xml",
+    "dstfilename": "config.xml", 
+    "sourcePath": "\\\\server\\share\\configs",
+    "destinationPath": "C:\\ProgramData\\TestApp",
+    "overwrite": true,
+    "copyonce": false,
+    "existCheckLocation": "",
+    "existCheck": false,
+    "deleteFile": false,
+    "targeting_type": "none",
+    "target": "all",
+    "requiresAdmin": true,
+    "adminContext": "system",
+    "_comment1": "Copy system config file",
+    "_comment2": "Requires SYSTEM privileges for ProgramData write"
+  },
+  {
+    "id": "002",
+    "srcfilename": "userconfig.ini",
+    "dstfilename": "userconfig.ini",
+    "sourcePath": "\\\\server\\share\\userconfigs", 
+    "destinationPath": "%USERPROFILE%\\AppData\\Local\\TestApp",
+    "overwrite": false,
+    "copyonce": true,
+    "existCheckLocation": "%USERPROFILE%\\AppData\\Local\\TestApp\\userconfig.ini",
+    "existCheck": true,
+    "deleteFile": false,
+    "targeting_type": "group",
+    "target": "Domain Users",
+    "requiresAdmin": false,
+    "adminContext": "auto",
+    "_comment1": "Copy user-specific config",
+    "_comment2": "User context operation"
+  }
+]

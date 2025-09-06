@@ -24,6 +24,8 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         private string _target;
         private string _comment1;
         private string _comment2;
+        private bool _requiresAdmin;
+        private string _adminContext;
 
         /// <summary>
         /// Gets or sets the registry value name
@@ -257,6 +259,47 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         public string[] TargetingTypes => new[] { "none", "group", "computer", "user" };
 
         /// <summary>
+        /// Gets or sets whether this operation requires administrative privileges
+        /// </summary>
+        public bool RequiresAdmin
+        {
+            get => _requiresAdmin;
+            set
+            {
+                if (SetProperty(ref _requiresAdmin, value) && SelectedOperation != null)
+                {
+                    SelectedOperation.RequiresAdmin = value;
+                    OnPropertyChanged(nameof(SelectedOperation));
+                    IsModified = true;
+                    ValidateAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the admin context when admin is required
+        /// </summary>
+        public string AdminContext
+        {
+            get => _adminContext;
+            set
+            {
+                if (SetProperty(ref _adminContext, value) && SelectedOperation != null)
+                {
+                    SelectedOperation.AdminContext = value;
+                    OnPropertyChanged(nameof(SelectedOperation));
+                    IsModified = true;
+                    ValidateAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the available admin context options
+        /// </summary>
+        public string[] AdminContexts => RegOperation.AvailableAdminContexts;
+
+        /// <summary>
         /// Initializes a new instance of the RegOpsEditorViewModel class
         /// </summary>
         /// <param name="operations">The registry operations</param>
@@ -295,6 +338,8 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 _target = SelectedOperation.Target;
                 _comment1 = SelectedOperation.Comment1;
                 _comment2 = SelectedOperation.Comment2;
+                _requiresAdmin = SelectedOperation.RequiresAdmin;
+                _adminContext = SelectedOperation.AdminContext;
 
                 base.OnPropertyChanged(nameof(Name));
                 base.OnPropertyChanged(nameof(Path));
@@ -308,6 +353,8 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 base.OnPropertyChanged(nameof(Target));
                 base.OnPropertyChanged(nameof(Comment1));
                 base.OnPropertyChanged(nameof(Comment2));
+                base.OnPropertyChanged(nameof(RequiresAdmin));
+                base.OnPropertyChanged(nameof(AdminContext));
             }
         }
 
@@ -327,6 +374,8 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 WriteOnce = "false",
                 TargetingType = "none",
                 Target = "all",
+                RequiresAdmin = false,
+                AdminContext = "auto",
                 Comment1 = "New registry operation"
             };
 
@@ -386,6 +435,8 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                     Delete = SelectedOperation.Delete,
                     TargetingType = SelectedOperation.TargetingType,
                     Target = SelectedOperation.Target,
+                    RequiresAdmin = SelectedOperation.RequiresAdmin,
+                    AdminContext = SelectedOperation.AdminContext,
                     Comment1 = SelectedOperation.Comment1,
                     Comment2 = SelectedOperation.Comment2
                 };

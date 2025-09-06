@@ -45,6 +45,8 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 
                 <!-- Basic Information Section -->
@@ -103,32 +105,46 @@
                 <CheckBox Grid.Row="9" Grid.Column="1" IsChecked="{Binding WriteOnceAsBool}" Style="{StaticResource CheckBoxStyle}" 
                           IsEnabled="{Binding Delete, Converter={StaticResource BoolToInvertedBoolConverter}}" />
                 
-                <!-- Targeting Section -->
+                <!-- Elevation Section -->
                 <TextBlock Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" 
+                           Text="Elevation" Style="{StaticResource SectionHeaderStyle}" />
+                
+                <!-- Requires Admin -->
+                <TextBlock Grid.Row="11" Grid.Column="0" Text="Requires Admin:" Style="{StaticResource FieldLabelStyle}" />
+                <CheckBox Grid.Row="11" Grid.Column="1" IsChecked="{Binding RequiresAdmin}" Style="{StaticResource CheckBoxStyle}" />
+                
+                <!-- Admin Context -->
+                <TextBlock Grid.Row="12" Grid.Column="0" Text="Admin Context:" Style="{StaticResource FieldLabelStyle}" />
+                <ComboBox Grid.Row="12" Grid.Column="1" ItemsSource="{Binding AdminContexts}" 
+                          SelectedItem="{Binding AdminContext}" Style="{StaticResource ComboBoxStyle}" 
+                          IsEnabled="{Binding RequiresAdmin}" />
+                
+                <!-- Targeting Section -->
+                <TextBlock Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2" 
                            Text="Targeting" Style="{StaticResource SectionHeaderStyle}" />
                 
                 <!-- Targeting Type -->
-                <TextBlock Grid.Row="11" Grid.Column="0" Text="Targeting Type:" Style="{StaticResource FieldLabelStyle}" />
-                <ComboBox Grid.Row="11" Grid.Column="1" ItemsSource="{Binding TargetingTypes}" 
+                <TextBlock Grid.Row="14" Grid.Column="0" Text="Targeting Type:" Style="{StaticResource FieldLabelStyle}" />
+                <ComboBox Grid.Row="14" Grid.Column="1" ItemsSource="{Binding TargetingTypes}" 
                           SelectedItem="{Binding TargetingType}" Style="{StaticResource ComboBoxStyle}" />
                 
                 <!-- Target -->
-                <TextBlock Grid.Row="12" Grid.Column="0" Text="Target:" Style="{StaticResource FieldLabelStyle}" />
-                <TextBox Grid.Row="12" Grid.Column="1" Text="{Binding Target, UpdateSourceTrigger=PropertyChanged}" 
+                <TextBlock Grid.Row="15" Grid.Column="0" Text="Target:" Style="{StaticResource FieldLabelStyle}" />
+                <TextBox Grid.Row="15" Grid.Column="1" Text="{Binding Target, UpdateSourceTrigger=PropertyChanged}" 
                          Style="{StaticResource FieldValueStyle}" />
                 
                 <!-- Comments Section -->
-                <TextBlock Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2" 
+                <TextBlock Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="2" 
                            Text="Comments" Style="{StaticResource SectionHeaderStyle}" />
                 
                 <!-- Comment 1 -->
-                <TextBlock Grid.Row="14" Grid.Column="0" Text="Comment 1:" Style="{StaticResource FieldLabelStyle}" />
-                <TextBox Grid.Row="14" Grid.Column="1" Text="{Binding Comment1, UpdateSourceTrigger=PropertyChanged}" 
+                <TextBlock Grid.Row="17" Grid.Column="0" Text="Comment 1:" Style="{StaticResource FieldLabelStyle}" />
+                <TextBox Grid.Row="17" Grid.Column="1" Text="{Binding Comment1, UpdateSourceTrigger=PropertyChanged}" 
                          Style="{StaticResource FieldValueStyle}" />
                 
                 <!-- Comment 2 -->
-                <TextBlock Grid.Row="15" Grid.Column="0" Text="Comment 2:" Style="{StaticResource FieldLabelStyle}" />
-                <TextBox Grid.Row="15" Grid.Column="1" Text="{Binding Comment2, UpdateSourceTrigger=PropertyChanged}" 
+                <TextBlock Grid.Row="18" Grid.Column="0" Text="Comment 2:" Style="{StaticResource FieldLabelStyle}" />
+                <TextBox Grid.Row="18" Grid.Column="1" Text="{Binding Comment2, UpdateSourceTrigger=PropertyChanged}" 
                          Style="{StaticResource FieldValueStyle}" />
             </Grid>
         </local:OperationEditorViewBase.Details>

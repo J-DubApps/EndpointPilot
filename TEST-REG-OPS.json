@@ -1,0 +1,32 @@
+[
+  {
+    "id": "001",
+    "name": "TestValue",
+    "path": "HKEY_LOCAL_MACHINE\\SOFTWARE\\TestApp",
+    "value": "TestData",
+    "regtype": "string",
+    "write_once": "false",
+    "delete": false,
+    "targeting_type": "none",
+    "target": "all",
+    "requiresAdmin": true,
+    "adminContext": "system",
+    "_comment1": "Test registry operation with elevation",
+    "_comment2": "This requires SYSTEM context"
+  },
+  {
+    "id": "002", 
+    "name": "UserValue",
+    "path": "HKEY_CURRENT_USER\\Software\\TestApp",
+    "value": "1",
+    "regtype": "dword",
+    "write_once": "false",
+    "delete": false,
+    "targeting_type": "group",
+    "target": "Administrators",
+    "requiresAdmin": false,
+    "adminContext": "auto",
+    "_comment1": "User-level registry operation",
+    "_comment2": "No elevation required"
+  }
+]

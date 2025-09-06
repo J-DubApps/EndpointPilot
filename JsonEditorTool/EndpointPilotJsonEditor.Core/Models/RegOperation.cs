@@ -45,6 +45,18 @@ namespace EndpointPilotJsonEditor.Core.Models
         public bool Delete { get; set; } = false;
 
         /// <summary>
+        /// Whether this operation requires administrative/SYSTEM privileges
+        /// </summary>
+        [JsonProperty("requiresAdmin")]
+        public bool RequiresAdmin { get; set; } = false;
+
+        /// <summary>
+        /// Execution context when admin is required (user, system, auto)
+        /// </summary>
+        [JsonProperty("adminContext")]
+        public string AdminContext { get; set; } = "auto";
+
+        /// <summary>
         /// Gets a display name for the operation
         /// </summary>
         [JsonIgnore] // <-- Add attribute here too
@@ -104,6 +116,17 @@ namespace EndpointPilotJsonEditor.Core.Models
             "HKEY_CLASSES_ROOT",
             "HKEY_USERS",
             "HKEY_CURRENT_CONFIG"
+        };
+
+        /// <summary>
+        /// Gets the available admin context options
+        /// </summary>
+        [JsonIgnore]
+        public static string[] AvailableAdminContexts => new[]
+        {
+            "auto",
+            "user", 
+            "system"
         };
     }
 }
