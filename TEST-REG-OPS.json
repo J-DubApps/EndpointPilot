@@ -11,8 +11,8 @@
     "target": "all",
     "requiresAdmin": true,
     "adminContext": "system",
-    "_comment1": "Test registry operation with elevation",
-    "_comment2": "This requires SYSTEM context"
+    "_comment1": "HKLM operation - requiresAdmin automatically set to true",
+    "_comment2": "System-level registry hive requires elevation"
   },
   {
     "id": "002", 
@@ -26,7 +26,22 @@
     "target": "Administrators",
     "requiresAdmin": false,
     "adminContext": "auto",
-    "_comment1": "User-level registry operation",
-    "_comment2": "No elevation required"
+    "_comment1": "HKCU operation - requiresAdmin remains false",
+    "_comment2": "User-level registry hive doesn't require elevation"
+  },
+  {
+    "id": "003",
+    "name": "FileAssociation",
+    "path": "HKEY_CLASSES_ROOT\\.txt",
+    "value": "txtfile",
+    "regtype": "string",
+    "write_once": "false",
+    "delete": false,
+    "targeting_type": "none",
+    "target": "all",
+    "requiresAdmin": false,
+    "adminContext": "auto",
+    "_comment1": "HKCR operation - will auto-set requiresAdmin to true when loaded",
+    "_comment2": "Classes Root requires system privileges"
   }
 ]

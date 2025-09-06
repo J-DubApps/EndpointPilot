@@ -74,6 +74,13 @@ namespace EndpointPilotJsonEditor.App.ViewModels
                 if (SetProperty(ref _selectedHive, value) && SelectedOperation != null)
                 {
                     UpdatePath();
+                    
+                    // Automatically set requiresAdmin for system-level registry hives
+                    if (value == "HKEY_LOCAL_MACHINE" || value == "HKEY_CLASSES_ROOT")
+                    {
+                        RequiresAdmin = true;
+                    }
+                    
                     OnPropertyChanged(nameof(SelectedOperation));
                     IsModified = true;
                     ValidateAsync();
@@ -403,6 +410,16 @@ namespace EndpointPilotJsonEditor.App.ViewModels
             {
                 _selectedHive = _path;
                 _pathSuffix = string.Empty;
+            }
+            
+            // Automatically set requiresAdmin for system-level registry hives when loading operations
+            if (_selectedHive == "HKEY_LOCAL_MACHINE" || _selectedHive == "HKEY_CLASSES_ROOT")
+            {
+                if (!SelectedOperation.RequiresAdmin)
+                {
+                    SelectedOperation.RequiresAdmin = true;
+                    _requiresAdmin = true;
+                }
             }
         }
 
