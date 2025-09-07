@@ -66,6 +66,7 @@ venv.bak/
 # Coding CLI files to ignnore
 .claude/*
 .agent-os/*
+.serena/*
 mcp.json
 claude.json
 
