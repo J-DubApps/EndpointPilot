@@ -28,6 +28,15 @@ public interface IPowerShellExecutor
     Task<PowerShellExecutionResult> ExecuteAsUserAsync(string scriptPath, Dictionary<string, object>? parameters = null, int? sessionId = null, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Executes a PowerShell script with elevated administrator privileges
+    /// </summary>
+    /// <param name="scriptPath">Path to the PowerShell script</param>
+    /// <param name="parameters">Parameters to pass to the script</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Execution result containing output, errors, and exit code</returns>
+    Task<PowerShellExecutionResult> ExecuteAsElevatedAsync(string scriptPath, Dictionary<string, object>? parameters = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Validates that a PowerShell script is safe to execute
     /// </summary>
     /// <param name="scriptPath">Path to the script to validate</param>

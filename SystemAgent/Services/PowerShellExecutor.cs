@@ -206,6 +206,83 @@ public class PowerShellExecutor : IPowerShellExecutor
         }
     }
 
+    public async Task<PowerShellExecutionResult> ExecuteAsElevatedAsync(string scriptPath, Dictionary<string, object>? parameters = null, CancellationToken cancellationToken = default)
+    {
+        var result = new PowerShellExecutionResult
+        {
+            StartTime = DateTime.UtcNow,
+            ExecutionContext = "Elevated"
+        };
+
+        try
+        {
+            if (!await ValidateScriptSafetyAsync(scriptPath))
+            {
+                result.Error = "Script failed security validation";
+                result.ExitCode = -1;
+                return result;
+            }
+
+            _logger.LogInformation("Executing PowerShell script with elevated privileges: {ScriptPath}", scriptPath);
+
+            // Since we're running as SYSTEM service, we have elevated privileges by default
+            // But we need to ensure the PowerShell execution context has admin rights
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "powershell.exe",
+                Arguments = BuildPowerShellArguments(scriptPath, parameters),
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                Verb = "runas" // Request elevation if needed
+            };
+
+            using var process = new Process { StartInfo = startInfo };
+            var outputBuilder = new StringBuilder();
+            var errorBuilder = new StringBuilder();
+
+            process.OutputDataReceived += (sender, e) =>
+            {
+                if (!string.IsNullOrEmpty(e.Data))
+                    outputBuilder.AppendLine(e.Data);
+            };
+
+            process.ErrorDataReceived += (sender, e) =>
+            {
+                if (!string.IsNullOrEmpty(e.Data))
+                    errorBuilder.AppendLine(e.Data);
+            };
+
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+
+            await process.WaitForExitAsync(cancellationToken);
+
+            result.Output = outputBuilder.ToString();
+            result.Error = errorBuilder.ToString();
+            result.ExitCode = process.ExitCode;
+            result.EndTime = DateTime.UtcNow;
+            result.ExecutionTime = result.EndTime - result.StartTime;
+
+            _logger.LogInformation("Elevated PowerShell script execution completed. Duration: {Duration}ms, Success: {Success}", 
+                result.ExecutionTime.TotalMilliseconds, result.Success);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error executing PowerShell script with elevation: {ScriptPath}", scriptPath);
+            result.Error = ex.Message;
+            result.ExitCode = -1;
+            result.EndTime = DateTime.UtcNow;
+            result.ExecutionTime = result.EndTime - result.StartTime;
+            return result;
+        }
+    }
+
     public async Task<bool> ValidateScriptSafetyAsync(string scriptPath)
     {
         try

@@ -4,7 +4,8 @@ using System.Collections.Concurrent;
 namespace EndpointPilot.SystemAgent.Services;
 
 /// <summary>
-/// Service for scheduling and managing EndpointPilot operations
+/// Service for scheduling and managing dual-context EndpointPilot operations
+/// Executes ENDPOINT-PILOT.PS1 in both user and elevated contexts
 /// </summary>
 public class SchedulerService : ISchedulerService
 {
@@ -12,6 +13,7 @@ public class SchedulerService : ISchedulerService
     private readonly IPowerShellExecutor _powerShellExecutor;
     private readonly ISystemOperationsService _systemOperationsService;
     private readonly string _endpointPilotPath;
+    private readonly string _endpointPilotScript;
     private readonly ConcurrentDictionary<string, Timer> _timers = new();
     private readonly ConcurrentDictionary<string, DateTime> _nextExecutions = new();
     private bool _isStarted = false;
@@ -25,6 +27,7 @@ public class SchedulerService : ISchedulerService
         _powerShellExecutor = powerShellExecutor;
         _systemOperationsService = systemOperationsService;
         _endpointPilotPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "EndpointPilot");
+        _endpointPilotScript = Path.Combine(_endpointPilotPath, "ENDPOINT-PILOT.PS1");
     }
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
@@ -35,25 +38,20 @@ public class SchedulerService : ISchedulerService
             return;
         }
 
-        _logger.LogInformation("Starting EndpointPilot Scheduler Service");
+        _logger.LogInformation("Starting EndpointPilot Dual-Context Scheduler Service");
 
         try
         {
             // Load configuration to determine intervals
             var config = await LoadConfigurationAsync();
             
-            var userInterval = TimeSpan.FromMinutes(config?.UserRefreshMinutes ?? 30);
-            var systemInterval = TimeSpan.FromMinutes(config?.SystemRefreshMinutes ?? 60);
+            var refreshInterval = TimeSpan.FromMinutes(config?.Refresh_Interval ?? 30);
 
-            // Schedule user operations
-            await ScheduleUserOperationsAsync(userInterval, cancellationToken);
-            
-            // Schedule system operations
-            await ScheduleSystemOperationsAsync(systemInterval, cancellationToken);
+            // Schedule dual-context operations (user + admin)
+            await ScheduleDualContextOperationsAsync(refreshInterval, cancellationToken);
 
             _isStarted = true;
-            _logger.LogInformation("Scheduler service started successfully. User interval: {UserInterval}min, System interval: {SystemInterval}min", 
-                userInterval.TotalMinutes, systemInterval.TotalMinutes);
+            _logger.LogInformation("Dual-context scheduler started successfully. Interval: {RefreshInterval}min", refreshInterval.TotalMinutes);
         }
         catch (Exception ex)
         {
@@ -69,7 +67,7 @@ public class SchedulerService : ISchedulerService
             return;
         }
 
-        _logger.LogInformation("Stopping EndpointPilot Scheduler Service");
+        _logger.LogInformation("Stopping EndpointPilot Dual-Context Scheduler Service");
 
         // Dispose all timers
         foreach (var timer in _timers.Values)
@@ -84,9 +82,9 @@ public class SchedulerService : ISchedulerService
         _logger.LogInformation("Scheduler service stopped successfully");
     }
 
-    public async Task ScheduleUserOperationsAsync(TimeSpan interval, CancellationToken cancellationToken = default)
+    public async Task ScheduleDualContextOperationsAsync(TimeSpan interval, CancellationToken cancellationToken = default)
     {
-        const string timerKey = "UserOperations";
+        const string timerKey = "DualContextOperations";
         
         try
         {
@@ -96,135 +94,132 @@ public class SchedulerService : ISchedulerService
                 await existingTimer.DisposeAsync();
             }
 
-            _logger.LogInformation("Scheduling user operations with interval: {Interval}", interval);
+            _logger.LogInformation("Scheduling dual-context operations with interval: {Interval}", interval);
 
             // Create new timer
             var timer = new Timer(async _ =>
             {
                 try
                 {
-                    await ExecuteUserOperationsNowAsync(CancellationToken.None);
+                    await ExecuteDualContextOperationsNowAsync(CancellationToken.None);
                     _nextExecutions[timerKey] = DateTime.Now.Add(interval);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error in scheduled user operations execution");
+                    _logger.LogError(ex, "Error in scheduled dual-context operations execution");
                 }
             }, null, TimeSpan.Zero, interval); // Start immediately, then repeat at interval
 
             _timers[timerKey] = timer;
             _nextExecutions[timerKey] = DateTime.Now.Add(interval);
 
-            _logger.LogInformation("User operations scheduled successfully");
+            _logger.LogInformation("Dual-context operations scheduled successfully");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to schedule user operations");
+            _logger.LogError(ex, "Failed to schedule dual-context operations");
             throw;
         }
     }
 
-    public async Task ScheduleSystemOperationsAsync(TimeSpan interval, CancellationToken cancellationToken = default)
-    {
-        const string timerKey = "SystemOperations";
-        
-        try
-        {
-            // Remove existing timer if present
-            if (_timers.TryRemove(timerKey, out var existingTimer))
-            {
-                await existingTimer.DisposeAsync();
-            }
-
-            _logger.LogInformation("Scheduling system operations with interval: {Interval}", interval);
-
-            // Create new timer
-            var timer = new Timer(async _ =>
-            {
-                try
-                {
-                    await ExecuteSystemOperationsNowAsync(CancellationToken.None);
-                    _nextExecutions[timerKey] = DateTime.Now.Add(interval);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error in scheduled system operations execution");
-                }
-            }, null, TimeSpan.FromMinutes(2), interval); // Start after 2 minutes, then repeat at interval
-
-            _timers[timerKey] = timer;
-            _nextExecutions[timerKey] = DateTime.Now.Add(TimeSpan.FromMinutes(2));
-
-            _logger.LogInformation("System operations scheduled successfully");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to schedule system operations");
-            throw;
-        }
-    }
-
-    public async Task ExecuteUserOperationsNowAsync(CancellationToken cancellationToken = default)
+    /// <summary>
+    /// Execute ENDPOINT-PILOT.PS1 in both user and admin contexts
+    /// </summary>
+    public async Task ExecuteDualContextOperationsNowAsync(CancellationToken cancellationToken = default)
     {
         try
         {
-            _logger.LogInformation("Executing user operations immediately");
+            _logger.LogInformation("Starting dual-context EndpointPilot execution");
 
-            var mainScriptPath = Path.Combine(_endpointPilotPath, "MAIN.PS1");
-            
-            if (!File.Exists(mainScriptPath))
+            if (!File.Exists(_endpointPilotScript))
             {
-                _logger.LogWarning("User operations main script not found: {ScriptPath}", mainScriptPath);
+                _logger.LogWarning("ENDPOINT-PILOT.PS1 not found at: {ScriptPath}", _endpointPilotScript);
                 return;
             }
 
-            // Execute the main EndpointPilot script in user context
-            var result = await _powerShellExecutor.ExecuteAsUserAsync(mainScriptPath, cancellationToken: cancellationToken);
+            var totalStartTime = DateTime.UtcNow;
+
+            // Phase 1: Execute as User (non-elevated) - handles requiresAdmin: false operations
+            _logger.LogInformation("Phase 1: Executing ENDPOINT-PILOT.PS1 in user context");
+            var userResult = await _powerShellExecutor.ExecuteAsUserAsync(_endpointPilotScript, cancellationToken: cancellationToken);
             
-            if (result.Success)
+            if (userResult.Success)
             {
-                _logger.LogInformation("User operations completed successfully. Duration: {Duration}ms", result.ExecutionTime.TotalMilliseconds);
+                _logger.LogInformation("User context execution completed successfully. Duration: {Duration}ms", userResult.ExecutionTime.TotalMilliseconds);
             }
             else
             {
-                _logger.LogWarning("User operations completed with errors. Duration: {Duration}ms, Error: {Error}", 
-                    result.ExecutionTime.TotalMilliseconds, result.Error);
+                _logger.LogWarning("User context execution completed with errors. Duration: {Duration}ms, Error: {Error}", 
+                    userResult.ExecutionTime.TotalMilliseconds, userResult.Error);
             }
 
-            // Log output for debugging (truncate if too long)
-            if (!string.IsNullOrEmpty(result.Output))
+            // Brief delay between executions to avoid conflicts
+            await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
+
+            // Phase 2: Execute as Elevated Admin - handles requiresAdmin: true operations
+            _logger.LogInformation("Phase 2: Executing ENDPOINT-PILOT.PS1 in elevated admin context");
+            var adminResult = await _powerShellExecutor.ExecuteAsElevatedAsync(_endpointPilotScript, cancellationToken: cancellationToken);
+            
+            if (adminResult.Success)
             {
-                var output = result.Output.Length > 1000 ? result.Output.Substring(0, 1000) + "..." : result.Output;
-                _logger.LogDebug("User operations output: {Output}", output);
+                _logger.LogInformation("Elevated admin execution completed successfully. Duration: {Duration}ms", adminResult.ExecutionTime.TotalMilliseconds);
             }
+            else
+            {
+                _logger.LogWarning("Elevated admin execution completed with errors. Duration: {Duration}ms, Error: {Error}", 
+                    adminResult.ExecutionTime.TotalMilliseconds, adminResult.Error);
+            }
+
+            var totalDuration = DateTime.UtcNow - totalStartTime;
+            _logger.LogInformation("Dual-context execution complete. Total duration: {TotalDuration}ms, User success: {UserSuccess}, Admin success: {AdminSuccess}",
+                totalDuration.TotalMilliseconds, userResult.Success, adminResult.Success);
+
+            // Log condensed output for debugging (truncate if too long)
+            LogExecutionOutput("User", userResult.Output);
+            LogExecutionOutput("Admin", adminResult.Output);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error executing user operations");
+            _logger.LogError(ex, "Error executing dual-context operations");
         }
     }
 
+    /// <summary>
+    /// Legacy method maintained for backward compatibility
+    /// </summary>
+    public async Task ScheduleUserOperationsAsync(TimeSpan interval, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Legacy ScheduleUserOperationsAsync called - redirecting to dual-context scheduling");
+        await ScheduleDualContextOperationsAsync(interval, cancellationToken);
+    }
+
+    /// <summary>
+    /// Legacy method maintained for backward compatibility
+    /// </summary>
+    public async Task ScheduleSystemOperationsAsync(TimeSpan interval, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Legacy ScheduleSystemOperationsAsync called - dual-context already handles this");
+        // No-op - dual context execution handles both user and system operations
+        await Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Legacy method maintained for backward compatibility
+    /// </summary>
+    public async Task ExecuteUserOperationsNowAsync(CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Legacy ExecuteUserOperationsNowAsync called - executing dual-context");
+        await ExecuteDualContextOperationsNowAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Legacy method maintained for backward compatibility
+    /// </summary>
     public async Task ExecuteSystemOperationsNowAsync(CancellationToken cancellationToken = default)
     {
-        try
-        {
-            _logger.LogInformation("Executing system operations immediately");
-
-            var result = await _systemOperationsService.ProcessSystemOperationsAsync(cancellationToken);
-            
-            _logger.LogInformation("System operations completed. Total: {Total}, Success: {Success}, Failed: {Failed}, Duration: {Duration}ms",
-                result.TotalOperations, result.SuccessfulOperations, result.FailedOperations, result.TotalExecutionTime.TotalMilliseconds);
-
-            // Log individual operation results for debugging
-            foreach (var operationResult in result.Results.Where(r => !r.Success))
-            {
-                _logger.LogWarning("System operation {OperationId} failed: {Error}", operationResult.OperationId, operationResult.Error);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error executing system operations");
-        }
+        _logger.LogInformation("Legacy ExecuteSystemOperationsNowAsync called - dual-context already handles this");
+        // The dual context execution already handles elevated operations
+        await Task.CompletedTask;
     }
 
     public Dictionary<string, DateTime> GetNextExecutionTimes()
@@ -256,6 +251,15 @@ public class SchedulerService : ISchedulerService
             return null;
         }
     }
+
+    private void LogExecutionOutput(string context, string? output)
+    {
+        if (!string.IsNullOrEmpty(output))
+        {
+            var truncatedOutput = output.Length > 500 ? output.Substring(0, 500) + "..." : output;
+            _logger.LogDebug("{Context} context output: {Output}", context, truncatedOutput);
+        }
+    }
 }
 
 /// <summary>
@@ -263,16 +267,22 @@ public class SchedulerService : ISchedulerService
 /// </summary>
 public class EndpointPilotConfig
 {
-    public string OrganizationName { get; set; } = string.Empty;
-    public int UserRefreshMinutes { get; set; } = 30;
-    public int SystemRefreshMinutes { get; set; } = 60;
+    public string OrgName { get; set; } = string.Empty;
+    public int Refresh_Interval { get; set; } = 30;
+    public string NetworkScriptRootPath { get; set; } = string.Empty;
+    public bool NetworkScriptRootEnabled { get; set; } = false;
+    public bool HttpsScriptRootEnabled { get; set; } = false;
+    public string HttpsScriptRootPath { get; set; } = string.Empty;
+    public bool CopyLogFileToNetwork { get; set; } = false;
+    public bool RoamFiles { get; set; } = false;
+    public string NetworkLogFile { get; set; } = string.Empty;
+    public string NetworkRoamFolder { get; set; } = string.Empty;
     public bool SkipFileOps { get; set; } = false;
-    public bool SkipRegOps { get; set; } = false;
     public bool SkipDriveOps { get; set; } = false;
+    public bool SkipRegOps { get; set; } = false;
     public bool SkipRoamOps { get; set; } = false;
     public bool SkipSchedTsk { get; set; } = false;
     public bool SkipTelemetry { get; set; } = false;
     public bool SkipUserCustom { get; set; } = false;
     public bool SkipMaint { get; set; } = false;
-    public bool SkipSystemOps { get; set; } = false;
 }
