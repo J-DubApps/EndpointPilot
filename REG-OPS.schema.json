@@ -1,7 +1,9 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "EndpointPilot Registry Operations",
-  "description": "Schema for EndpointPilot registry operations",
+  "$id": "https://endpointpilot.local/schemas/reg-ops-v1.1.json",
+  "title": "EndpointPilot Registry Operations with Authentication",
+  "description": "Schema for EndpointPilot registry operations including digital signature support",
+  "version": "1.1.0",
   "type": "array",
   "items": {
     "type": "object",
@@ -64,6 +66,33 @@
       "_comment2": {
         "type": "string",
         "description": "Comment field 2"
+      },
+      "signature": {
+        "type": "string",
+        "description": "Base64-encoded digital signature of the operation data",
+        "pattern": "^[A-Za-z0-9+/]+=*$"
+      },
+      "timestamp": {
+        "type": "string",
+        "format": "date-time",
+        "description": "ISO 8601 timestamp when signature was created"
+      },
+      "signerCertThumbprint": {
+        "type": "string",
+        "description": "SHA-1 thumbprint of the signing certificate",
+        "pattern": "^[A-Fa-f0-9]{40}$"
+      },
+      "hashAlgorithm": {
+        "type": "string",
+        "enum": ["SHA-256"],
+        "default": "SHA-256",
+        "description": "Hash algorithm used for signature generation"
+      },
+      "signatureVersion": {
+        "type": "string",
+        "enum": ["1.0"],
+        "default": "1.0",
+        "description": "Signature format version for future compatibility"
       }
     },
     "required": ["id", "name", "path", "regtype", "targeting_type", "target"],
