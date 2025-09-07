@@ -5,9 +5,6 @@
 
 Set-Alias -Name 'Get-Permissions' -Value 'Get-Permission'
 
-Export-ModuleMember -Function InGroup, InGroupGP, Get-Permission, IsCurrentProcessArm64, Get-RegistryValue, Import-RegKey, Get-DsRegStatusInfo, Measure-DownloadSpeed, Measure-UploadSpeed, Get-LoggedInUser, Get-TextWithin, Get-WorkstationUsageStatus, Copy-File, Copy-Directory, Move-Files, Move-Directory, Send-SmtpMail
-Export-ModuleMember -Alias Get-Permissions
-
 #region FUNCTIONS
 
 function Get-Permission {
@@ -739,7 +736,451 @@ function Send-SmtpMail {
     $smtp.Send($message)
 }
 
+#region SIGNATURE_VALIDATION_FUNCTIONS
+
+function Test-JsonSignature {
+    <#
+    .SYNOPSIS
+    Validates the digital signature of a JSON operation against its signing certificate.
+    
+    .DESCRIPTION
+    Verifies the authenticity and integrity of JSON operations by validating their digital signatures
+    using the specified signing certificate from the Windows Certificate Store.
+    
+    .PARAMETER OperationData
+    The JSON operation data (excluding signature fields) to validate.
+    
+    .PARAMETER SignatureData
+    Hashtable containing signature metadata: signature, timestamp, signerCertThumbprint, hashAlgorithm, signatureVersion.
+    
+    .EXAMPLE
+    $opData = @{ id="test-001"; srcfilename="test.txt"; targeting_type="none"; target="all" }
+    $sigData = @{ signature="SGVsbG8="; timestamp="2025-09-07T10:30:00Z"; signerCertThumbprint="A1B2..."; hashAlgorithm="SHA-256"; signatureVersion="1.0" }
+    Test-JsonSignature -OperationData $opData -SignatureData $sigData
+    
+    .OUTPUTS
+    Boolean - True if signature is valid, False otherwise.
+    #>
+    [CmdletBinding()]
+    [OutputType([bool])]
+    param(
+        [Parameter(Mandatory = $true)]
+        [hashtable]$OperationData,
+        
+        [Parameter(Mandatory = $true)]
+        [hashtable]$SignatureData
+    )
+    
+    try {
+        # Validate signature data structure
+        $requiredFields = @('signature', 'timestamp', 'signerCertThumbprint', 'hashAlgorithm', 'signatureVersion')
+        foreach ($field in $requiredFields) {
+            if (-not $SignatureData.ContainsKey($field) -or [string]::IsNullOrEmpty($SignatureData[$field])) {
+                Write-Warning "Missing or empty signature field: $field"
+                return $false
+            }
+        }
+        
+        # Validate Base64 signature format
+        if ($SignatureData.signature -notmatch '^[A-Za-z0-9+/]+=*$') {
+            Write-Warning "Invalid Base64 signature format"
+            return $false
+        }
+        
+        # Validate timestamp format
+        try {
+            [DateTime]::Parse($SignatureData.timestamp) | Out-Null
+        } catch {
+            Write-Warning "Invalid timestamp format: $($SignatureData.timestamp)"
+            return $false
+        }
+        
+        # Validate certificate thumbprint format
+        if ($SignatureData.signerCertThumbprint -notmatch '^[A-Fa-f0-9]{40}$') {
+            Write-Warning "Invalid certificate thumbprint format"
+            return $false
+        }
+        
+        # Validate supported hash algorithm
+        if ($SignatureData.hashAlgorithm -ne 'SHA-256') {
+            Write-Warning "Unsupported hash algorithm: $($SignatureData.hashAlgorithm)"
+            return $false
+        }
+        
+        # Validate signature version
+        if ($SignatureData.signatureVersion -ne '1.0') {
+            Write-Warning "Unsupported signature version: $($SignatureData.signatureVersion)"
+            return $false
+        }
+        
+        # Get signing certificate
+        $certificate = Get-SignerCertificate -Thumbprint $SignatureData.signerCertThumbprint
+        if (-not $certificate) {
+            Write-Warning "Signing certificate not found or invalid"
+            return $false
+        }
+        
+        # Build hash input (excluding signature fields to prevent circular dependency)
+        $hashInput = @{
+            operationData = $OperationData
+            timestamp = $SignatureData.timestamp
+            signerCertThumbprint = $SignatureData.signerCertThumbprint
+        }
+        
+        # Convert to canonical JSON for consistent hashing
+        $canonicalJson = ConvertTo-CanonicalJson -InputObject $hashInput
+        
+        # Verify signature
+        $isValid = Invoke-SignatureVerification -CanonicalJson $canonicalJson -Signature $SignatureData.signature -Certificate $certificate -HashAlgorithm $SignatureData.hashAlgorithm
+        
+        if (-not $isValid) {
+            Write-Warning "Digital signature verification failed"
+        }
+        
+        return $isValid
+        
+    } catch {
+        Write-Warning "Signature validation error: $_"
+        return $false
+    }
+}
+
+function Get-SignerCertificate {
+    <#
+    .SYNOPSIS
+    Retrieves a signing certificate from the Windows Certificate Store by thumbprint.
+    
+    .DESCRIPTION
+    Locates and validates a certificate suitable for digital signature verification.
+    Searches CurrentUser and LocalMachine certificate stores.
+    
+    .PARAMETER Thumbprint
+    The SHA-1 thumbprint of the certificate to retrieve (40-character hex string).
+    
+    .EXAMPLE
+    Get-SignerCertificate -Thumbprint "A1B2C3D4E5F6789012345678901234567890ABCD"
+    
+    .OUTPUTS
+    System.Security.Cryptography.X509Certificates.X509Certificate2 or $null if not found/invalid.
+    #>
+    [CmdletBinding()]
+    [OutputType([System.Security.Cryptography.X509Certificates.X509Certificate2])]
+    param(
+        [Parameter(Mandatory = $true)]
+        [ValidatePattern('^[A-Fa-f0-9]{40}$')]
+        [string]$Thumbprint
+    )
+    
+    # Use static cache to improve performance
+    if (-not $script:CertificateCache) {
+        $script:CertificateCache = @{}
+    }
+    
+    # Check cache first
+    if ($script:CertificateCache.ContainsKey($Thumbprint)) {
+        return $script:CertificateCache[$Thumbprint]
+    }
+    
+    try {
+        $certificate = $null
+        
+        # Search certificate stores (CurrentUser first, then LocalMachine)
+        $stores = @(
+            "Cert:\CurrentUser\My",
+            "Cert:\LocalMachine\My"
+        )
+        
+        foreach ($storePath in $stores) {
+            try {
+                $certs = Get-ChildItem -Path $storePath -ErrorAction Stop | Where-Object { $_.Thumbprint -eq $Thumbprint }
+                if ($certs) {
+                    $certificate = $certs[0]
+                    break
+                }
+            } catch {
+                Write-Verbose "Unable to access certificate store: $storePath"
+                continue
+            }
+        }
+        
+        if (-not $certificate) {
+            Write-Warning "Certificate with thumbprint $Thumbprint not found in certificate stores"
+            $script:CertificateCache[$Thumbprint] = $null
+            return $null
+        }
+        
+        # Validate certificate for signature verification
+        $validationResult = Test-CertificateForSigning -Certificate $certificate
+        if (-not $validationResult) {
+            $script:CertificateCache[$Thumbprint] = $null
+            return $null
+        }
+        
+        # Cache valid certificate
+        $script:CertificateCache[$Thumbprint] = $certificate
+        return $certificate
+        
+    } catch {
+        Write-Warning "Error retrieving certificate: $_"
+        $script:CertificateCache[$Thumbprint] = $null
+        return $null
+    }
+}
+
+function ConvertTo-CanonicalJson {
+    <#
+    .SYNOPSIS
+    Converts a PowerShell object to canonical JSON format for consistent hashing.
+    
+    .DESCRIPTION
+    Creates a deterministic JSON representation by sorting object properties alphabetically
+    and removing whitespace to ensure consistent hash calculations.
+    
+    .PARAMETER InputObject
+    The object to convert to canonical JSON.
+    
+    .EXAMPLE
+    ConvertTo-CanonicalJson -InputObject @{ zebra="last"; alpha="first" }
+    
+    .OUTPUTS
+    String - Canonical JSON representation.
+    #>
+    [CmdletBinding()]
+    [OutputType([string])]
+    param(
+        [Parameter(Mandatory = $true)]
+        [object]$InputObject
+    )
+    
+    try {
+        # Recursive function to sort object properties
+        function Sort-ObjectProperties {
+            param([object]$Object)
+            
+            if ($Object -is [hashtable]) {
+                $sortedHash = [ordered]@{}
+                $Object.Keys | Sort-Object | ForEach-Object {
+                    $sortedHash[$_] = Sort-ObjectProperties $Object[$_]
+                }
+                return $sortedHash
+            } elseif ($Object -is [PSCustomObject]) {
+                $sortedObject = [ordered]@{}
+                $Object.PSObject.Properties | Sort-Object Name | ForEach-Object {
+                    $sortedObject[$_.Name] = Sort-ObjectProperties $_.Value
+                }
+                return [PSCustomObject]$sortedObject
+            } elseif ($Object -is [array]) {
+                return @($Object | ForEach-Object { Sort-ObjectProperties $_ })
+            } else {
+                return $Object
+            }
+        }
+        
+        # Sort properties recursively
+        $sortedObject = Sort-ObjectProperties -Object $InputObject
+        
+        # Convert to JSON with minimal formatting
+        $json = ConvertTo-Json -InputObject $sortedObject -Depth 10 -Compress
+        
+        return $json
+        
+    } catch {
+        throw "JSON canonicalization failed: $_"
+    }
+}
+
+function Test-CertificateForSigning {
+    <#
+    .SYNOPSIS
+    Validates a certificate for digital signature operations.
+    
+    .DESCRIPTION
+    Checks certificate validity period, Enhanced Key Usage, and key strength
+    to ensure it's suitable for signature verification.
+    
+    .PARAMETER Certificate
+    The X509Certificate2 object to validate.
+    
+    .OUTPUTS
+    Boolean - True if certificate is valid for signing.
+    #>
+    [CmdletBinding()]
+    [OutputType([bool])]
+    param(
+        [Parameter(Mandatory = $true)]
+        [System.Security.Cryptography.X509Certificates.X509Certificate2]$Certificate
+    )
+    
+    try {
+        # Check certificate validity period
+        $now = Get-Date
+        if ($now -lt $Certificate.NotBefore -or $now -gt $Certificate.NotAfter) {
+            Write-Warning "Certificate is not within valid date range"
+            return $false
+        }
+        
+        # Check Enhanced Key Usage for Code Signing
+        $hasCodeSigning = $false
+        foreach ($extension in $Certificate.Extensions) {
+            if ($extension.Oid.Value -eq "2.5.29.37") {  # Enhanced Key Usage
+                $eku = [System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension]$extension
+                foreach ($usage in $eku.EnhancedKeyUsages) {
+                    if ($usage.Value -eq "1.3.6.1.5.5.7.3.3") {  # Code Signing
+                        $hasCodeSigning = $true
+                        break
+                    }
+                }
+            }
+        }
+        
+        if (-not $hasCodeSigning) {
+            Write-Warning "Certificate does not have Code Signing Enhanced Key Usage"
+            return $false
+        }
+        
+        # Check minimum key size (2048 bits for RSA)
+        if ($Certificate.PublicKey.Key.KeySize -lt 2048) {
+            Write-Warning "Certificate key size ($($Certificate.PublicKey.Key.KeySize) bits) below minimum requirement (2048 bits)"
+            return $false
+        }
+        
+        return $true
+        
+    } catch {
+        Write-Warning "Certificate validation error: $_"
+        return $false
+    }
+}
+
+function Invoke-SignatureVerification {
+    <#
+    .SYNOPSIS
+    Performs cryptographic signature verification using a certificate's public key.
+    
+    .DESCRIPTION
+    Uses .NET cryptographic libraries to verify a digital signature against canonical JSON data.
+    
+    .PARAMETER CanonicalJson
+    The canonical JSON string to verify.
+    
+    .PARAMETER Signature
+    The Base64-encoded signature to verify.
+    
+    .PARAMETER Certificate
+    The certificate containing the public key for verification.
+    
+    .PARAMETER HashAlgorithm
+    The hash algorithm used for signing (currently only SHA-256 supported).
+    
+    .OUTPUTS
+    Boolean - True if signature verification succeeds.
+    #>
+    [CmdletBinding()]
+    [OutputType([bool])]
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$CanonicalJson,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$Signature,
+        
+        [Parameter(Mandatory = $true)]
+        [System.Security.Cryptography.X509Certificates.X509Certificate2]$Certificate,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$HashAlgorithm
+    )
+    
+    try {
+        # Convert JSON to bytes for hashing
+        $jsonBytes = [System.Text.Encoding]::UTF8.GetBytes($CanonicalJson)
+        
+        # Decode Base64 signature
+        $signatureBytes = [Convert]::FromBase64String($Signature)
+        
+        # Get public key from certificate
+        $publicKey = $Certificate.PublicKey.Key
+        
+        # Create hash of canonical JSON
+        $hashAlgorithmObj = [System.Security.Cryptography.SHA256]::Create()
+        $hash = $hashAlgorithmObj.ComputeHash($jsonBytes)
+        
+        # Verify signature using RSA public key
+        $rsaFormatter = New-Object System.Security.Cryptography.RSAPKCS1SignatureDeformatter($publicKey)
+        $rsaFormatter.SetHashAlgorithm("SHA256")
+        
+        $isValid = $rsaFormatter.VerifySignature($hash, $signatureBytes)
+        
+        return $isValid
+        
+    } catch {
+        Write-Warning "Signature verification failed: $_"
+        return $false
+    } finally {
+        if ($hashAlgorithmObj) {
+            $hashAlgorithmObj.Dispose()
+        }
+    }
+}
+
+function Get-SignatureValidationConfig {
+    <#
+    .SYNOPSIS
+    Retrieves signature validation configuration settings.
+    
+    .DESCRIPTION
+    Returns configuration for signature validation enforcement modes and behavior.
+    
+    .PARAMETER Mode
+    The enforcement mode to configure: 'strict', 'warn', or 'disabled'.
+    
+    .OUTPUTS
+    PSCustomObject with validation configuration.
+    #>
+    [CmdletBinding()]
+    [OutputType([PSCustomObject])]
+    param(
+        [Parameter()]
+        [ValidateSet('strict', 'warn', 'disabled')]
+        [string]$Mode = 'warn'
+    )
+    
+    switch ($Mode) {
+        'strict' {
+            return [PSCustomObject]@{
+                EnforcementMode = 'strict'
+                FailOnUnsigned = $true
+                FailOnInvalid = $true
+                LogLevel = 'Error'
+            }
+        }
+        'warn' {
+            return [PSCustomObject]@{
+                EnforcementMode = 'warn'
+                FailOnUnsigned = $false
+                FailOnInvalid = $true
+                LogLevel = 'Warning'
+            }
+        }
+        'disabled' {
+            return [PSCustomObject]@{
+                EnforcementMode = 'disabled'
+                FailOnUnsigned = $false
+                FailOnInvalid = $false
+                LogLevel = 'Information'
+            }
+        }
+    }
+}
+
+#endregion SIGNATURE_VALIDATION_FUNCTIONS
+
 #endregion FUNCTIONS
+
+# Export all functions and aliases
+Export-ModuleMember -Function InGroup, InGroupGP, Get-Permission, IsCurrentProcessArm64, Get-RegistryValue, Import-RegKey, Get-DsRegStatusInfo, Measure-DownloadSpeed, Measure-UploadSpeed, Get-LoggedInUser, Get-TextWithin, Get-WorkstationUsageStatus, Copy-File, Copy-Directory, Move-Files, Move-Directory, Send-SmtpMail, Test-JsonSignature, Get-SignerCertificate, ConvertTo-CanonicalJson, Test-CertificateForSigning, Invoke-SignatureVerification, Get-SignatureValidationConfig
+Export-ModuleMember -Alias Get-Permissions
+
 ##
 ##########################################################################
 ##					End of Functions Section

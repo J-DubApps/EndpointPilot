@@ -48,12 +48,19 @@
         'Get-LoggedInUser',
 
         # File Operation Functions
-        
         'Copy-File', 
         'Copy-Directory', 
         'Move-Files', 
         'Move-Directory',
-        'Import-RegKey'
+        'Import-RegKey',
+        
+        # Signature Validation Functions
+        'Test-JsonSignature',
+        'Get-SignerCertificate',
+        'ConvertTo-CanonicalJson',
+        'Test-CertificateForSigning',
+        'Invoke-SignatureVerification',
+        'Get-SignatureValidationConfig'
     )
     
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
