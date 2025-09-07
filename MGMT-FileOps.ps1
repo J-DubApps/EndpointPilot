@@ -51,8 +51,62 @@ If $overwrite is true, the script checks if the source file is newer than the de
 # Read JSON file
 $json = Get-Content -Raw -Path ".\file-ops.json" | ConvertFrom-Json
 
+# Get signature validation configuration
+$signatureConfig = Get-SignatureValidationConfig
+
 # Loop through each entry in the json file
 $json | ForEach-Object {
+    # Validate signature if present (Phase 1 compatibility)
+    if ($_.signature -or $_.signerCertThumbprint) {
+        WriteLog "Validating signature for file operation"
+        
+        $signatureData = @{
+            signature = $_.signature
+            timestamp = $_.timestamp
+            signerCertThumbprint = $_.signerCertThumbprint
+            hashAlgorithm = $_.hashAlgorithm
+            signatureVersion = $_.signatureVersion
+        }
+        
+        try {
+            $validationResult = Test-JsonSignature -OperationData $_ -SignatureData $signatureData
+            if ($validationResult.IsValid) {
+                WriteLog "Signature validation passed for operation: $($_.comments)"
+            } else {
+                $errorMsg = "Signature validation failed for operation: $($_.comments). Reason: $($validationResult.ErrorMessage)"
+                WriteLog "SECURITY WARNING: $errorMsg"
+                
+                if ($signatureConfig.EnforcementMode -eq 'strict') {
+                    WriteLog "ERROR: Skipping operation due to failed signature validation (strict mode)"
+                    return
+                } elseif ($signatureConfig.EnforcementMode -eq 'warn') {
+                    WriteLog "WARNING: Proceeding with unsigned operation (warn mode)"
+                } else {
+                    WriteLog "INFO: Signature validation disabled (disabled mode)"
+                }
+            }
+        }
+        catch {
+            $errorMsg = "Exception during signature validation for operation: $($_.comments). Error: $_"
+            WriteLog "SECURITY ERROR: $errorMsg"
+            
+            if ($signatureConfig.EnforcementMode -eq 'strict') {
+                WriteLog "ERROR: Skipping operation due to signature validation exception (strict mode)"
+                return
+            } else {
+                WriteLog "WARNING: Proceeding despite signature validation error"
+            }
+        }
+    } else {
+        # No signature present - Phase 1 compatibility
+        if ($signatureConfig.EnforcementMode -eq 'strict') {
+            WriteLog "ERROR: Operation missing required signature (strict mode): $($_.comments)"
+            return
+        } elseif ($signatureConfig.EnforcementMode -eq 'warn') {
+            WriteLog "WARNING: Processing unsigned operation (warn mode): $($_.comments)"
+        }
+        # In disabled mode, no logging needed for unsigned operations
+    }
     # Extract File information from JSON
     $srcfilename = $_.srcfilename
     $dstfilename = $_.dstfilename
