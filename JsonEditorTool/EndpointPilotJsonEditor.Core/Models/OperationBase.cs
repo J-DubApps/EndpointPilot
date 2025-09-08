@@ -39,6 +39,42 @@ namespace EndpointPilotJsonEditor.Core.Models
         public string Comment2 { get; set; } = string.Empty;
 
         /// <summary>
+        /// Digital signature for operation authentication (Base64 encoded)
+        /// </summary>
+        [JsonProperty("signature", NullValueHandling = NullValueHandling.Ignore)]
+        public string? Signature { get; set; }
+
+        /// <summary>
+        /// Timestamp when the operation was signed (ISO 8601 format)
+        /// </summary>
+        [JsonProperty("timestamp", NullValueHandling = NullValueHandling.Ignore)]
+        public string? Timestamp { get; set; }
+
+        /// <summary>
+        /// Thumbprint of the certificate used for signing (SHA-1 hash)
+        /// </summary>
+        [JsonProperty("signerCertThumbprint", NullValueHandling = NullValueHandling.Ignore)]
+        public string? SignerCertThumbprint { get; set; }
+
+        /// <summary>
+        /// Hash algorithm used for signature generation (e.g., "SHA256")
+        /// </summary>
+        [JsonProperty("hashAlgorithm", NullValueHandling = NullValueHandling.Ignore)]
+        public string? HashAlgorithm { get; set; }
+
+        /// <summary>
+        /// Version of the signature format (e.g., "1.0")
+        /// </summary>
+        [JsonProperty("signatureVersion", NullValueHandling = NullValueHandling.Ignore)]
+        public string? SignatureVersion { get; set; }
+
+        /// <summary>
+        /// Gets a value indicating whether this operation is digitally signed
+        /// </summary>
+        [JsonIgnore]
+        public bool IsSigned => !string.IsNullOrEmpty(Signature) && !string.IsNullOrEmpty(SignerCertThumbprint);
+
+        /// <summary>
         /// Gets a display name for the operation
         /// </summary>
         public abstract string DisplayName { get; }

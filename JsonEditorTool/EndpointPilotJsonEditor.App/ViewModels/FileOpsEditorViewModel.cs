@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using EndpointPilotJsonEditor.App.Views;
 using EndpointPilotJsonEditor.Core.Models;
 using EndpointPilotJsonEditor.Core.Services;
 
@@ -317,12 +320,67 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         public FileOpsEditorViewModel(IEnumerable<FileOperation> operations, JsonFileService jsonFileService, SchemaValidationService schemaValidationService)
             : base(operations, jsonFileService, schemaValidationService)
         {
+            // Initialize signing command
+            SignAndSaveCommand = new RelayCommand(_ => SignAndSaveAsync(), _ => IsModified && IsValid);
+            
             // Set the selected operation if there are any operations
             if (Operations.Any())
             {
                 SelectedOperation = Operations.First();
             }
             ValidateAsync(); // Call initial validation after full initialization
+        }
+
+        /// <summary>
+        /// Gets the command to sign and save operations
+        /// </summary>
+        public ICommand SignAndSaveCommand { get; }
+
+        /// <summary>
+        /// Signs and saves the file operations
+        /// </summary>
+        private async Task SignAndSaveAsync()
+        {
+            try
+            {
+                // Show certificate selection dialog
+                var certificateDialog = new CertificateSelectionDialog();
+                var dialogResult = certificateDialog.ShowDialog();
+                
+                if (dialogResult == true && certificateDialog.DataContext is CertificateSelectionViewModel viewModel)
+                {
+                    var selectedCertificate = viewModel.SelectedCertificate;
+                    if (selectedCertificate != null)
+                    {
+                        // Perform full validation before saving
+                        await PerformFullValidationAsync();
+                        
+                        // Only save if validation passes
+                        if (IsValid)
+                        {
+                            // Use the overloaded method with signing certificate
+                            await _jsonFileService.WriteFileOperationsAsync(Operations.ToList(), "FILE-OPS.json", selectedCertificate);
+                            IsModified = false;
+                            OnStatusChanged($"File operations digitally signed and saved successfully using certificate: {selectedCertificate.Subject}", false);
+                            
+                            // Reload operations after saving to refresh the UI
+                            await ReloadAsync();
+                        }
+                        else
+                        {
+                            OnStatusChanged("Cannot sign and save: File operations contain validation errors", true);
+                        }
+                    }
+                }
+                else
+                {
+                    OnStatusChanged("Digital signing cancelled by user", false);
+                }
+            }
+            catch (Exception ex)
+            {
+                OnStatusChanged($"Error during digital signing: {ex.Message}", true);
+            }
         }
 
         /// <summary>

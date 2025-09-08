@@ -12,6 +12,7 @@
     
     <UserControl.Resources>
         <converters:BoolToInvertedBoolConverter x:Key="BoolToInvertedBoolConverter" />
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </UserControl.Resources>
     
     <local:OperationEditorViewBase x:Name="BaseView">
@@ -29,6 +30,10 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -155,6 +160,46 @@
                 <TextBlock Grid.Row="21" Grid.Column="0" Text="Comment 2:" Style="{StaticResource FieldLabelStyle}" />
                 <TextBox Grid.Row="21" Grid.Column="1" Text="{Binding Comment2, UpdateSourceTrigger=PropertyChanged}" 
                          Style="{StaticResource FieldValueStyle}" />
+                
+                <!-- Digital Signature Section -->
+                <TextBlock Grid.Row="22" Grid.Column="0" Grid.ColumnSpan="2" 
+                           Text="Digital Signature" Style="{StaticResource SectionHeaderStyle}" />
+                
+                <!-- Signature Status -->
+                <TextBlock Grid.Row="23" Grid.Column="0" Text="Status:" Style="{StaticResource FieldLabelStyle}" />
+                <StackPanel Grid.Row="23" Grid.Column="1" Orientation="Horizontal" Margin="0,5,0,0">
+                    <Border Background="#28A745" CornerRadius="3" Padding="6,2" 
+                            Visibility="{Binding SelectedOperation.IsSigned, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🔒" Foreground="White" FontSize="12" Margin="0,0,4,0" VerticalAlignment="Center" />
+                            <TextBlock Text="Digitally Signed" Foreground="White" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+                    <Border Background="#DC3545" CornerRadius="3" Padding="6,2" 
+                            Visibility="{Binding SelectedOperation.IsSigned, Converter={StaticResource BoolToInvertedBoolConverter}}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="⚠️" Foreground="White" FontSize="12" Margin="0,0,4,0" VerticalAlignment="Center" />
+                            <TextBlock Text="Not Signed" Foreground="White" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+                
+                <!-- Certificate Thumbprint (when signed) -->
+                <TextBlock Grid.Row="24" Grid.Column="0" Text="Certificate:" Style="{StaticResource FieldLabelStyle}"
+                           Visibility="{Binding SelectedOperation.IsSigned, Converter={StaticResource BoolToVisibilityConverter}}" />
+                <TextBox Grid.Row="24" Grid.Column="1" Text="{Binding SelectedOperation.SignerCertThumbprint, Mode=OneWay}" 
+                         IsReadOnly="True" FontFamily="Consolas" FontSize="10"
+                         Style="{StaticResource FieldValueStyle}"
+                         Visibility="{Binding SelectedOperation.IsSigned, Converter={StaticResource BoolToVisibilityConverter}}"
+                         ToolTip="Certificate thumbprint used for digital signature" />
+                
+                <!-- Signature Timestamp (when signed) -->
+                <TextBlock Grid.Row="25" Grid.Column="0" Text="Signed On:" Style="{StaticResource FieldLabelStyle}"
+                           Visibility="{Binding SelectedOperation.IsSigned, Converter={StaticResource BoolToVisibilityConverter}}" />
+                <TextBox Grid.Row="25" Grid.Column="1" Text="{Binding SelectedOperation.Timestamp, Mode=OneWay}" 
+                         IsReadOnly="True" Style="{StaticResource FieldValueStyle}"
+                         Visibility="{Binding SelectedOperation.IsSigned, Converter={StaticResource BoolToVisibilityConverter}}"
+                         ToolTip="Timestamp when the operation was digitally signed" />
             </Grid>
         </local:OperationEditorViewBase.Details>
     </local:OperationEditorViewBase>

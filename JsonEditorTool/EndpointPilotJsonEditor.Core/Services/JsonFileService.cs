@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using EndpointPilotJsonEditor.Core.Models;
@@ -13,6 +14,7 @@ namespace EndpointPilotJsonEditor.Core.Services
     public class JsonFileService
     {
         private string _baseDirectory;
+        private readonly CryptographicService _cryptographicService;
 
         /// <summary>
         /// Gets or sets the base directory for JSON files
@@ -30,6 +32,7 @@ namespace EndpointPilotJsonEditor.Core.Services
         public JsonFileService(string baseDirectory)
         {
             _baseDirectory = baseDirectory;
+            _cryptographicService = new CryptographicService();
         }
 
         /// <summary>
@@ -95,6 +98,27 @@ namespace EndpointPilotJsonEditor.Core.Services
         /// <returns>A task representing the asynchronous operation</returns>
         public async Task WriteFileOperationsAsync(List<FileOperation> operations, string fileName = "FILE-OPS.json")
         {
+            await WriteFileOperationsAsync(operations, fileName, null);
+        }
+
+        /// <summary>
+        /// Writes file operations with optional digital signing
+        /// </summary>
+        /// <param name="operations">The list of file operations to write</param>
+        /// <param name="fileName">The name of the file to write</param>
+        /// <param name="signingCertificate">Certificate to use for signing operations (null for no signing)</param>
+        /// <returns>A task representing the asynchronous operation</returns>
+        public async Task WriteFileOperationsAsync(List<FileOperation> operations, string fileName, X509Certificate2? signingCertificate)
+        {
+            // Sign operations if certificate is provided
+            if (signingCertificate != null)
+            {
+                foreach (var operation in operations)
+                {
+                    _cryptographicService.SignOperation(operation, signingCertificate);
+                }
+            }
+
             var filePath = Path.Combine(_baseDirectory, fileName);
             var json = JsonConvert.SerializeObject(operations, Formatting.Indented);
             
@@ -133,6 +157,27 @@ namespace EndpointPilotJsonEditor.Core.Services
         /// <returns>A task representing the asynchronous operation</returns>
         public async Task WriteRegOperationsAsync(List<RegOperation> operations, string fileName = "REG-OPS.json")
         {
+            await WriteRegOperationsAsync(operations, fileName, null);
+        }
+
+        /// <summary>
+        /// Writes registry operations with optional digital signing
+        /// </summary>
+        /// <param name="operations">The list of registry operations to write</param>
+        /// <param name="fileName">The name of the file to write</param>
+        /// <param name="signingCertificate">Certificate to use for signing operations (null for no signing)</param>
+        /// <returns>A task representing the asynchronous operation</returns>
+        public async Task WriteRegOperationsAsync(List<RegOperation> operations, string fileName, X509Certificate2? signingCertificate)
+        {
+            // Sign operations if certificate is provided
+            if (signingCertificate != null)
+            {
+                foreach (var operation in operations)
+                {
+                    _cryptographicService.SignOperation(operation, signingCertificate);
+                }
+            }
+
             var filePath = Path.Combine(_baseDirectory, fileName);
             var json = JsonConvert.SerializeObject(operations, Formatting.Indented);
             
@@ -201,6 +246,34 @@ namespace EndpointPilotJsonEditor.Core.Services
 
             File.Copy(backupPath, filePath, true);
             return true;
+        }
+
+        /// <summary>
+        /// Gets the cryptographic service for signing and validation operations
+        /// </summary>
+        /// <returns>The cryptographic service instance</returns>
+        public CryptographicService GetCryptographicService()
+        {
+            return _cryptographicService;
+        }
+
+        /// <summary>
+        /// Validates signatures for a collection of operations
+        /// </summary>
+        /// <param name="operations">The operations to validate</param>
+        /// <returns>Dictionary mapping operation IDs to their validation results</returns>
+        public Dictionary<string, SignatureValidationResult> ValidateOperationSignatures<T>(List<T> operations) 
+            where T : OperationBase
+        {
+            var results = new Dictionary<string, SignatureValidationResult>();
+            
+            foreach (var operation in operations)
+            {
+                var result = _cryptographicService.ValidateSignature(operation);
+                results[operation.Id] = result;
+            }
+
+            return results;
         }
     }
 }

@@ -8,6 +8,8 @@
              d:DesignHeight="450" d:DesignWidth="800">
     
     <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        
         <Style x:Key="FieldLabelStyle" TargetType="TextBlock">
             <Setter Property="Margin" Value="0,5,5,0" />
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -73,9 +75,21 @@
                     <ListBox Grid.Row="1" x:Name="OperationsList" 
                              ItemsSource="{Binding Operations}" 
                              SelectedItem="{Binding SelectedOperation}"
-                             DisplayMemberPath="DisplayName"
                              ItemContainerStyle="{StaticResource ListBoxItemStyle}"
-                             BorderThickness="0" />
+                             BorderThickness="0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" />
+                                    <Border Background="#28A745" CornerRadius="2" Padding="4,1" Margin="5,0,0,0" 
+                                            Visibility="{Binding IsSigned, Converter={StaticResource BoolToVisibilityConverter}}"
+                                            ToolTip="This operation is digitally signed">
+                                        <TextBlock Text="🔒" Foreground="White" FontSize="10" VerticalAlignment="Center" />
+                                    </Border>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                     
                     <!-- List Actions -->
                     <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10">
@@ -99,7 +113,9 @@
         <!-- Buttons -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
             <Button Content="Reload" Command="{Binding ReloadCommand}" Padding="10,5" Margin="0,0,10,0" />
-            <Button Content="Save" Command="{Binding SaveCommand}" Padding="10,5" Background="#007ACC" Foreground="White" />
+            <Button Content="Save" Command="{Binding SaveCommand}" Padding="10,5" Background="#007ACC" Foreground="White" Margin="0,0,10,0" />
+            <Button Content="🔒 Sign &amp; Save" Command="{Binding SignAndSaveCommand}" Padding="10,5" Background="#28A745" Foreground="White" 
+                    ToolTip="Digitally sign and save operations with enhanced security" />
         </StackPanel>
     </Grid>
 </UserControl>
