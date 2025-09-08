@@ -56,6 +56,38 @@ venv.bak/
 # Built Visual Studio Code Extensions
 *.vsix
 
+# Visual Studio .NET projects
+.vs/
+.vs/*
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.csproj.user
+*.vcxproj.user
+*.dbmdl
+*.pdb
+*.opendb
+*.VC.db
+*.VC.VC.opendb
+*.ncb
+*.sdf
+*.cachefile
+*.ilk
+*.log
+*.tlog
+*.lastbuildstate
+*.sbr
+
+/JsonEditorTool/EndpointPilotJsonEditor.App.csproj.nuget.g.props
+/JsonEditorTool/EndpointPilotJsonEditor.App.csproj.nuget.dgspec.json
+/JsonEditorTool/EndpointPilotJsonEditor.App/obj/project.assets.json
+/JsonEditorTool/EndpointPilotJsonEditor.App/obj/project.nuget.cache
+/JsonEditorTool/EndpointPilotJsonEditor.Core.csproj.nuget.g.props
+/JsonEditorTool/EndpointPilotJsonEditor.Core.csproj.nuget.dgspec.json
+/JsonEditorTool/EndpointPilotJsonEditor.Core/obj/project.nuget.cache
+/JsonEditorTool/EndpointPilotJsonEditor.Core/obj/project.assets.json
+
 # Cursor
 #  Cursor is an AI-powered code editor. `.cursorignore` specifies files/directories to
 #  exclude from AI features like autocomplete and code analysis. Recommended for sensitive data
