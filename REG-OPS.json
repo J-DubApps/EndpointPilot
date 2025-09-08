@@ -6,13 +6,18 @@
     "regtype": "string",
     "write_once": "false",
     "delete": false,
+    "requiresAdmin": false,
+    "adminContext": "auto",
     "id": "001",
     "targeting_type": "none",
     "target": "all",
-    "requiresAdmin": false,
-    "adminContext": "auto",
     "_comment1": "This is a registry entry",
-    "_comment2": "Secondary Comment"
+    "_comment2": "Secondary Comment",
+    "signature": "ZtqBbRRe8kE7RLMC0YOFRuMP1IOOc7WvCDgTsqADkzOmEveuzV1vQWT3LE3biBDBBrnWOPgp/tup5t4sIgg65GMODg0wVg3wdOWseedygri76AGTtg8orM9xxJ9rdP0bHYQ1yHWZm/j3gQdwsQH1eCjEGGhkZkLPh4sT5mh8ElGkvIacF3N5DHNABDaNOOdhSfjTGouvu2b4hNoYh4MHTotjr07jFMNycEU6+skqZAZf76UOdPmQK/nafO0HakvZCgtNz02AZYbVqEDnJMH+KVqhS2+y/LmdAh08/Ha8UHjWDY2hM2/1AUJOSixdSRPB1Yu/wrjEPAbboj/wOc6yDVziFIDj6gDmoL8iRr1zDBYephjIj5Vjg/HaKyh6kZKVdjZjubZ6oGfahCAV7xzTLpKVRfReEO/LVvL/ypkoq91E1kKyr5Cu5XQuMfezYXLgoVjMCkv8RfDTrHlroJYA1eVuq6uwQIuJ8Hfejdvxid/b0+J6nIkaNGDFl6kwvQp4ypxf9D97+W4MOsVNfh1R98cUvc0/5SLn0niqmK6jWJ0ZQiF+X4nsGs+NfZdFTl1rhznUHhsnB+H0T0I1H/h11HhpZLRJW0iZz3KwS+8+nGTt9ZX+vfuRSz5xGc5rg3NpHYb2FsP/3hQMxk1NaRuhdsXpptfHi9uG2+ZogzFOqA0=",
+    "timestamp": "2025-09-08T02:31:14.914Z",
+    "signerCertThumbprint": "D49B316F4C24CA8EC1ECA41FDB901E48DB08A978",
+    "hashAlgorithm": "SHA256",
+    "signatureVersion": "1.0"
   },
   {
     "name": "key2",
@@ -21,13 +26,18 @@
     "regtype": "dword",
     "write_once": "true",
     "delete": false,
+    "requiresAdmin": false,
+    "adminContext": "auto",
     "id": "002",
     "targeting_type": "none",
     "target": "all",
-    "requiresAdmin": false,
-    "adminContext": "auto",
     "_comment1": "This is a registry entry",
-    "_comment2": "Secondary Comment"
+    "_comment2": "Secondary Comment",
+    "signature": "RQjwLPNrwPF7ZRmo0ilzD/IypdmiRALBQme3vD8VspR88Ke+8lYdYI8WcelpLuhEUQcuWIzttP6pUIQgquXD+M3WxJHI2j/+z96gT/WMNlBvjLS1YqNkAYK+f82nWEi1ur3DfZv+pdEJJk8ZwPjZWOjBBS3B+KsDIQ6QW+H5WNqqQYfuNU6RGNiVYzag3AlL1ARdHSHBrZa9tBvu+SsBP0cYtF9c3D3BIuojlGYc6cGSoc7Sl8Kbu5Qgix+mAaYqaXJ+85mwQakdMqnuPlY5KyG4wrrEfz3dKkO9UC9NEiBsHGws+XRQtw4rug+sy/CngvbtPy4V3Z5Y/dZgg8tCJmjMw5NV96AMoL/8QXAQSPLClygwt70fh7e8ZqjnbIAKyO7fdQ0KzBIdyJOAo+3erf86eSoi1lJ35epsrQz4T86QBxX5j52JJcjakXXYHIhpxv10hVSvU5Q9yGxS9cjX/X60IFUFoau72TT/zJJPLhxoW1J08FBWTGK0wpPMwSfI/hW4SRX23o2jpiSuTb+OawFQicJ48mKuz4hQjKlkhxjvBAeMlLEqerXOJKeEvzm768pyOC5NofjRN1w3X50GpIglaeuMaAxVcE+zRzJS4OG9hIIn1s9nUWIrzFxJ/T35M04kxqeETBCc58xa+F8dCONNoIpLBYD+Ld5R38AWhww=",
+    "timestamp": "2025-09-08T02:31:14.923Z",
+    "signerCertThumbprint": "D49B316F4C24CA8EC1ECA41FDB901E48DB08A978",
+    "hashAlgorithm": "SHA256",
+    "signatureVersion": "1.0"
   },
   {
     "name": "key3",
@@ -36,12 +46,17 @@
     "regtype": "dword",
     "write_once": "false",
     "delete": false,
+    "requiresAdmin": false,
+    "adminContext": "auto",
     "id": "003",
     "targeting_type": "none",
     "target": "all",
-    "requiresAdmin": false,
-    "adminContext": "auto",
     "_comment1": "This is a registry entry",
-    "_comment2": "Secondary Comment"
+    "_comment2": "Secondary Comment",
+    "signature": "OxcgJJXARoPGYBOxnomUrlGdexxvGR9MfWnzcKEnNvujQan86pgOwRh5m9htvK5Uf/I5fgP3PRos1k+bCjYN3zGgjUV7pUZEShmxr3mdlJR5y6lwv0glWzN+yaSWlgKDKfEaTp5EVytrmkVlXjFy52uNZx9iYdxiNssJAQef3a5a8sGTb0Kel/RuYazuVB3MeAqrVSXAc7K0xkvrXU2YoAk8oHF0bZ0UojlVNOnLXbDhuR0D1C/EudyDVSGFFp0pLyUZVSncF/cc4OaMrXHuKgqfS3MponNfbwPWInejXRuYMu+vJ6NZ/0IN30OeUhSpkJ0XeT4IXrZ7WEtaV4+kdsK+mJ6hrIzSUCzN15R+2Mzrn/pP2bWa9v5uvgMf05Fe5FIPFZS9VunJ0x3rjtzRBLVkUb2o/FlR5pXPhn488pShmK4gguRESLh7S1oF0Lmsb5ebjUB4lOBpSZkHL+7iyiEDZ2Cby1B0lVXrz4n0y/xbWd75kxDoth76bnQXAYvgmEthQFzkLLc35wJ7MkaKdV9yO+nadmhmOnszFhLG532hY3sUA5lUm8CYqCNLVF6xUYIsbxDBEes+dj0jOjMILeM1bJfij8hGefdqZsgPw/ZJUnpBnsKWLEuE68uS1KDVnsL8nGpeKoe07N1DmzEaY6+63crSzJPjCcfyHbyGgFY=",
+    "timestamp": "2025-09-08T02:31:14.930Z",
+    "signerCertThumbprint": "D49B316F4C24CA8EC1ECA41FDB901E48DB08A978",
+    "hashAlgorithm": "SHA256",
+    "signatureVersion": "1.0"
   }
 ]

@@ -15,7 +15,12 @@
     "targeting_type": "none",
     "target": "all",
     "_comment1": "This is File Copy",
-    "_comment2": "If existCheckLocation *and* existCheck are not blank, then existCheck must either be yes (check if exist) or no (check if *not* exist)"
+    "_comment2": "If existCheckLocation *and* existCheck are not blank, then existCheck must either be yes (check if exist) or no (check if *not* exist)",
+    "signature": "Y84W5LaOBnmc8wbQMKGaP/U1HvLbGQzDRjnoQAcQnGTX5Itg02IxdcOnSbP54jNmKTz8tIoKCIWc9HkV/BQCEF1QzF6zSotDUx/S16KAKHbhGkkE23uCBB07tdKJym8ntZV2kGOxYt+Hk43D2V4yf+SuXg7oiC0AySWoEDwFhU6OHMgZ4NKeOd9oTq4TKHHj11XiUAEYiAy39gtoZl6NyzsPh6VGY3ZktdYmrN7WBMencc4jA2bepobYxCOs0dzvU3vddalmgsKts1LfdR/D+/P9R71NzwyV51tQkOzHdyBRc+LZRmXXvD0DDYJph6jLhLvsCQvtXWJCwS9ovQ1WoJx+XSuzNoCQje3CKwdp8zGX+xDZcojzOnW7jCKOqNQx/cKV3ahswRT4WB77iutRmZWnRx63U4Gc7KGZHUR69YvCF+q6Pls2OrIVvtm1brknrreJLwaIAU5cbHiF4zIdbAEP0YnwudTAtL6a0jGdoj5Gz9ydI6EiUuLnT3eB9DEsu3e4ttLMoVMrnsNI1XyPhYfbL1trTcJGeIU0ZyLLQQJeUXBffT28otJIlVf/ao6jwrlQd1QKiKbBqYK3mBhqBAYEWlBZ/uMSVR0ac0iNPsK4eaCsD5GtKcHI/Zoz1viUdHLv17tYgyAeXVSW+FH0742EQU0177NRw8IueSk3Xfg=",
+    "timestamp": "2025-09-08T02:27:12.237Z",
+    "signerCertThumbprint": "D49B316F4C24CA8EC1ECA41FDB901E48DB08A978",
+    "hashAlgorithm": "SHA256",
+    "signatureVersion": "1.0"
   },
   {
     "srcfilename": "example2.txt",
@@ -33,7 +38,12 @@
     "targeting_type": "none",
     "target": "all",
     "_comment1": "This is a CopyOnce Example, with no Existence Check performed.  File will copy once.",
-    "_comment2": ""
+    "_comment2": "",
+    "signature": "BfHd/MKMmIJcFjzBEQarxBQJO7fhg54aMTOLMzphAShQLipKoRQ9k1hUsk5yVq4BmLp8LriGxj07isVaaa60uY3FEJqznMnoUvN9ZXW2m8mFZxnXFdBkUBjgrORUSVbMvTNtRyNF6QADs85yFXF/4rfijwK6qRZgJKVx520AcjtsJKf/2I3sVsGQCFGrjtJrHwddkfjAASRaKC9mWFwsXVYaGl+NmtVNQpIOYRCv24EDCzerpKcbJgqmM2RuHl8DU5lxIygGzWQvt1S/3jLjAcGeprPba7fYcqWbaWoSN0tktVRhaZIyOws65zmWRX7MqODC7CJ4ooC+83ILepK0d5wQuhV5XDteRDzuS5DEH8ojqVZi03r7a+uXTVjfFwH9Y8xnPmT2wumNJvk+0Rwo1oSFsJhyh1BNEZPh4K7U+Dlfm1Ga6y1Qdl+JFGnnW38GVeiQKOf43/vQ0qaarrOPdmC3IJfQFvhIdYWHYRL+EC44tgBnjsEmGgOaBGMs+nsIy6hYaIUliwC77OB1dz/oLjLBTcUEnHs8eSLlSBJ26GLmV6QweLgSyqiBADQCIsUfzKokxKucIBwWdPIf0DVsD0qEoFmXxJq0TFYREicuZSZk6Hb77qZ0jpSuIx3Ftjm1lfC5oWssuZB3OE7A7KEWKBzB3tvgeRlWkBevyQUrjR4=",
+    "timestamp": "2025-09-08T02:27:12.245Z",
+    "signerCertThumbprint": "D49B316F4C24CA8EC1ECA41FDB901E48DB08A978",
+    "hashAlgorithm": "SHA256",
+    "signatureVersion": "1.0"
   },
   {
     "srcfilename": "example3.txt",
@@ -51,7 +61,12 @@
     "targeting_type": "none",
     "target": "all",
     "_comment1": "place comment here",
-    "_comment2": ""
+    "_comment2": "",
+    "signature": "QIec+z4pxi7oBoj9fB0kQdFmttFhpiOsMN5WMKe3SFCqkgwkBeVwGj9mktYXKPzpRmn2waU/VrxJSzmv2884EFaAaOyrzU0eVyZUh9mET7EI0dXOs3E5OMmMYoFERwYFVsLEfsiKgo096GeDClFVWe1ZQsSjCgzMypvjAznfGUFX48E0WFa2ADfqXfd4INOlBmACCx7pFev/kaoq00898SjXo6dgUJ8kzXI067LHK4NZ7ZW5zPKAYuhiMSUHdRinO+3tHdYOIZn7wl57Wpq2t6Z7wNKqbPIftuE1rq8qfNU9H6Nqc2SUWwcbc0Paeh0f7nzNhFu6Np0z9V3KsGLqxNhuvm/Gzpi2zXTK3gnuZ3BJLCkwBcmTDixX0zymQkQ2GHdMxvIUG2tHVR+DXOTR56jVT+9VSMadbdoGJD83xfyDGTbVT2iDJFlMIyrqY23btdAEF+eNeiHhc8ex8UeRNQqBzanB+7KgZm7X5yGKJPG/MmBkfdWi7wAy5ihRsQyEvIfnDt6xrWHJlS7N9MEfimT2q2VEFu1Tp9uukDqneFtdWxhG0wFVVUpa/4wN13h7TXJgmiZv8Ul/ZU/qKXzDu0RXAJKHqul6uVCmGGuN0QnOFP6cZCoFdBz0P04yf7kJtvAiFthIvTgkPRzLIuW7jWqAgxHk2Q1NNYH+44siMwc=",
+    "timestamp": "2025-09-08T02:27:12.252Z",
+    "signerCertThumbprint": "D49B316F4C24CA8EC1ECA41FDB901E48DB08A978",
+    "hashAlgorithm": "SHA256",
+    "signatureVersion": "1.0"
   },
   {
     "srcfilename": "",
@@ -69,6 +84,11 @@
     "targeting_type": "none",
     "target": "all",
     "_comment1": "place comment here",
-    "_comment2": "place comment here"
+    "_comment2": "place comment here",
+    "signature": "RuaNl1GWPTSjv7SmKtIgrvay3UsGxrlXa7wLV/M6gNTJ73Vd97I11AAuhvee0FGIeMh+h4lCyxaDCEajUuL5P6PpypYJpywjdn+wy+yXrUzg6tIf2VtXECuQd1UOxbTen/BY+ngEs9DVKp/vGIKmeSz4hbYcTsItRLK9Z5yfyYFzwzqdpGSPR41X3boYZiPd1GNcAWN/c2xQ25kzkQtfDDpATmSw2iBKmDtyP32PW7IjMjR2A17eKKBYUpdBLhUs1Hrk/NV+bGc6GUGPyGhJ1oLQtYk3mS2X8AiO6W3+yiY5BkPHIi3RrNBdbNhSzhM+Zz7y1lgBEtYhRGxBwQjQrYb6EsDXxHZGHGiAmp2SwsIAio5R01WIJ5n0+V579bXupHtMpjbSFK20jZ+hv2QuOeRxUaxJJF1XA4sAvp3/YYluLSo2vS7mljrEOO9BTDSYTLcG27/9rLEyJIxGWX/HvsWQoFFGUly05sFSFDIXcArLU0kX3qEyqMIkcr2oXmhfO4max1KgSbo8roxI7ZMHvLQxBRxJxFJnhUxjOLyX0O5yucJplB32hptF8BUzD40nN9efz9sN2v3Y8bKDeOc6oYGAITxZ+bgw6xoXOg2uVALchWx1NinxC4jwmCsPlZbiV5ly2yywZFvCJcz5Boqh1uYNRPtaOirF1/NNsGbxl3w=",
+    "timestamp": "2025-09-08T02:27:12.260Z",
+    "signerCertThumbprint": "D49B316F4C24CA8EC1ECA41FDB901E48DB08A978",
+    "hashAlgorithm": "SHA256",
+    "signatureVersion": "1.0"
   }
 ]
