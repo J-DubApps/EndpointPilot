@@ -10,12 +10,12 @@ updated: 2025-08-19T15:58
 
 > [!NOTE]
 > This repo isn't currently accepting code contributions. It's public and open source to show progress and
-> enable feedback for summer '25 soft launch. Once I get it to a feature-complete state, I plan to accept input and contributions.  Once that begins, see [CONTRIBUTING.md](CONTRIBUTING.md)
+> enable feedback for summer '26 soft launch. Once I get it to a feature-complete state, I plan to accept input and contributions.  Once that begins, see [CONTRIBUTING.md](CONTRIBUTING.md)
 
 > [!WARNING]
 > This solution is ramping toward a 1.0 Beta Release and is ***NOT*** remotely ready for use on ANY live production scenarios. Do NOT install onto your prod PC Endpoints! You have been warned!
 
-**EndpointPilot** (under development summer 2025) **is a PowerShell-based autonoumous Windows PC Endpoint** ***Configuration Management*** **solution for PCs operating in an Active Directory**, **Intune**, **or a NinjaOne-managed context**.  It uses JSON files to define operations like file, registry, and system settings management.  
+**EndpointPilot** (under development summer 2026) **is a PowerShell-based autonoumous Windows PC Endpoint** ***Configuration Management*** **solution for PCs operating in **Intune** **or a NinjaOne-managed context**.  It uses JSON files to define operations like file, registry, and system settings management.  
 
 <br />
 <p align="center">
@@ -23,16 +23,16 @@ updated: 2025-08-19T15:58
 </p>
 
 
-At first EndpointPilot will only offer Config Mgmt of user profiles on managed Windows Endpoints during its closed Alpha testing.  EndpointPilot is able to manage settings in either *on-prem* ***Office*** or ***Remote-Work scenarios***. It functions a lot like a logon script, but runs locally via Agent (or Scheduled Task, in some configurations).  EndpointPilot's PowerShell code is directed by ***x-OPS.JSON*** directive files, which tells EP's scripts what to do (each line within each **x-OPS.JSON*** govern the actions each config sript undertakes).  A Json Editor GUI Tool is included for managing ***x-OPS.JSON*** JSON directive file.  **Think of *EP* as an alternative to [GPO/GPP](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-policy/group-policy-processing) or [Intune Policy CSP](https://learn.microsoft.com/en-us/windows/client-management/mdm/policy-configuration-service-provider)**.  Because **EP** operates *independent of* a Windows PC Endpoint's AD, Intune, or NinjaOne status -- so it can be a great config-mgmt add-on for use with those environments.
+At first EndpointPilot will only offer Config Mgmt of user profiles on managed Windows Endpoints during its closed Alpha testing.  EndpointPilot currently can manage settings in either *on-prem* ***Office*** or ***Remote-Work scenarios***. It functions a lot like a logon script, but runs locally via Agent.  EndpointPilot's PowerShell code is directed by ***x-OPS.JSON*** directive files, which tells EP's scripts what to do (each line within each **x-OPS.JSON*** govern the actions each config sript undertakes).  A very basic Json Editor GUI Tool is included for managing ***x-OPS.JSON*** JSON directive files.  **Think of *EP* as an alternative to [GPO/GPP](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-policy/group-policy-processing) or [Intune Policy CSP](https://learn.microsoft.com/en-us/windows/client-management/mdm/policy-configuration-service-provider)**.  Because **EP** operates *independent of* a Windows PC Endpoint's AD, Intune, or NinjaOne status -- so it can be a useful config-mgmt add-on for use with those environments.
 
 ### EndpointPilot addresses the following use-case scenarios:
 
-1. Hybrid/Remote staff needing persistent sysadmin settings on their Windows PC endpoints, even when they infrequently restart.
-2. Where timely settings-placement needs to occur outside of the logon/restart process, independent of Corporate VPN or Intune-visibility status.
+1. Hybrid/Remote staff needing persistent settings applied to their Windows PC endpoints, even when they infrequently restart.
+2. Where timely settings-placement needs to occur outside of the logon/restart process, independent of Corporate VPN or visibility status to Intune/NinjaOne.
 3. Hybrid Domain-Joined PCs where Intune Configuration Profiles/CSP or Active Directory GPP settings are not always feasible, or need to occur at a different cadence than default.
-4. GPO/GPP-processing is slow over a cloud-based VPN. 
+4. GPO/GPP-processing TTL / latency over a corporate VPN. 
 
-EndpointPilot runs locally on the PC endpoint itself, as a repeating Scheduled Task, so it does not require line-of-sight to a Domain Controller NETLOGON share or a Logon Script GPO. Its runtime components (primarily PowerShell and JSON files) are staged onto a PC endpoint under each user's profile at %LOCALAPPDATA%\EndpointPilot (C:\Users\Username\AppData\Local\EndpointPilot).  See [Roadmap](#roadmap) for system-agent (run as SYSTEM) plans.
+EndpointPilot runs locally on the PC endpoint itself, and does not require line-of-sight to Domain Controllers or other legacy corporate infrastructure (Netlogon/GPO/etc). Its runtime components (primarily PowerShell and JSON files) are staged onto a PC endpoint under each user's profile at %LOCALAPPDATA%\EndpointPilot (C:\Users\Username\AppData\Local\EndpointPilot).  See [Roadmap](#roadmap) for system-agent (run as SYSTEM) plans.
 
 EndpointPilot's running config and common operations stored in ***three*** (3) *JSON*-formatted ***directive files***.  The key-value pairs in the directive files are processed similar in concept to "*Playbooks*", but are simpler in design and function.  
 
