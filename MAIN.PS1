@@ -69,7 +69,7 @@ if($Env:USERPROFILE.EndsWith("system32\config\systemprofile")){
 If ($TestSharedVarModule -eq $true) {
 	$RunMode = $false
 	$skipScheduledTaskCreation = $true
-	$SharedVarModuleCheck - $true
+	$SharedVarModuleCheck = $true
 	$triggerRuntimeScriptHere = $False
 }
 

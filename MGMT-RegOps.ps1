@@ -56,9 +56,9 @@ try {
                 try {
                     $validationResult = Test-JsonSignature -OperationData $_ -SignatureData $signatureData
                     if ($validationResult.IsValid) {
-                        WriteLog "Signature validation passed for registry operation: $($_.comments)"
+                        WriteLog "Signature validation passed for registry operation: $($_._comment1) (id: $($_.id))"
                     } else {
-                        $errorMsg = "Signature validation failed for registry operation: $($_.comments). Reason: $($validationResult.ErrorMessage)"
+                        $errorMsg = "Signature validation failed for registry operation: $($_._comment1) (id: $($_.id)). Reason: $($validationResult.ErrorMessage)"
                         WriteLog "SECURITY WARNING: $errorMsg"
                         
                         if ($signatureConfig.EnforcementMode -eq 'strict') {
@@ -72,7 +72,7 @@ try {
                     }
                 }
                 catch {
-                    $errorMsg = "Exception during signature validation for registry operation: $($_.comments). Error: $_"
+                    $errorMsg = "Exception during signature validation for registry operation: $($_._comment1) (id: $($_.id)). Error: $_"
                     WriteLog "SECURITY ERROR: $errorMsg"
                     
                     if ($signatureConfig.EnforcementMode -eq 'strict') {
@@ -85,66 +85,77 @@ try {
             } else {
                 # No signature present - Phase 1 compatibility
                 if ($signatureConfig.EnforcementMode -eq 'strict') {
-                    WriteLog "ERROR: Registry operation missing required signature (strict mode): $($_.comments)"
+                    WriteLog "ERROR: Registry operation missing required signature (strict mode): $($_._comment1) (id: $($_.id))"
                     return
                 } elseif ($signatureConfig.EnforcementMode -eq 'warn') {
-                    WriteLog "WARNING: Processing unsigned registry operation (warn mode): $($_.comments)"
+                    WriteLog "WARNING: Processing unsigned registry operation (warn mode): $($_._comment1) (id: $($_.id))"
                 }
                 # In disabled mode, no logging needed for unsigned operations
             }
             
             # Extract registry operation information from JSON
-            $keyPath = $_.keyPath
-            $valueName = $_.valueName
-            $valueData = $_.valueData
-            $valueType = $_.valueType
-            $operation = $_.operation
+            # Field names match REG-OPS.schema.json: name, path, value, regtype, write_once, delete
+            $regName = $_.name
+            $regPath = $_.path
+            $regValue = $_.value
+            $regType = $_.regtype
+            $writeOnce = $_.write_once
+            $deleteValue = $_.delete
             $requiresAdmin = $_.requiresAdmin
-            $comments = $_.comments
-            
+            $comment = $_._comment1
+
             # Check if this operation requires administrative privileges
             if ($requiresAdmin -eq $true) {
-                WriteLog "WARNING: Registry operation requires administrative privileges: $comments"
-                # Skip operation if not running with appropriate privileges
-                # This will be handled by the System Agent in future versions
+                WriteLog "WARNING: Registry operation requires administrative privileges: $comment (id: $($_.id))"
                 return
             }
-            
+
             try {
-                # Process registry operation based on operation type
-                switch ($operation.ToLower()) {
-                    'create' {
-                        WriteLog "Creating registry key: $keyPath"
-                        if (-not (Test-Path "Registry::$keyPath")) {
-                            New-Item -Path "Registry::$keyPath" -Force -ErrorAction Stop
-                            WriteLog "Successfully created registry key: $keyPath"
-                        } else {
-                            WriteLog "Registry key already exists: $keyPath"
+                if ($deleteValue -eq $true) {
+                    # Delete operation
+                    if ($regName) {
+                        WriteLog "Deleting registry value: $regPath\$regName"
+                        Remove-ItemProperty -Path "Registry::$regPath" -Name $regName -ErrorAction Stop
+                        WriteLog "Successfully deleted registry value: $regPath\$regName"
+                    } else {
+                        WriteLog "Deleting registry key: $regPath"
+                        Remove-Item -Path "Registry::$regPath" -Recurse -Force -ErrorAction Stop
+                        WriteLog "Successfully deleted registry key: $regPath"
+                    }
+                } else {
+                    # Set operation — ensure the key path exists
+                    if (-not (Test-Path "Registry::$regPath")) {
+                        New-Item -Path "Registry::$regPath" -Force -ErrorAction Stop | Out-Null
+                        WriteLog "Created registry key: $regPath"
+                    }
+
+                    # Handle write_once: skip if value already exists
+                    if ($writeOnce -eq "true") {
+                        $existing = Get-ItemProperty -Path "Registry::$regPath" -Name $regName -ErrorAction SilentlyContinue
+                        if ($null -ne $existing) {
+                            WriteLog "Skipping write-once registry value (already exists): $regPath\$regName"
+                            return
                         }
                     }
-                    'set' {
-                        WriteLog "Setting registry value: $keyPath\$valueName = $valueData"
-                        Set-ItemProperty -Path "Registry::$keyPath" -Name $valueName -Value $valueData -Type $valueType -ErrorAction Stop
-                        WriteLog "Successfully set registry value: $keyPath\$valueName"
+
+                    # Map regtype to PowerShell registry types
+                    $psRegType = switch ($regType) {
+                        'string'      { 'String' }
+                        'dword'       { 'DWord' }
+                        'qword'       { 'QWord' }
+                        'binary'      { 'Binary' }
+                        'multi-string' { 'MultiString' }
+                        'expandable'  { 'ExpandString' }
+                        default       { 'String' }
                     }
-                    'delete' {
-                        if ($valueName) {
-                            WriteLog "Deleting registry value: $keyPath\$valueName"
-                            Remove-ItemProperty -Path "Registry::$keyPath" -Name $valueName -ErrorAction Stop
-                            WriteLog "Successfully deleted registry value: $keyPath\$valueName"
-                        } else {
-                            WriteLog "Deleting registry key: $keyPath"
-                            Remove-Item -Path "Registry::$keyPath" -Recurse -Force -ErrorAction Stop
-                            WriteLog "Successfully deleted registry key: $keyPath"
-                        }
-                    }
-                    default {
-                        WriteLog "ERROR: Unknown registry operation type: $operation"
-                    }
+
+                    WriteLog "Setting registry value: $regPath\$regName = $regValue (type: $psRegType)"
+                    Set-ItemProperty -Path "Registry::$regPath" -Name $regName -Value $regValue -Type $psRegType -ErrorAction Stop
+                    WriteLog "Successfully set registry value: $regPath\$regName"
                 }
             }
             catch {
-                WriteLog "ERROR processing registry operation: $comments. Error: $_"
+                WriteLog "ERROR processing registry operation (id: $($_.id)): $comment. Error: $_"
             }
         }
     } else {

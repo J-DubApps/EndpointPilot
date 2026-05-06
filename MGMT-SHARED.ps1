@@ -172,7 +172,7 @@ $psEd = $PSVersionTable.PSEdition
 if ($psEd -eq 'Desktop' -and $psVer.Major -eq 5 -and $psVer.Minor -eq 1) {
     # Write-Output "You are running Windows PowerShell 5.1 (Desktop Edition)."
     $psClassicDesktop = $true
-} elseif ($psEd -eq 'Core' -and $psVers.Major -ge 7) {
+} elseif ($psEd -eq 'Core' -and $psVer.Major -ge 7) {
     # Write-Output "You are running PowerShell Core (version 7.x or newer)."
     $psClassicDesktop = $false
 } else {
