@@ -45,26 +45,48 @@ Function Test-ClientEnvironment() {
 
 Function Get-OperatingSystemApproved() {
     ##########################################################################
-    ##	Checks what version of Windows the machine is running
-    ##	and quits if it is on an unsupported platform
+    ##	Checks what version of Windows the machine is running.
+    ##  Blocks unsupported platforms (Server, x86, etc).
+    ##  Pro editions: allowed by default, blocked when EnterpriseOnly = true.
+    ##  In dry-run mode, logs detection but never exits.
     ##########################################################################
-    $wmiOS = Get-WmiObject -Class Win32_OperatingSystem;
-    $OS = $wmiOS.caption
+    $osInfo = Get-CimInstance -ClassName Win32_OperatingSystem
+    $OS = $osInfo.Caption
 
-    If ($OS -like "Microsoft Windows 10 Enterprise*") {
-        $OSName = "Microsoft Windows 10 Enterprise"
-        #$OS
-        #$OSName
-    } Elseif ($OS -like "Microsoft Windows 11 Enterprise*") {
-        $OSName = "Microsoft Windows 11 Enterprise"
-        #$OS
-        #$OSName
-    } Else {
-        Write-WarningEvent("The current operating system, " + $OS + ", is not supported. Exiting the script now.")
-        #$OS
-        #$OSName
-        Exit
+    $supported = $false
+    $isEnterprise = $false
+
+    if ($OS -like "Microsoft Windows 1* Enterprise*") {
+        $supported = $true
+        $isEnterprise = $true
+    } elseif ($OS -like "Microsoft Windows 1* Pro*") {
+        $supported = $true
+        $isEnterprise = $false
     }
+
+    if (-not $supported) {
+        WriteLog "Unsupported operating system detected: $OS"
+        if ($global:DryRunMode) {
+            WriteLog "Would exit due to unsupported OS (skipped in dry-run)"
+        } else {
+            Write-WarningEvent("The current operating system, " + $OS + ", is not supported. Exiting the script now.")
+            Exit
+        }
+        return
+    }
+
+    if (-not $isEnterprise -and $config.EnterpriseOnly -eq $true) {
+        WriteLog "Non-Enterprise OS detected: $OS (EnterpriseOnly is enabled in CONFIG.json)"
+        if ($global:DryRunMode) {
+            WriteLog "Would exit due to EnterpriseOnly policy (skipped in dry-run)"
+        } else {
+            Write-WarningEvent("The current operating system, " + $OS + ", is not Enterprise. Exiting per EnterpriseOnly policy.")
+            Exit
+        }
+        return
+    }
+
+    WriteLog "Operating system approved: $OS"
 }
 
 # Test if an operation requires elevation

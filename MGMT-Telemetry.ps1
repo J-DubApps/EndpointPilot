@@ -73,10 +73,10 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
             or Description like '%vpn%'"
 }
 else {
-    # Needed this script to work on PowerShell 2.0 (don't ask)
-    $WirelessAdapters = Get-WmiObject -Namespace "root\WMI" -Class MSNdis_PhysicalMediumType -Filter `
+    # PS 2.0 fallback removed -- minimum supported version is now PS 5.1
+    $WirelessAdapters = Get-CimInstance -Namespace "root\WMI" -ClassName MSNdis_PhysicalMediumType -Filter `
         'NdisPhysicalMediumType = 9'
-    $WiredAdapters = Get-WmiObject -Namespace "root\WMI" -Class MSNdis_PhysicalMediumType -Filter `
+    $WiredAdapters = Get-CimInstance -Namespace "root\WMI" -ClassName MSNdis_PhysicalMediumType -Filter `
         "NdisPhysicalMediumType = 0 and `
             (NOT InstanceName like '%pangp%') and `
             (NOT InstanceName like '%cisco%') and `
@@ -85,9 +85,9 @@ else {
             (NOT InstanceName like 'Hyper-V%') and `
             (NOT InstanceName like 'VMware%') and `
             (NOT InstanceName like 'VirtualBox Host-Only%')"
-    $ConnectedAdapters = Get-WmiObject -Class win32_NetworkAdapter -Filter `
+    $ConnectedAdapters = Get-CimInstance -ClassName Win32_NetworkAdapter -Filter `
         'NetConnectionStatus = 2'
-    $VPNAdapters = Get-WmiObject -Class Win32_NetworkAdapterConfiguration -Filter `
+    $VPNAdapters = Get-CimInstance -ClassName Win32_NetworkAdapterConfiguration -Filter `
         "Description like '%pangp%' `
             or Description like '%cisco%'  `
             or Description like '%juniper%' `
@@ -194,7 +194,7 @@ WriteLog "Installation Date of this PC is:  $installdate"
 #systeminfo | findstr /C:"Original Install Date" | Out-File -Append -NoClobber -Encoding UTF8 -FilePath "$env:userprofile\LOGON-$env:computername.log"
 #gcim Win32_OperatingSystem | select InstallDate | Out-File -Append -NoClobber -Encoding UTF8 -FilePath "$env:userprofile\LOGON-$env:computername.log"
 WriteLog ""
-$BuildNumber = Get-WmiObject -query "select * from Win32_OperatingSystem" | select BuildNumber
+$BuildNumber = Get-CimInstance -Query "select BuildNumber from Win32_OperatingSystem" | Select-Object -ExpandProperty BuildNumber
 WriteLog "Build Number of this PC is:  $BuildNumber"
 
 WriteLog ""
@@ -214,11 +214,11 @@ else {
 #Checking uptime
 WriteLog ""
 
-# Get the Win32_OperatingSystem WMI class
-$os = Get-WmiObject -Class Win32_OperatingSystem
+# Get the Win32_OperatingSystem CIM instance
+$os = Get-CimInstance -ClassName Win32_OperatingSystem
 
-# Parse the LastBootUpTime property into a DateTime object
-$lastBootUpTime = $os.ConvertToDateTime($os.LastBootUpTime)
+# CIM returns LastBootUpTime as a native DateTime (no ConvertToDateTime needed)
+$lastBootUpTime = $os.LastBootUpTime
 
 # Print the last boot up time
 #Write-Output "Last boot time: $lastBootUpTime"
@@ -230,7 +230,7 @@ $uptime = New-TimeSpan -Start $lastBootUpTime -End (Get-Date)
 WriteLog "Uptime: $($uptime.Days) days $($uptime.Hours) hours $($uptime.Minutes) minutes $($uptime.Seconds) seconds"
 
 # Get the information of logical disk C:
-$disk = Get-WmiObject -Class Win32_LogicalDisk -Filter "DeviceID='C:'"
+$disk = Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DeviceID='C:'"
 
 # Convert the free space in bytes to GB and round it to 2 decimal places
 $freeSpaceGB = [math]::Round(($disk.FreeSpace / 1GB), 2)
@@ -383,7 +383,7 @@ foreach ($pstobject in $pstobjects) {
 #endregion PST_Check
 
 # Get the information of logical disk C:
-$disk = Get-WmiObject -Class Win32_LogicalDisk -Filter "DeviceID='C:'"
+$disk = Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DeviceID='C:'"
 
 # Convert the free space in bytes to GB and round it to 2 decimal places
 $freeSpaceGB = [math]::Round(($disk.FreeSpace / 1GB), 2)

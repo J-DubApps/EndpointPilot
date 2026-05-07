@@ -63,7 +63,11 @@
     },
     "DryRun": {
       "type": "boolean",
-      "description": "Enable dry-run mode — all operations are logged but no changes are made to the system"
+      "description": "Enable dry-run mode -- all operations are logged but no changes are made to the system"
+    },
+    "EnterpriseOnly": {
+      "type": "boolean",
+      "description": "When true, only Windows Enterprise editions are allowed. When false (default), Pro editions are also permitted."
     }
   },
   "required": ["OrgName", "Refresh_Interval", "NetworkScriptRootPath"],

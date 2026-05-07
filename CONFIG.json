@@ -13,5 +13,6 @@
   "SkipDriveOps": false,
   "SkipRegOps": false,
   "SkipRoamOps": false,
-  "DryRun": false
+  "DryRun": false,
+  "EnterpriseOnly": false
 }
