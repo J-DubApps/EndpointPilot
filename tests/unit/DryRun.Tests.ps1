@@ -121,7 +121,7 @@ Describe "Dry-Run Mode" -Tag "Unit", "DryRun" {
 
             # Simulate the FileOps delete guard
             if ($global:DryRunMode) {
-                # Would delete — but doesn't
+                # Would delete -- but doesn't
             } else {
                 Remove-Item -Path $testFile -Force -ErrorAction Ignore
             }
@@ -138,7 +138,7 @@ Describe "Dry-Run Mode" -Tag "Unit", "DryRun" {
 
             # Simulate the FileOps copy guard
             if ($global:DryRunMode) {
-                # Would copy — but doesn't
+                # Would copy -- but doesn't
             } else {
                 Copy-Item -Path $sourceFile -Destination $destFile -Force
             }

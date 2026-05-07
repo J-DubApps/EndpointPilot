@@ -290,7 +290,7 @@ $objComputer = ([adsisearcher]$filter).FindOne().Properties.distinguishedname
 #Log Runtime start
 WriteLog "Logon Script Run Start"
 if ($global:DryRunMode) {
-    WriteLog "*** DRY-RUN MODE ACTIVE — no system changes will be made ***"
+    WriteLog "*** DRY-RUN MODE ACTIVE -- no system changes will be made ***"
 }
 
 #Create Event Viewer entry for the start of the script

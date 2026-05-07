@@ -131,7 +131,7 @@ try {
                         }
                     }
                 } else {
-                    # Set operation — ensure the key path exists
+                    # Set operation -- ensure the key path exists
                     if (-not (Test-Path "Registry::$regPath")) {
                         if ($global:DryRunMode) {
                             WriteLog "Would create registry key: $regPath"
