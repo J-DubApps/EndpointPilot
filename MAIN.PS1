@@ -119,7 +119,7 @@ else {
 ## If we're on VPN + Network shares are reachable, continuing script-run...
 
 # Exit if not running Enterprise Edition
-Test-OperatingSystem
+Get-OperatingSystemApproved
 
 
 #Call Script Element / Component Modules -
@@ -221,7 +221,7 @@ if ($global:DryRunMode) {
 
 #Final logging entries & network log placement
 
-Log-InformationalEvent("EndpointPilot run completed for " + $env:UserName)
+Write-InformationalEvent("EndpointPilot run completed for " + $env:UserName)
 Start-Sleep -Milliseconds 100 #Wait
 WriteLog "EndPointPilot Run Complete"
 

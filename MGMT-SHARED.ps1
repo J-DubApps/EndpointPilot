@@ -272,7 +272,11 @@ If ($HttpsScriptRootEnabled -eq $true) {
 #region Check
 #region Defaults
 $SCT = 'SilentlyContinue'
-Get-ChildItem -Path $LogFile | Remove-Item -Force -ErrorAction Ignore | Out-Null
+if (-not (Test-Path -Path $LogFile)) {
+    New-Item -Path $LogFile -ItemType File -Force | Out-Null
+} else {
+    Remove-Item -Path $LogFile -Force -ErrorAction SilentlyContinue | Out-Null
+}
 $ErrorActionPreference = "Continue"
 #Set the Robocopy location
 $Robocopy = "C:\Windows\System32\Robocopy.exe"
