@@ -93,7 +93,7 @@ $setPSRuntimeLauncherPath = Join-Path $setRuntimeScriptFolder -ChildPath "./EPIL
 
 # load the shared functions module
 
-Import-Module MGMT-Functions.psm1
+Import-Module (Join-Path $PSScriptRoot "MGMT-Functions.psm1") -Force
 
 # load shared variables and non independent functions from the MGMT-SHARED.ps1 file
 

@@ -17,7 +17,7 @@
 if ($MyInvocation.InvocationName -ne '.') {
     # Load shared components if run standalone (for potential future testing)
     try {
-        Import-Module MGMT-Functions.psm1 -ErrorAction Stop
+        Import-Module (Join-Path $PSScriptRoot "MGMT-Functions.psm1") -Force -ErrorAction Stop
         . .\MGMT-SHARED.ps1 -ErrorAction Stop
     }
     catch {

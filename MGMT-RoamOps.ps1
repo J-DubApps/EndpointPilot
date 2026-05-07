@@ -27,7 +27,7 @@ if ($MyInvocation.InvocationName -ne '.') {
 
 	    # We are running independently of MAIN.PS1, load Shared Modules & Shaed Variable Files
  	    # and coninue the rest of the script with your shared variables and functions
-    	Import-Module MGMT-Functions.psm1
+    	Import-Module (Join-Path $PSScriptRoot "MGMT-Functions.psm1") -Force
     	. .\MGMT-SHARED.ps1
 
 } else {
