@@ -48,8 +48,12 @@ $DuplicateNames = @(
 
 try {
     Get-ChildItem -Path $DesktopPath -Filter *.lnk -Include $DuplicateNames | Where-Object {$_.Name -like "*-*.lnk"} | ForEach-Object {
-        WriteLog "Removing duplicate shortcut: $($_.FullName)"
-        Remove-Item -Path $_.FullName -Force -ErrorAction Stop
+        if ($global:DryRunMode) {
+            WriteLog "Would remove duplicate shortcut: $($_.FullName)"
+        } else {
+            WriteLog "Removing duplicate shortcut: $($_.FullName)"
+            Remove-Item -Path $_.FullName -Force -ErrorAction Stop
+        }
     }
 } catch {
     WriteLog "ERROR cleaning up duplicate .lnk shortcuts: $_"
@@ -57,8 +61,12 @@ try {
 
 try {
     Get-ChildItem -Path $DesktopPath -Filter *.url -Include $DuplicateNames | Where-Object {$_.Name -like "*-*.url"} | ForEach-Object {
-        WriteLog "Removing duplicate shortcut: $($_.FullName)"
-        Remove-Item -Path $_.FullName -Force -ErrorAction Stop
+        if ($global:DryRunMode) {
+            WriteLog "Would remove duplicate shortcut: $($_.FullName)"
+        } else {
+            WriteLog "Removing duplicate shortcut: $($_.FullName)"
+            Remove-Item -Path $_.FullName -Force -ErrorAction Stop
+        }
     }
 } catch {
     WriteLog "ERROR cleaning up duplicate .url shortcuts: $_"

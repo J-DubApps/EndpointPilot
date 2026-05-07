@@ -130,12 +130,16 @@ $json | ForEach-Object {
     try {
         # Delete file if specified in the JSON file
         if (-not $srcfilename -and $deleteFile -and $deleteFile -eq $true -and $requiresAdmin -eq $false) {
-            Remove-Item -Path $destinationFile -Force -ErrorAction Ignore
+            if ($global:DryRunMode) {
+                WriteLog "Would delete file: $destinationFile"
+            } else {
+                Remove-Item -Path $destinationFile -Force -ErrorAction Ignore
+            }
             return
         }
     }
     catch {
-        WriteLog "ERROR processing file operation (delete check): $_" # Log full exception details
+        WriteLog "ERROR processing file operation (delete check): $_"
     }
 
 If ($requiresAdmin -eq $false) {
@@ -164,11 +168,14 @@ If ($requiresAdmin -eq $false) {
     try {
         if ($copyonce) {
             if (Test-Path -Path $destinationFile) {
-                # Write-Host "File already exists, skipping copy"
+                # File already exists, skipping copy
             }
             else {
-                # Copy the file if it doesn't exist
-                Copy-Item -Path $sourceFile -Destination $destinationFile -Force -ErrorAction Ignore
+                if ($global:DryRunMode) {
+                    WriteLog "Would copy (copyonce): $sourceFile -> $destinationFile"
+                } else {
+                    Copy-Item -Path $sourceFile -Destination $destinationFile -Force -ErrorAction Ignore
+                }
             }
         }
         else {
@@ -177,24 +184,34 @@ If ($requiresAdmin -eq $false) {
                     $sourceDate = (Get-Item $sourceFile).LastWriteTime
                     $destinationDate = (Get-Item $destinationFile).LastWriteTime
                     if ($sourceDate -gt $destinationDate) {
-                        Copy-Item -Path $sourceFile -Destination $destinationFile -Force -ErrorAction Ignore
+                        if ($global:DryRunMode) {
+                            WriteLog "Would copy (newer): $sourceFile -> $destinationFile"
+                        } else {
+                            Copy-Item -Path $sourceFile -Destination $destinationFile -Force -ErrorAction Ignore
+                        }
                     }
                 }
                 else {
-                    # Copy the file if it doesn't exist
-                    Copy-Item -Path $sourceFile -Destination $destinationFile -ErrorAction Ignore
+                    if ($global:DryRunMode) {
+                        WriteLog "Would copy (new): $sourceFile -> $destinationFile"
+                    } else {
+                        Copy-Item -Path $sourceFile -Destination $destinationFile -ErrorAction Ignore
+                    }
                 }
             }
             else {
-                # Copy the file, but don't overwrite if it already exists
                 if (!(Test-Path -Path $destinationFile)) {
-                    Copy-Item -Path $sourceFile -Destination $destinationFile -ErrorAction Ignore
+                    if ($global:DryRunMode) {
+                        WriteLog "Would copy (no-overwrite): $sourceFile -> $destinationFile"
+                    } else {
+                        Copy-Item -Path $sourceFile -Destination $destinationFile -ErrorAction Ignore
+                    }
                 }
             }
         }
     }
     catch {
-        WriteLog "ERROR processing file operation (copy): $_" # Log full exception details
+        WriteLog "ERROR processing file operation (copy): $_"
     }
   }
 }

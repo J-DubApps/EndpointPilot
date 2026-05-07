@@ -12,5 +12,6 @@
   "SkipFileOps": false,
   "SkipDriveOps": false,
   "SkipRegOps": false,
-  "SkipRoamOps": false
+  "SkipRoamOps": false,
+  "DryRun": false
 }

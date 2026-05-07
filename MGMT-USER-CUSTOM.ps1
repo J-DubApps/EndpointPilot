@@ -42,24 +42,24 @@ if ($MyInvocation.InvocationName -ne '.') {
 
 
     try{
+        if ($global:DryRunMode) {
+            WriteLog "Would set Modern Auth registry keys (HKCU:\SOFTWARE\Microsoft\Exchange, HKCU:\SOFTWARE\Microsoft\Office\16.0\Common\Identity)"
+        } else {
+            $resEAD = New-Item -Path "HKCU:\SOFTWARE\Microsoft\Exchange" -Confirm:$False -ErrorAction SilentlyContinue
+            $resEAD = New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Exchange" -Name AlwaysUseMSOAuthForAutoDiscover -Value 1 -PropertyType DWORD -Force -ErrorAction SilentlyContinue
+            $resEAD = New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Exchange" -Name MSOAuthDisabled -Value 0 -PropertyType DWORD -Force -ErrorAction SilentlyContinue
 
-	$resEAD = New-Item -Path "HKCU:\SOFTWARE\Microsoft\Exchange" -Confirm:$False -ErrorAction SilentlyContinue
-	$resEAD = New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Exchange" -Name AlwaysUseMSOAuthForAutoDiscover -Value 1 -PropertyType DWORD -Force -ErrorAction SilentlyContinue
-	$resEAD = New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Exchange" -Name MSOAuthDisabled -Value 0 -PropertyType DWORD -Force -ErrorAction SilentlyContinue
+            $resMA = New-Item -Path "HKCU:\SOFTWARE\Microsoft\Office\16.0\Common\Identity" -Confirm:$False -ErrorAction SilentlyContinue
+            $resMA = New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Office\16.0\Common\Identity" -Name EnableADAL -Value 1 -PropertyType DWORD -Force -ErrorAction SilentlyContinue
+            $resMA = New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Office\16.0\Common\Identity" -Name DisableADALatopWAMOverride -Value 0 -PropertyType DWORD -Force -ErrorAction SilentlyContinue
+            $resMA = New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Office\16.0\Common\Identity" -Name DisableAADWAM -Value 0 -PropertyType DWORD -Force -ErrorAction SilentlyContinue
 
-	$resMA = New-Item -Path "HKCU:\SOFTWARE\Microsoft\Office\16.0\Common\Identity" -Confirm:$False -ErrorAction SilentlyContinue
-	$resMA = New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Office\16.0\Common\Identity" -Name EnableADAL -Value 1 -PropertyType DWORD -Force -ErrorAction SilentlyContinue
-	$resMA = New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Office\16.0\Common\Identity" -Name DisableADALatopWAMOverride -Value 0 -PropertyType DWORD -Force -ErrorAction SilentlyContinue
-	$resMA = New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Office\16.0\Common\Identity" -Name DisableAADWAM -Value 0 -PropertyType DWORD -Force -ErrorAction SilentlyContinue
-
-        WriteLog "Verifying/Setting Modern Auth registry key" # Changed from Write-Output
-		WriteLog "Verifying/Setting Modern Auth registry key"
-		WriteLog "registry key verified" # Changed from Write-Output
-		WriteLog "registry key verified"
+            WriteLog "Verifying/Setting Modern Auth registry key"
+            WriteLog "registry key verified"
+        }
     }catch{
-        WriteLog "WARN: Failed to add Modern Auth registry keys, skipping to allow GPO to do this..." # Changed from Write-Error
-		WriteLog "Failed to add Modern Auth registry keys, skipping to allow GPO to do this..."
-        WriteLog "ERROR setting Modern Auth keys: $_" # Changed from Write-Error, log full exception
+        WriteLog "WARN: Failed to add Modern Auth registry keys, skipping to allow GPO to do this..."
+        WriteLog "ERROR setting Modern Auth keys: $_"
     }
 
 #}else{

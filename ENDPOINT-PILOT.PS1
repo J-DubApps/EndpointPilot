@@ -65,6 +65,11 @@ Author: Julian West
     --
 #>
 
+[CmdletBinding()]
+PARAM(
+	[switch]$DryRun = $false
+)
+
 # region PowerShell Version and Edition
 # Retrieve the current PowerShell version information -- if we're allowed to run under PowerShell Core (top comments left enabled)
 # then we want to know if we're running under PowerShell Core or Windows PowerShell 5.1
@@ -114,7 +119,9 @@ If ($psClassicDesktop -eq $true) {
     if (([IntPtr]::Size -eq 4) -and ($env:PROCESSOR_ARCHITECTURE -eq 'AMD64')) {
         # If running in 32-bit PowerShell on a 64-bit OS, launch the 64-bit version of PowerShell
         try {
-            &"$ENV:WINDIR\SysNative\WindowsPowershell\v1.0\PowerShell.exe" -File $PSCOMMANDPATH
+            $relaunchArgs = "-File `"$PSCOMMANDPATH`""
+            if ($DryRun) { $relaunchArgs += " -DryRun" }
+            &"$ENV:WINDIR\SysNative\WindowsPowershell\v1.0\PowerShell.exe" $relaunchArgs
         } catch {
             Throw ('Failed to start {0}' -f $PSCOMMANDPATH)
         }
@@ -141,7 +148,7 @@ $setPSRuntimeLauncherPath = Join-Path $setRuntimeScriptFolder -ChildPath "./EPIL
 
 
 # Launch EP Main runtime script
-.\MAIN.ps1
+.\MAIN.ps1 -DryRun:$DryRun
 
 exit 0
 

@@ -36,7 +36,8 @@ PARAM(
 	[parameter(ValueFromPipeline = $true,
 		ValueFromPipelineByPropertyName = $true,
 		Mandatory = $false)]
-	[switch]$TestSharedVarModule = $false
+	[switch]$TestSharedVarModule = $false,
+	[switch]$DryRun = $false
 )
 
 #region TEST_MODE_CHECK
@@ -204,13 +205,16 @@ catch {
 }
 
 #For VPN users, refresh the GPO once for User settings
-WriteLog "Updating GPO Settings"
-
-If ($runningAsSystem -eq $True) {
-	gpupdate /target:computer
-}
-else {
-	gpupdate /target:user
+if ($global:DryRunMode) {
+	WriteLog "Would run gpupdate"
+} else {
+	WriteLog "Updating GPO Settings"
+	If ($runningAsSystem -eq $True) {
+		gpupdate /target:computer
+	}
+	else {
+		gpupdate /target:user
+	}
 }
 
 # gpupdate /target:user
@@ -222,8 +226,12 @@ Start-Sleep -Milliseconds 100 #Wait
 WriteLog "EndPointPilot Run Complete"
 
 If ($CopyLogFileToNetwork -eq $true) {
-	$NetworkLogFile = Join-Path $NetworkScriptPath -ChildPath "$LogFileName"
-	Copy-Item "$LogFile" -Destination $NetworkLogFile -Force -ErrorAction Ignore | Out-Null
+	if ($global:DryRunMode) {
+		WriteLog "Would copy log file to network"
+	} else {
+		$NetworkLogFile = Join-Path $NetworkScriptPath -ChildPath "$LogFileName"
+		Copy-Item "$LogFile" -Destination $NetworkLogFile -Force -ErrorAction Ignore | Out-Null
+	}
 }
 
 # Copy-Item "$LogFile" -Destination $NetworkLogFile -Force -ErrorAction Ignore | Out-Null

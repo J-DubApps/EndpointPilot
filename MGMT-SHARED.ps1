@@ -142,9 +142,9 @@ Function WriteLog($LogString) {
     ##	Writes Run info to a logfile set in $LogFile variable
     ##########################################################################
 
-    #Param ([string]$LogString)
     $Stamp = (Get-Date).toString("yyyy/MM/dd HH:mm:ss")
-    $LogMessage = "$Stamp $LogString"
+    $prefix = if ($global:DryRunMode) { "[DRY-RUN] " } else { "" }
+    $LogMessage = "$Stamp $prefix$LogString"
     Add-content $LogFile -value $LogMessage
 }
 
@@ -248,6 +248,9 @@ $SkipDriveOps = $config.SkipDriveOps
 $SkipRegOps = $config.SkipRegOps
 $SkipRoamOps = $config.SkipRoamOps
 
+# Dry-run mode: enabled by -DryRun CLI switch OR CONFIG.json DryRun flag
+$global:DryRunMode = ($DryRun -eq $true) -or ($config.DryRun -eq $true)
+
 If ($HttpsScriptRootEnabled -eq $true) {
     $NetworkScriptRootEnabled = $false
 } elseif ($NetworkScriptRootEnabled -eq $true -and $HttpsScriptRootEnabled -eq $true) {
@@ -286,6 +289,9 @@ $objComputer = ([adsisearcher]$filter).FindOne().Properties.distinguishedname
 
 #Log Runtime start
 WriteLog "Logon Script Run Start"
+if ($global:DryRunMode) {
+    WriteLog "*** DRY-RUN MODE ACTIVE — no system changes will be made ***"
+}
 
 #Create Event Viewer entry for the start of the script
 Write-InformationalEvent("MS Logon Script started for " + $env:UserName)

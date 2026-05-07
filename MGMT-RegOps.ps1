@@ -114,19 +114,31 @@ try {
                 if ($deleteValue -eq $true) {
                     # Delete operation
                     if ($regName) {
-                        WriteLog "Deleting registry value: $regPath\$regName"
-                        Remove-ItemProperty -Path "Registry::$regPath" -Name $regName -ErrorAction Stop
-                        WriteLog "Successfully deleted registry value: $regPath\$regName"
+                        if ($global:DryRunMode) {
+                            WriteLog "Would delete registry value: $regPath\$regName"
+                        } else {
+                            WriteLog "Deleting registry value: $regPath\$regName"
+                            Remove-ItemProperty -Path "Registry::$regPath" -Name $regName -ErrorAction Stop
+                            WriteLog "Successfully deleted registry value: $regPath\$regName"
+                        }
                     } else {
-                        WriteLog "Deleting registry key: $regPath"
-                        Remove-Item -Path "Registry::$regPath" -Recurse -Force -ErrorAction Stop
-                        WriteLog "Successfully deleted registry key: $regPath"
+                        if ($global:DryRunMode) {
+                            WriteLog "Would delete registry key: $regPath"
+                        } else {
+                            WriteLog "Deleting registry key: $regPath"
+                            Remove-Item -Path "Registry::$regPath" -Recurse -Force -ErrorAction Stop
+                            WriteLog "Successfully deleted registry key: $regPath"
+                        }
                     }
                 } else {
                     # Set operation — ensure the key path exists
                     if (-not (Test-Path "Registry::$regPath")) {
-                        New-Item -Path "Registry::$regPath" -Force -ErrorAction Stop | Out-Null
-                        WriteLog "Created registry key: $regPath"
+                        if ($global:DryRunMode) {
+                            WriteLog "Would create registry key: $regPath"
+                        } else {
+                            New-Item -Path "Registry::$regPath" -Force -ErrorAction Stop | Out-Null
+                            WriteLog "Created registry key: $regPath"
+                        }
                     }
 
                     # Handle write_once: skip if value already exists
@@ -149,9 +161,13 @@ try {
                         default       { 'String' }
                     }
 
-                    WriteLog "Setting registry value: $regPath\$regName = $regValue (type: $psRegType)"
-                    Set-ItemProperty -Path "Registry::$regPath" -Name $regName -Value $regValue -Type $psRegType -ErrorAction Stop
-                    WriteLog "Successfully set registry value: $regPath\$regName"
+                    if ($global:DryRunMode) {
+                        WriteLog "Would set registry value: $regPath\$regName = $regValue (type: $psRegType)"
+                    } else {
+                        WriteLog "Setting registry value: $regPath\$regName = $regValue (type: $psRegType)"
+                        Set-ItemProperty -Path "Registry::$regPath" -Name $regName -Value $regValue -Type $psRegType -ErrorAction Stop
+                        WriteLog "Successfully set registry value: $regPath\$regName"
+                    }
                 }
             }
             catch {

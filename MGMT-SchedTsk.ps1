@@ -68,10 +68,13 @@ try {
     $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries:$false -DontStopIfGoingOnBatteries -ExecutionTimeLimit (New-TimeSpan -Hours 1) -RunOnlyIfNetworkAvailable
 
     # Register the task, overwriting if it exists (-Force)
-    WriteLog "Registering/Updating Scheduled Task: $taskName"
-    Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $triggerLogon, $triggerRepeat -Principal $principal -Settings $settings -Description $taskDescription -Force | Out-Null
-
-    WriteLog "Scheduled Task '$taskName' configured successfully."
+    if ($global:DryRunMode) {
+        WriteLog "Would register/update Scheduled Task: $taskName (interval: $Refresh_Interval sec)"
+    } else {
+        WriteLog "Registering/Updating Scheduled Task: $taskName"
+        Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $triggerLogon, $triggerRepeat -Principal $principal -Settings $settings -Description $taskDescription -Force | Out-Null
+        WriteLog "Scheduled Task '$taskName' configured successfully."
+    }
 
 } catch {
     WriteLog "ERROR configuring Scheduled Task '$taskName': $_"
