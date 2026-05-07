@@ -99,21 +99,20 @@ Import-Module (Join-Path $PSScriptRoot "MGMT-Functions.psm1") -Force
 
 . .\MGMT-SHARED.ps1
 
-WriteLog "Checking Network Path reachability..."
+if ($NetworkScriptRootEnabled -eq $true -and -not [string]::IsNullOrWhiteSpace($NetworkScriptRootPath)) {
+	WriteLog "Checking Network Path reachability..."
 
-[System.IO.DirectoryInfo]$NetworkPathCheck = $NetworkScriptPath
+	[System.IO.DirectoryInfo]$NetworkPathCheck = $NetworkScriptRootPath
 
-
-If (Test-Path -Path $NetworkPathCheck.FullName) {
-
-	WriteLog "Network Test Path is reachable, continuing Logon Script run..."
-
-}
-else {
-
-	WriteLog "Network Test Path is NOT reachable, exiting Script!"
-
-	Exit (0)
+	If (Test-Path -Path $NetworkPathCheck.FullName) {
+		WriteLog "Network Test Path is reachable, continuing Logon Script run..."
+	}
+	else {
+		WriteLog "Network Test Path is NOT reachable, exiting Script!"
+		Exit (0)
+	}
+} else {
+	WriteLog "Network script root is disabled or not configured, skipping network path check."
 }
 
 ## If we're on VPN + Network shares are reachable, continuing script-run...
@@ -229,7 +228,7 @@ If ($CopyLogFileToNetwork -eq $true) {
 	if ($global:DryRunMode) {
 		WriteLog "Would copy log file to network"
 	} else {
-		$NetworkLogFile = Join-Path $NetworkScriptPath -ChildPath "$LogFileName"
+		$NetworkLogFile = Join-Path $NetworkScriptRootPath -ChildPath "$LogFileName"
 		Copy-Item "$LogFile" -Destination $NetworkLogFile -Force -ErrorAction Ignore | Out-Null
 	}
 }

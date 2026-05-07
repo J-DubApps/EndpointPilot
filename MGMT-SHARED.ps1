@@ -282,9 +282,14 @@ $ErrorActionPreference = "Continue"
 $Robocopy = "C:\Windows\System32\Robocopy.exe"
 #endregion Defaults
 
-#Collect the Computer distinguished name
-$filter = "(&(objectCategory=computer)(objectClass=computer)(cn=$env:COMPUTERNAME))"
-$objComputer = ([adsisearcher]$filter).FindOne().Properties.distinguishedname
+#Collect the Computer distinguished name (requires domain connectivity)
+$objComputer = $null
+try {
+    $filter = "(&(objectCategory=computer)(objectClass=computer)(cn=$env:COMPUTERNAME))"
+    $objComputer = ([adsisearcher]$filter).FindOne().Properties.distinguishedname
+} catch {
+    WriteLog "AD lookup unavailable (not domain-joined or DC unreachable) -- skipping computer DN resolution"
+}
 
 
 #endregion variables
