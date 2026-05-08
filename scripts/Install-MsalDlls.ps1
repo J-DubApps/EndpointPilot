@@ -166,7 +166,7 @@ try {
         $path = Join-Path $TargetDir ($f -replace '/', [IO.Path]::DirectorySeparatorChar)
         if (Test-Path $path) {
             $sizeKB = [math]::Round((Get-Item $path).Length / 1KB)
-            Write-Host "  [OK]      $f ($sizeKB KB)" -ForegroundColor Green
+            Write-Host "  [OK]      $f (${sizeKB} KB)" -ForegroundColor Green
         }
         else {
             Write-Host "  [MISSING] $f" -ForegroundColor Red
