@@ -45,7 +45,8 @@ EndpointPilot can be set to execute as a Windows Scheduled Task at configured "r
 
 **Windows Endpoint:**
 
-- Windows 10/11 Enterprise, x64 or ARM64
+- Windows 10/11 Enterprise (limited Professional edition support, zero Home Support)
+- Support for Windows x64 or ARM64 hardware
 - PowerShell 5.1 minimum (7+ supported)
 
 **Entra ID Group Targeting (Optional but Recommended):**
