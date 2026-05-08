@@ -31,7 +31,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-# TLS 1.2 — PS 5.1 defaults to older protocols
+# TLS 1.2 -- PS 5.1 defaults to older protocols
 [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
 # Default target: lib/msal relative to repo root (one level up from scripts/)
@@ -40,7 +40,7 @@ if (-not $TargetDir) {
     $TargetDir = Join-Path (Join-Path $repoRoot "lib") "msal"
 }
 
-# Idempotent — skip if already installed
+# Idempotent -- skip if already installed
 $checkFile = Join-Path (Join-Path $TargetDir "net462") "Microsoft.Identity.Client.dll"
 if ((Test-Path $checkFile) -and -not $Force) {
     Write-Host "MSAL DLLs already installed at $TargetDir" -ForegroundColor Green
@@ -151,9 +151,9 @@ try {
         Write-Host ""
     }
 
-    # ── Verification ──────────────────────────────────────────────
+    # -- Verification ---------------------------------------------
     Write-Host "Verification" -ForegroundColor Cyan
-    Write-Host "─────────────────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host "---------------------------------------------" -ForegroundColor DarkGray
 
     $expectedFiles = @(
         "net462/Microsoft.Identity.Client.dll",
