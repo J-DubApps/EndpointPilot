@@ -109,31 +109,40 @@ foreach ($directive in $driveDirectives) {
     }
 
     # --- Targeting evaluation ---
+    # Note: 'continue' inside a PowerShell switch exits the switch, not the foreach.
+    # Use a flag to skip the rest of the loop iteration.
     $targetingType = $directive.targeting_type
     $target = $directive.target
+    $skipDirective = $false
 
     switch ($targetingType) {
         'group' {
             $groupResult = Resolve-GroupMembership -GroupName $target
             if (-not $groupResult.IsMember) {
                 WriteLog "SKIP directive $directiveId`: $($groupResult.Reason)"
-                continue
+                $skipDirective = $true
             }
-            WriteLog "Targeting matched: $($groupResult.Reason) [source: $($groupResult.Source)]"
+            else {
+                WriteLog "Targeting matched: $($groupResult.Reason) [source: $($groupResult.Source)]"
+            }
         }
         'computer' {
             if ($env:COMPUTERNAME -ne $target) {
                 WriteLog "SKIP directive $directiveId`: computer name '$env:COMPUTERNAME' does not match target '$target'"
-                continue
+                $skipDirective = $true
             }
-            WriteLog "Targeting matched: computer name '$env:COMPUTERNAME'"
+            else {
+                WriteLog "Targeting matched: computer name '$env:COMPUTERNAME'"
+            }
         }
         'user' {
             if ($env:USERNAME -ne $target) {
                 WriteLog "SKIP directive $directiveId`: username '$env:USERNAME' does not match target '$target'"
-                continue
+                $skipDirective = $true
             }
-            WriteLog "Targeting matched: username '$env:USERNAME'"
+            else {
+                WriteLog "Targeting matched: username '$env:USERNAME'"
+            }
         }
         'none' {
             # No targeting — applies to all endpoints
@@ -142,6 +151,8 @@ foreach ($directive in $driveDirectives) {
             WriteLog "WARNING: Unknown targeting_type '$targetingType' on directive $directiveId. Processing anyway."
         }
     }
+
+    if ($skipDirective) { continue }
 
     # --- Drive operation ---
     $deleteMapping = $directive.delete
