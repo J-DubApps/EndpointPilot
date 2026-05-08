@@ -15,11 +15,11 @@ updated: 2025-08-19T15:58
 > [!WARNING]
 > This solution is ramping toward a 1.0 Beta Release and is **_NOT_** remotely ready for use on ANY live production scenarios. Do NOT install onto your prod PC Endpoints! You have been warned!
 
-**EndpointPilot** (under development summer 2026) **is a PowerShell-based autonoumous Windows PC Endpoint** **_Configuration Management_** **solution for PCs operating in **Intune\*\* **or a NinjaOne-managed context**. It uses JSON files to define operations like file, registry, and system settings management.
+**EndpointPilot** (under development summer 2026) **is a PowerShell-based autonoumous Windows PC Endpoint** **_Configuration Management_** solution for PCs operating in **Intune\*\* **or a NinjaOne-managed context**. It uses JSON files to direct certain operations like: file, registry, drive-mappings and other settings management.
 
 <br />
 <p align="center">
-    <img src="https://github.com/J-DubApps/EndpointPilot/blob/main/images/EndpointPilot.png" width="100" height="300" />
+    <img src="https://github.com/J-DubApps/EndpointPilot/blob/main/images/EndpointPilot.png" width="200" height="425" />
 </p>
 
 At first EndpointPilot will only offer Config Mgmt of user profiles on managed Windows Endpoints during its closed Alpha testing. EndpointPilot currently can manage settings in either _on-prem_ **_Office_** or **_Remote-Work scenarios_**. It functions a lot like a logon script, but runs locally via Agent. EndpointPilot's PowerShell code is directed by **_x-OPS.JSON_** directive files, which tells EP's scripts what to do (each line within each **x-OPS.JSON\*** govern the actions each config sript undertakes). A very basic Json Editor GUI Tool is included for managing **_x-OPS.JSON_** JSON directive files. **Think of _EP_ as an alternative to [GPO/GPP](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-policy/group-policy-processing) or [Intune Policy CSP](https://learn.microsoft.com/en-us/windows/client-management/mdm/policy-configuration-service-provider)**. Because **EP** operates _independent of_ a Windows PC Endpoint's AD, Intune, or NinjaOne status -- so it can be a useful config-mgmt add-on for use with those environments.
