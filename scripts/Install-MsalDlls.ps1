@@ -58,38 +58,45 @@ Write-Host ""
 # Source paths use the nearest compatible TFM folder in each .nupkg;
 # all managed DLLs land in net462/ for a single Add-Type load path.
 $packages = @(
+    # Pinned versions: newer releases of these System.* packages dropped net461/net462 TFMs.
     @{
         Id          = "System.Buffers"
+        Version     = "4.5.1"
         Extractions = @(
             @{ Source = "lib/net461/System.Buffers.dll"; Dest = "net462/System.Buffers.dll" }
         )
     },
     @{
         Id          = "System.Numerics.Vectors"
+        Version     = "4.5.0"
         Extractions = @(
             @{ Source = "lib/net46/System.Numerics.Vectors.dll"; Dest = "net462/System.Numerics.Vectors.dll" }
         )
     },
     @{
         Id          = "System.Runtime.CompilerServices.Unsafe"
+        Version     = "6.0.0"
         Extractions = @(
             @{ Source = "lib/net461/System.Runtime.CompilerServices.Unsafe.dll"; Dest = "net462/System.Runtime.CompilerServices.Unsafe.dll" }
         )
     },
     @{
         Id          = "System.Memory"
+        Version     = "4.5.5"
         Extractions = @(
             @{ Source = "lib/net461/System.Memory.dll"; Dest = "net462/System.Memory.dll" }
         )
     },
     @{
         Id          = "System.Diagnostics.DiagnosticSource"
+        Version     = "6.0.1"
         Extractions = @(
             @{ Source = "lib/net461/System.Diagnostics.DiagnosticSource.dll"; Dest = "net462/System.Diagnostics.DiagnosticSource.dll" }
         )
     },
     @{
         Id          = "System.Formats.Asn1"
+        Version     = "8.0.1"
         Extractions = @(
             @{ Source = "lib/net462/System.Formats.Asn1.dll"; Dest = "net462/System.Formats.Asn1.dll" }
         )
@@ -130,28 +137,36 @@ try {
     foreach ($pkg in $packages) {
         $pkgLower = $pkg.Id.ToLower()
 
-        # Query NuGet flat container for latest stable version
         Write-Host ('[{0}]' -f $pkg.Id) -ForegroundColor White
-        $indexUrl = "https://api.nuget.org/v3-flatcontainer/$pkgLower/index.json"
 
-        try {
-            $indexData = Invoke-RestMethod -Uri $indexUrl -UseBasicParsing
+        if ($pkg.Version) {
+            # Pinned version -- use directly, skip NuGet query
+            $version = $pkg.Version
+            Write-Host "  Version: $version (pinned)"
         }
-        catch {
-            Write-Host ('  ERROR: Failed to query NuGet for {0}: {1}' -f $pkg.Id, $_.Exception.Message) -ForegroundColor Red
-            $success = $false
-            continue
-        }
+        else {
+            # Query NuGet flat container for latest stable version
+            $indexUrl = "https://api.nuget.org/v3-flatcontainer/$pkgLower/index.json"
 
-        # Filter to stable versions (no prerelease dash)
-        $stableVersions = $indexData.versions | Where-Object { $_ -notmatch '-' }
-        if (-not $stableVersions -or $stableVersions.Count -eq 0) {
-            Write-Host ('  ERROR: No stable versions found for {0}' -f $pkg.Id) -ForegroundColor Red
-            $success = $false
-            continue
+            try {
+                $indexData = Invoke-RestMethod -Uri $indexUrl -UseBasicParsing
+            }
+            catch {
+                Write-Host ('  ERROR: Failed to query NuGet for {0}: {1}' -f $pkg.Id, $_.Exception.Message) -ForegroundColor Red
+                $success = $false
+                continue
+            }
+
+            # Filter to stable versions (no prerelease dash)
+            $stableVersions = $indexData.versions | Where-Object { $_ -notmatch '-' }
+            if (-not $stableVersions -or $stableVersions.Count -eq 0) {
+                Write-Host ('  ERROR: No stable versions found for {0}' -f $pkg.Id) -ForegroundColor Red
+                $success = $false
+                continue
+            }
+            $version = $stableVersions[-1]
+            Write-Host "  Version: $version"
         }
-        $version = $stableVersions[-1]
-        Write-Host "  Version: $version"
 
         # Download the .nupkg (it's a ZIP)
         $nupkgUrl  = "https://api.nuget.org/v3-flatcontainer/$pkgLower/$version/$pkgLower.$version.nupkg"
