@@ -53,8 +53,53 @@ Write-Host "Installing MSAL.NET DLLs for EndpointPilot..." -ForegroundColor Cyan
 Write-Host "Target: $TargetDir"
 Write-Host ""
 
-# NuGet packages and the specific files we need from each
+# NuGet packages and the specific files we need from each.
+# Includes transitive dependencies required for Add-Type to succeed on PS 5.1.
+# Source paths use the nearest compatible TFM folder in each .nupkg;
+# all managed DLLs land in net462/ for a single Add-Type load path.
 $packages = @(
+    @{
+        Id          = "System.Buffers"
+        Extractions = @(
+            @{ Source = "lib/net461/System.Buffers.dll"; Dest = "net462/System.Buffers.dll" }
+        )
+    },
+    @{
+        Id          = "System.Numerics.Vectors"
+        Extractions = @(
+            @{ Source = "lib/net46/System.Numerics.Vectors.dll"; Dest = "net462/System.Numerics.Vectors.dll" }
+        )
+    },
+    @{
+        Id          = "System.Runtime.CompilerServices.Unsafe"
+        Extractions = @(
+            @{ Source = "lib/net461/System.Runtime.CompilerServices.Unsafe.dll"; Dest = "net462/System.Runtime.CompilerServices.Unsafe.dll" }
+        )
+    },
+    @{
+        Id          = "System.Memory"
+        Extractions = @(
+            @{ Source = "lib/net461/System.Memory.dll"; Dest = "net462/System.Memory.dll" }
+        )
+    },
+    @{
+        Id          = "System.Diagnostics.DiagnosticSource"
+        Extractions = @(
+            @{ Source = "lib/net461/System.Diagnostics.DiagnosticSource.dll"; Dest = "net462/System.Diagnostics.DiagnosticSource.dll" }
+        )
+    },
+    @{
+        Id          = "System.Formats.Asn1"
+        Extractions = @(
+            @{ Source = "lib/net462/System.Formats.Asn1.dll"; Dest = "net462/System.Formats.Asn1.dll" }
+        )
+    },
+    @{
+        Id          = "Microsoft.IdentityModel.Abstractions"
+        Extractions = @(
+            @{ Source = "lib/net462/Microsoft.IdentityModel.Abstractions.dll"; Dest = "net462/Microsoft.IdentityModel.Abstractions.dll" }
+        )
+    },
     @{
         Id          = "Microsoft.Identity.Client"
         Extractions = @(
@@ -156,6 +201,13 @@ try {
     Write-Host "---------------------------------------------" -ForegroundColor DarkGray
 
     $expectedFiles = @(
+        "net462/System.Buffers.dll",
+        "net462/System.Numerics.Vectors.dll",
+        "net462/System.Runtime.CompilerServices.Unsafe.dll",
+        "net462/System.Memory.dll",
+        "net462/System.Diagnostics.DiagnosticSource.dll",
+        "net462/System.Formats.Asn1.dll",
+        "net462/Microsoft.IdentityModel.Abstractions.dll",
         "net462/Microsoft.Identity.Client.dll",
         "net462/Microsoft.Identity.Client.Broker.dll",
         "runtimes/win-x64/native/msalruntime.dll",
