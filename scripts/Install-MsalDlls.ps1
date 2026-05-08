@@ -220,17 +220,10 @@ try {
     Write-Host "Verification" -ForegroundColor Cyan
     Write-Host "---------------------------------------------" -ForegroundColor DarkGray
 
-    # Detect architecture for native DLL verification
+    # PS 5.1 runs as x64 on all Windows (including ARM64 via emulation),
+    # so the x64 native DLL is always required. ARM64 native is a bonus.
     $arch = $env:PROCESSOR_ARCHITECTURE
-    if ($arch -eq 'ARM64') {
-        $nativeRuntime = "runtimes/win-arm64/native/msalruntime.dll"
-        $crossRuntime  = "runtimes/win-x64/native/msalruntime.dll"
-    }
-    else {
-        $nativeRuntime = "runtimes/win-x64/native/msalruntime.dll"
-        $crossRuntime  = "runtimes/win-arm64/native/msalruntime.dll"
-    }
-    Write-Host ('  Architecture: {0}' -f $arch)
+    Write-Host ('  CPU: {0}, PS process: x64' -f $arch)
 
     $expectedFiles = @(
         "net462/System.Buffers.dll",
@@ -242,7 +235,7 @@ try {
         "net462/Microsoft.IdentityModel.Abstractions.dll",
         "net462/Microsoft.Identity.Client.dll",
         "net462/Microsoft.Identity.Client.Broker.dll",
-        $nativeRuntime
+        "runtimes/win-x64/native/msalruntime.dll"
     )
 
     foreach ($f in $expectedFiles) {
@@ -257,14 +250,14 @@ try {
         }
     }
 
-    # Note cross-architecture native DLL status (non-fatal)
-    $crossPath = Join-Path $TargetDir ($crossRuntime -replace '/', [IO.Path]::DirectorySeparatorChar)
-    if (Test-Path $crossPath) {
-        $sizeKB = [math]::Round((Get-Item $crossPath).Length / 1KB)
-        Write-Host ('  [OK]      {0} ({1} KB) (cross-arch)' -f $crossRuntime, $sizeKB) -ForegroundColor DarkGray
+    # ARM64 native DLL status (non-fatal, bonus for future ARM64-native PS)
+    $arm64Path = Join-Path $TargetDir "runtimes\win-arm64\native\msalruntime.dll"
+    if (Test-Path $arm64Path) {
+        $sizeKB = [math]::Round((Get-Item $arm64Path).Length / 1KB)
+        Write-Host ('  [OK]      runtimes/win-arm64/native/msalruntime.dll ({0} KB)' -f $sizeKB) -ForegroundColor DarkGray
     }
     else {
-        Write-Host ('  [--]      {0} (not available, cross-arch)' -f $crossRuntime) -ForegroundColor DarkGray
+        Write-Host '  [--]      runtimes/win-arm64/native/msalruntime.dll (not in package)' -ForegroundColor DarkGray
     }
 
     Write-Host ""
