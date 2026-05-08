@@ -47,7 +47,6 @@ EndpointPilot can be set to execute as a Windows Scheduled Task at configured "r
 
 - Windows 10/11 Enterprise, x64 or ARM64
 - PowerShell 5.1 minimum (7+ supported)
-- Users need rights to create Scheduled Tasks on their Windows PC Endpoints (this right is not available by default, and usually only granted in GPO or Intune CSP)
 
 **Entra ID Group Targeting (Optional but Recommended):**
 EndpointPilot can resolve Entra ID (Azure AD) security group memberships for per-group targeting of configuration directives — enabling scenarios like "apply this registry setting only to members of the Finance group." This requires:

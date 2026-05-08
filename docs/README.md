@@ -20,7 +20,6 @@
 
 - Windows 10/11 Enterprise, x64 or ARM64
 - PowerShell 5.1 minimum (7+ supported)
-- Users need rights to create Scheduled Tasks on their Windows PC Endpoints (this right is granted in GPO or Intune CSP)
 
 **Entra ID Group Targeting (Optional but Recommended):**
 EndpointPilot supports Entra ID security group resolution for per-group targeting of directives. This bridges a gap that GPMC cannot: applying ADMX-style policy settings to _specific groups_, not just everyone a GPO is linked to. To enable this:
