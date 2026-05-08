@@ -569,12 +569,16 @@ this is /even more data\
 function InGroup {
 	##########################################################################
 	##	Group check - Returns True/False for whether the user is in a group
+	##	DEPRECATED: Use Resolve-GroupMembership for new code.
+	##	Retained for backward compatibility.
 	##########################################################################
 	<#
 			.SYNOPSIS
 				Check if the current user is in a specified group
 			.DESCRIPTION
-				Check if the current user is in a specified group
+				Check if the current user is in a specified group.
+				DEPRECATED: Prefer Resolve-GroupMembership which handles
+				AD, Entra ID, and local group fallback scenarios.
 			.PARAMETER GroupName
 				The name of the group to check
 			.EXAMPLE
@@ -603,10 +607,13 @@ function InGroup {
 function InGroupGP {
 	############################################################################################
 	##	Group check via GPResult tool - Returns True/False for whether the user is in a group
+	##	DEPRECATED: Use Resolve-GroupMembership for new code.
+	##	Retained for backward compatibility.
 	############################################################################################
 	<#
 				 .SYNOPSIS
-						 Check if the current user is in a specified group using gpresult utility
+						 Check if the current user is in a specified group using gpresult utility.
+						 DEPRECATED: Prefer Resolve-GroupMembership.
 				 .DESCRIPTION
 						 Check if the current user is in a specified group
 				 .PARAMETER GroupName
@@ -661,6 +668,278 @@ function InGroupGP {
 	}
 
 }
+
+#region GROUP_MEMBERSHIP_RESOLUTION
+
+# Module-level caches — populated lazily, persist for the duration of one EP run
+$script:JoinStateCache = $null
+$script:GroupMembershipCache = @{}
+
+function Get-EndpointJoinState {
+	<#
+		.SYNOPSIS
+			Detects whether this endpoint is AD domain-joined, Entra ID-joined, both, or neither.
+			Result is cached for the duration of the EP run.
+	#>
+	[CmdletBinding()]
+	[OutputType([PSCustomObject])]
+	param()
+
+	if ($null -ne $script:JoinStateCache) {
+		return $script:JoinStateCache
+	}
+
+	$state = [PSCustomObject]@{
+		DomainJoined  = $false
+		AzureAdJoined = $false
+		AzureAdPrt    = $false
+		WorkplaceJoined = $false
+		TenantId      = $null
+		RawInfo       = $null
+	}
+
+	try {
+		$dsreg = Get-DsRegStatusInfo
+		$state.RawInfo = $dsreg
+
+		if ($dsreg.DomainJoined -eq 'YES') { $state.DomainJoined = $true }
+		if ($dsreg.AzureAdJoined -eq 'YES') { $state.AzureAdJoined = $true }
+		if ($dsreg.AzureAdPrt -eq 'YES') { $state.AzureAdPrt = $true }
+		if ($dsreg.WorkplaceJoined -eq 'YES') { $state.WorkplaceJoined = $true }
+		if ($dsreg.TenantId) { $state.TenantId = $dsreg.TenantId }
+	}
+	catch {
+		WriteLog "WARNING: Could not determine endpoint join state via dsregcmd: $_"
+	}
+
+	$script:JoinStateCache = $state
+	return $state
+}
+
+function Test-ADGroupMembership {
+	<#
+		.SYNOPSIS
+			Checks AD group membership using the current user's Windows logon token.
+			Works offline for security groups resolved at logon.
+		.OUTPUTS
+			$true if member, $false if not member, $null if check could not be performed.
+	#>
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory)]
+		[string]$GroupName
+	)
+
+	try {
+		$identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+		$principal = New-Object System.Security.Principal.WindowsPrincipal($identity)
+		return $principal.IsInRole($GroupName)
+	}
+	catch {
+		WriteLog "DEBUG: AD token group check failed for '$GroupName': $_"
+		return $null
+	}
+}
+
+function Test-EntraGroupMembership {
+	<#
+		.SYNOPSIS
+			Checks Entra ID security group membership via Microsoft Graph REST API.
+			Requires the endpoint to have an Azure AD PRT for token acquisition.
+		.DESCRIPTION
+			Phase 1: Stubbed — logs the attempt and returns $null (inconclusive).
+			Phase 2 will use the device PRT to acquire a Graph access token via WAM
+			and call /me/memberOf to resolve Entra-only security groups.
+		.OUTPUTS
+			$true if member, $false if not member, $null if check could not be performed.
+	#>
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory)]
+		[string]$GroupName,
+
+		[Parameter(Mandatory)]
+		[PSCustomObject]$JoinState
+	)
+
+	# Phase 1 stub — Entra Graph check is not yet wired up.
+	# The function structure is here so the fallback chain is complete;
+	# implementation will use Invoke-RestMethod against Graph /me/memberOf
+	# with a WAM-acquired token once validated on the test VM.
+
+	if (-not $JoinState.AzureAdJoined -and -not $JoinState.AzureAdPrt) {
+		return $null
+	}
+
+	WriteLog "INFO: Entra ID group check for '$GroupName' is not yet implemented (Phase 2). Falling through."
+	return $null
+}
+
+function Test-LocalGroupMembership {
+	<#
+		.SYNOPSIS
+			Checks if the current user is a member of a local Windows group.
+			Used as a final fallback — catches typos (user meant a local group)
+			and handles standalone/workgroup machines.
+		.OUTPUTS
+			$true if member, $false if not member, $null if the local group does not exist.
+	#>
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory)]
+		[string]$GroupName
+	)
+
+	try {
+		$output = & net localgroup $GroupName 2>&1
+		if ($LASTEXITCODE -ne 0) {
+			return $null
+		}
+
+		$currentUser = $env:USERNAME
+		$inMemberList = $false
+		$memberSection = $false
+
+		foreach ($line in $output) {
+			$lineStr = "$line".Trim()
+			if ($lineStr -match '^---') {
+				$memberSection = $true
+				continue
+			}
+			if ($memberSection) {
+				if ($lineStr -eq '' -or $lineStr -match '^The command completed') {
+					break
+				}
+				if ($lineStr -eq $currentUser) {
+					$inMemberList = $true
+					break
+				}
+				# Also match DOMAIN\user or MACHINE\user format
+				if ($lineStr -match "\\$currentUser$") {
+					$inMemberList = $true
+					break
+				}
+			}
+		}
+
+		return $inMemberList
+	}
+	catch {
+		WriteLog "DEBUG: Local group check failed for '$GroupName': $_"
+		return $null
+	}
+}
+
+function Resolve-GroupMembership {
+	<#
+		.SYNOPSIS
+			Unified group membership check with automatic fallback across AD, Entra ID, and local groups.
+		.DESCRIPTION
+			Probes the endpoint join state and checks group membership using the best available
+			authority. Falls back gracefully when authorities are unavailable, and caches results
+			for the duration of the EP run.
+
+			Fallback chain:
+			  1. AD token check (if domain-joined) -- works offline
+			  2. Entra ID Graph check (if Entra-joined/has PRT) -- Phase 2
+			  3. Local group check (net localgroup) -- catches typos, workgroup machines
+			  4. No authority available -- returns IsMember=$false with explanatory reason
+		.PARAMETER GroupName
+			The name of the group to check membership for.
+		.OUTPUTS
+			PSCustomObject with IsMember, Source, and Reason properties.
+		.EXAMPLE
+			$result = Resolve-GroupMembership -GroupName "Finance-Users"
+			if ($result.IsMember) { # proceed with directive }
+	#>
+	[CmdletBinding()]
+	[OutputType([PSCustomObject])]
+	param(
+		[Parameter(Mandatory)]
+		[string]$GroupName
+	)
+
+	# Return cached result if we already resolved this group in this run
+	if ($script:GroupMembershipCache.ContainsKey($GroupName)) {
+		return $script:GroupMembershipCache[$GroupName]
+	}
+
+	$joinState = Get-EndpointJoinState
+
+	$result = [PSCustomObject]@{
+		IsMember = $false
+		Source   = 'None'
+		Reason   = ''
+	}
+
+	# --- Step 1: AD token check (domain-joined machines) ---
+	if ($joinState.DomainJoined) {
+		$adResult = Test-ADGroupMembership -GroupName $GroupName
+		if ($null -ne $adResult) {
+			$result.Source = 'AD-Token'
+			if ($adResult) {
+				$result.IsMember = $true
+				$result.Reason = "User is a member of '$GroupName' (AD logon token)"
+			}
+			else {
+				$result.IsMember = $false
+				$result.Reason = "User is NOT a member of '$GroupName' (AD logon token)"
+			}
+			$script:GroupMembershipCache[$GroupName] = $result
+			return $result
+		}
+		WriteLog "DEBUG: AD token check was inconclusive for '$GroupName', trying next authority."
+	}
+
+	# --- Step 2: Entra ID check (Entra-joined or has PRT) ---
+	if ($joinState.AzureAdJoined -or $joinState.AzureAdPrt) {
+		$entraResult = Test-EntraGroupMembership -GroupName $GroupName -JoinState $joinState
+		if ($null -ne $entraResult) {
+			$result.Source = 'Entra-Graph'
+			if ($entraResult) {
+				$result.IsMember = $true
+				$result.Reason = "User is a member of '$GroupName' (Entra ID / Microsoft Graph)"
+			}
+			else {
+				$result.IsMember = $false
+				$result.Reason = "User is NOT a member of '$GroupName' (Entra ID / Microsoft Graph)"
+			}
+			$script:GroupMembershipCache[$GroupName] = $result
+			return $result
+		}
+	}
+
+	# --- Step 3: Local group fallback ---
+	$localResult = Test-LocalGroupMembership -GroupName $GroupName
+	if ($null -ne $localResult) {
+		$result.Source = 'LocalGroup'
+		if ($localResult) {
+			$result.IsMember = $true
+			$result.Reason = "User is a member of local group '$GroupName'"
+		}
+		else {
+			$result.IsMember = $false
+			$result.Reason = "User is NOT a member of local group '$GroupName'"
+		}
+		$script:GroupMembershipCache[$GroupName] = $result
+		return $result
+	}
+
+	# --- Step 4: No authority matched ---
+	$joinDesc = @()
+	if (-not $joinState.DomainJoined) { $joinDesc += 'not domain-joined' }
+	if (-not $joinState.AzureAdJoined -and -not $joinState.AzureAdPrt) { $joinDesc += 'not Entra-joined' }
+	$joinDesc += "no local group '$GroupName' found"
+
+	$result.Source = 'None'
+	$result.IsMember = $false
+	$result.Reason = "No group authority available ($($joinDesc -join ', ')). Skipping group-targeted directive."
+
+	$script:GroupMembershipCache[$GroupName] = $result
+	return $result
+}
+
+#endregion GROUP_MEMBERSHIP_RESOLUTION
 
 
 function Get-WorkstationUsageStatus {
@@ -1178,7 +1457,7 @@ function Get-SignatureValidationConfig {
 #endregion FUNCTIONS
 
 # Export all functions and aliases
-Export-ModuleMember -Function InGroup, InGroupGP, Get-Permission, IsCurrentProcessArm64, Get-RegistryValue, Import-RegKey, Get-DsRegStatusInfo, Measure-DownloadSpeed, Measure-UploadSpeed, Get-LoggedInUser, Get-TextWithin, Get-WorkstationUsageStatus, Copy-File, Copy-Directory, Move-Files, Move-Directory, Send-SmtpMail, Test-JsonSignature, Get-SignerCertificate, ConvertTo-CanonicalJson, Test-CertificateForSigning, Invoke-SignatureVerification, Get-SignatureValidationConfig
+Export-ModuleMember -Function InGroup, InGroupGP, Get-Permission, IsCurrentProcessArm64, Get-RegistryValue, Import-RegKey, Get-DsRegStatusInfo, Measure-DownloadSpeed, Measure-UploadSpeed, Get-LoggedInUser, Get-TextWithin, Get-WorkstationUsageStatus, Copy-File, Copy-Directory, Move-Files, Move-Directory, Send-SmtpMail, Test-JsonSignature, Get-SignerCertificate, ConvertTo-CanonicalJson, Test-CertificateForSigning, Invoke-SignatureVerification, Get-SignatureValidationConfig, Resolve-GroupMembership, Get-EndpointJoinState
 Export-ModuleMember -Alias Get-Permissions
 
 ##

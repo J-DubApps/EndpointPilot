@@ -58,5 +58,41 @@
     "target": "all",
     "_comment1": "New drive mapping",
     "_comment2": ""
+  },
+  {
+    "driveLetter": "K:",
+    "drivePath": "\\\\fileserver\\finance",
+    "reconnect": true,
+    "delete": false,
+    "hidden": false,
+    "id": "006",
+    "targeting_type": "group",
+    "target": "Finance-Users",
+    "_comment1": "Finance team shared drive - group targeted",
+    "_comment2": "Tests Resolve-GroupMembership fallback chain"
+  },
+  {
+    "driveLetter": "L:",
+    "drivePath": "\\\\fileserver\\it-tools",
+    "reconnect": false,
+    "delete": false,
+    "hidden": true,
+    "id": "007",
+    "targeting_type": "user",
+    "target": "jwest",
+    "_comment1": "IT admin tools - user targeted, hidden drive",
+    "_comment2": ""
+  },
+  {
+    "driveLetter": "M:",
+    "drivePath": "\\\\oldserver\\legacy",
+    "reconnect": false,
+    "delete": true,
+    "hidden": false,
+    "id": "008",
+    "targeting_type": "none",
+    "target": "all",
+    "_comment1": "Remove legacy drive mapping from all endpoints",
+    "_comment2": ""
   }
 ]

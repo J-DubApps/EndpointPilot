@@ -183,6 +183,9 @@ var/
 .installed.cfg
 MANIFEST
 
+# Smoke tests (local-only, not committed)
+tests/smoke/
+
 # CI/CD Files to Ignore
 Switch-DevContainer.ps1
 

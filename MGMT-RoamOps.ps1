@@ -55,7 +55,18 @@ If $overwrite is true, the script checks if the source file is newer than the de
 
 
 # Read JSON file
-$json = Get-Content -Raw -Path ".\ROAM-OPS.json" | ConvertFrom-Json # Corrected JSON filename
+$roamJsonPath = Join-Path $PSScriptRoot "ROAM-OPS.json"
+if (-not (Test-Path $roamJsonPath)) {
+    WriteLog "ROAM-OPS.json not found at $roamJsonPath. Skipping roaming operations."
+    return
+}
+
+$json = Get-Content -Raw -Path $roamJsonPath | ConvertFrom-Json
+
+if (-not $json -or $json.Count -eq 0) {
+    WriteLog "ROAM-OPS.json is empty. No roaming operations to process."
+    return
+}
 
 # Loop through each entry in the json file
 $json | ForEach-Object {
