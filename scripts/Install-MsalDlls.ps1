@@ -215,6 +215,18 @@ try {
     Write-Host "Verification" -ForegroundColor Cyan
     Write-Host "---------------------------------------------" -ForegroundColor DarkGray
 
+    # Detect architecture for native DLL verification
+    $arch = $env:PROCESSOR_ARCHITECTURE
+    if ($arch -eq 'ARM64') {
+        $nativeRuntime = "runtimes/win-arm64/native/msalruntime.dll"
+        $crossRuntime  = "runtimes/win-x64/native/msalruntime.dll"
+    }
+    else {
+        $nativeRuntime = "runtimes/win-x64/native/msalruntime.dll"
+        $crossRuntime  = "runtimes/win-arm64/native/msalruntime.dll"
+    }
+    Write-Host ('  Architecture: {0}' -f $arch)
+
     $expectedFiles = @(
         "net462/System.Buffers.dll",
         "net462/System.Numerics.Vectors.dll",
@@ -225,8 +237,7 @@ try {
         "net462/Microsoft.IdentityModel.Abstractions.dll",
         "net462/Microsoft.Identity.Client.dll",
         "net462/Microsoft.Identity.Client.Broker.dll",
-        "runtimes/win-x64/native/msalruntime.dll",
-        "runtimes/win-arm64/native/msalruntime.dll"
+        $nativeRuntime
     )
 
     foreach ($f in $expectedFiles) {
@@ -239,6 +250,16 @@ try {
             Write-Host "  [MISSING] $f" -ForegroundColor Red
             $success = $false
         }
+    }
+
+    # Note cross-architecture native DLL status (non-fatal)
+    $crossPath = Join-Path $TargetDir ($crossRuntime -replace '/', [IO.Path]::DirectorySeparatorChar)
+    if (Test-Path $crossPath) {
+        $sizeKB = [math]::Round((Get-Item $crossPath).Length / 1KB)
+        Write-Host ('  [OK]      {0} ({1} KB) (cross-arch)' -f $crossRuntime, $sizeKB) -ForegroundColor DarkGray
+    }
+    else {
+        Write-Host ('  [--]      {0} (not available, cross-arch)' -f $crossRuntime) -ForegroundColor DarkGray
     }
 
     Write-Host ""
