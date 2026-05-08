@@ -122,8 +122,8 @@ $packages = @(
     @{
         Id          = "Microsoft.Identity.Client.NativeInterop"
         Extractions = @(
-            @{ Source = "runtimes/win-x64/native/msalruntime.dll"; Dest = "runtimes/win-x64/native/msalruntime.dll" },
-            @{ Source = "runtimes/win-arm64/native/msalruntime.dll"; Dest = "runtimes/win-arm64/native/msalruntime.dll" }
+            @{ Source = "runtimes/win-x64/native/msalruntime.dll"; Dest = "runtimes/win-x64/native/msalruntime.dll"; Optional = $false },
+            @{ Source = "runtimes/win-arm64/native/msalruntime.dll"; Dest = "runtimes/win-arm64/native/msalruntime.dll"; Optional = $true }
         )
     }
 )
@@ -193,9 +193,14 @@ try {
             $destDir  = Split-Path $destPath -Parent
 
             if (-not (Test-Path $srcPath)) {
-                Write-Host ('  WARNING: Expected file not found in package: {0}' -f $ex.Source) -ForegroundColor Yellow
-                Write-Host "           NuGet package structure may have changed." -ForegroundColor Yellow
-                $success = $false
+                if ($ex.Optional) {
+                    Write-Host ('  Optional, not present: {0}' -f $ex.Source) -ForegroundColor DarkGray
+                }
+                else {
+                    Write-Host ('  WARNING: Expected file not found in package: {0}' -f $ex.Source) -ForegroundColor Yellow
+                    Write-Host "           NuGet package structure may have changed." -ForegroundColor Yellow
+                    $success = $false
+                }
                 continue
             }
 
