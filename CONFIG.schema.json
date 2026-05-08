@@ -68,6 +68,18 @@
     "EnterpriseOnly": {
       "type": "boolean",
       "description": "When true, only Windows Enterprise editions are allowed. When false (default), Pro editions are also permitted."
+    },
+    "EntraClientId": {
+      "type": "string",
+      "description": "Entra ID app registration client ID for Graph API group membership checks. Leave empty to disable Entra group checks."
+    },
+    "EntraTenantId": {
+      "type": "string",
+      "description": "Entra ID tenant ID. Required when EntraClientId is configured."
+    },
+    "EntraTransitiveGroups": {
+      "type": "boolean",
+      "description": "When true (default), resolve nested/transitive Entra group memberships. When false, resolve direct memberships only."
     }
   },
   "required": ["OrgName", "Refresh_Interval", "NetworkScriptRootPath"],

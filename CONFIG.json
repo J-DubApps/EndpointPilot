@@ -14,5 +14,8 @@
   "SkipRegOps": false,
   "SkipRoamOps": false,
   "DryRun": false,
-  "EnterpriseOnly": false
+  "EnterpriseOnly": false,
+  "EntraClientId": "",
+  "EntraTenantId": "",
+  "EntraTransitiveGroups": true
 }

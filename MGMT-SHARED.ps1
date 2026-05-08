@@ -273,6 +273,12 @@ $SkipRoamOps = $config.SkipRoamOps
 # Dry-run mode: enabled by -DryRun CLI switch OR CONFIG.json DryRun flag
 $global:DryRunMode = ($DryRun -eq $true) -or ($config.DryRun -eq $true)
 
+# Entra ID config -- used by Get-EntraAccessToken in MGMT-Functions.psm1 (module scope
+# isolation requires global variables, same pattern as $global:DryRunMode)
+$global:EntraClientId = if ($config.EntraClientId) { $config.EntraClientId } else { "" }
+$global:EntraTenantId = if ($config.EntraTenantId) { $config.EntraTenantId } else { "" }
+$global:EntraTransitiveGroups = if ($null -ne $config.EntraTransitiveGroups) { $config.EntraTransitiveGroups } else { $true }
+
 If ($HttpsScriptRootEnabled -eq $true) {
     $NetworkScriptRootEnabled = $false
 } elseif ($NetworkScriptRootEnabled -eq $true -and $HttpsScriptRootEnabled -eq $true) {

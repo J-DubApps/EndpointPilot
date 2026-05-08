@@ -671,9 +671,284 @@ function InGroupGP {
 
 #region GROUP_MEMBERSHIP_RESOLUTION
 
-# Module-level caches — populated lazily, persist for the duration of one EP run
+# Module-level caches -- populated lazily, persist for the duration of one EP run
 $script:JoinStateCache = $null
 $script:GroupMembershipCache = @{}
+$script:EntraTokenCache = $null
+$script:EntraGroupCache = $null
+$script:MsalDllsLoaded = $false
+
+function Initialize-MsalLibraries {
+    <#
+        .SYNOPSIS
+            Loads MSAL.NET DLLs in dependency order for Entra ID token acquisition.
+            Idempotent -- safe to call multiple times per session.
+        .OUTPUTS
+            $true if libraries are ready, $false if loading failed.
+    #>
+    [CmdletBinding()]
+    [OutputType([bool])]
+    param()
+
+    if ($script:MsalDllsLoaded) { return $true }
+
+    # Already loaded in this AppDomain (handles module reimport)
+    $loaded = [System.AppDomain]::CurrentDomain.GetAssemblies() | Where-Object {
+        $_.GetName().Name -eq 'Microsoft.Identity.Client'
+    }
+    if ($loaded) {
+        $script:MsalDllsLoaded = $true
+        return $true
+    }
+
+    # PS 5.1 defaults to TLS 1.0/1.1 -- enable TLS 1.2 for MSAL and Graph calls
+    [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+
+    $msalBase = Join-Path (Join-Path $PSScriptRoot "lib") "msal"
+    $net462Dir = Join-Path $msalBase "net462"
+
+    $mainDll = Join-Path $net462Dir "Microsoft.Identity.Client.dll"
+    if (-not (Test-Path $mainDll)) {
+        WriteLog ('ERROR: MSAL DLLs not found at {0} -- run scripts\Install-MsalDlls.ps1 to bootstrap' -f $net462Dir)
+        return $false
+    }
+
+    # Pre-load native WAM bridge DLL so managed code can P/Invoke it.
+    # PS 5.1 runs as x64 even on ARM64 (emulation), so always load win-x64.
+    $nativeDir = Join-Path (Join-Path (Join-Path $msalBase "runtimes") "win-x64") "native"
+    $nativeDll = Join-Path $nativeDir "msalruntime.dll"
+    if (Test-Path $nativeDll) {
+        if (-not ([System.Management.Automation.PSTypeName]'MsalNativeLoader').Type) {
+            Add-Type -TypeDefinition @"
+using System;
+using System.Runtime.InteropServices;
+public static class MsalNativeLoader {
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern IntPtr LoadLibrary(string lpFileName);
+}
+"@
+        }
+        $handle = [MsalNativeLoader]::LoadLibrary($nativeDll)
+        if ($handle -eq [IntPtr]::Zero) {
+            WriteLog 'WARNING: Failed to pre-load msalruntime.dll -- WAM broker may not work'
+        }
+    }
+    else {
+        WriteLog 'WARNING: msalruntime.dll not found -- WAM broker will not be available'
+    }
+
+    # Load managed DLLs in dependency order (leaf deps first)
+    $dllOrder = @(
+        'System.Buffers.dll',
+        'System.Numerics.Vectors.dll',
+        'System.Runtime.CompilerServices.Unsafe.dll',
+        'System.Memory.dll',
+        'System.Diagnostics.DiagnosticSource.dll',
+        'System.Formats.Asn1.dll',
+        'Microsoft.IdentityModel.Abstractions.dll',
+        'Microsoft.Identity.Client.dll',
+        'Microsoft.Identity.Client.Broker.dll'
+    )
+
+    foreach ($dllName in $dllOrder) {
+        $dllPath = Join-Path $net462Dir $dllName
+        try {
+            Add-Type -Path $dllPath
+        }
+        catch {
+            $asmName = [System.IO.Path]::GetFileNameWithoutExtension($dllName)
+            $alreadyLoaded = [System.AppDomain]::CurrentDomain.GetAssemblies() | Where-Object {
+                $_.GetName().Name -eq $asmName
+            }
+            if (-not $alreadyLoaded) {
+                WriteLog ('ERROR: Failed to load {0}: {1}' -f $dllName, $_)
+                return $false
+            }
+        }
+    }
+
+    $script:MsalDllsLoaded = $true
+    WriteLog 'INFO: MSAL.NET libraries loaded successfully'
+    return $true
+}
+
+function Get-EntraAccessToken {
+    <#
+        .SYNOPSIS
+            Acquires a Microsoft Graph access token silently using MSAL.NET + WAM broker.
+            Returns the access token string, or $null if acquisition fails.
+        .DESCRIPTION
+            Uses the device PRT (Primary Refresh Token) via Windows WAM broker for
+            zero-interaction token acquisition. Requires an Entra-joined or hybrid-joined
+            endpoint with a valid PRT. Token is cached for the duration of the EP run.
+            All failures return $null to preserve the fallback-chain contract.
+    #>
+    [CmdletBinding()]
+    [OutputType([string])]
+    param()
+
+    # Return cached token if still valid (5-minute buffer)
+    if ($null -ne $script:EntraTokenCache) {
+        if ($script:EntraTokenCache.ExpiresOn.UtcDateTime -gt [DateTime]::UtcNow.AddMinutes(5)) {
+            return $script:EntraTokenCache.AccessToken
+        }
+        WriteLog 'INFO: Cached Entra token expired or expiring soon -- re-acquiring'
+        $script:EntraTokenCache = $null
+    }
+
+    # Guard: Entra not configured
+    if ([string]::IsNullOrEmpty($global:EntraClientId)) {
+        return $null
+    }
+    if ([string]::IsNullOrEmpty($global:EntraTenantId)) {
+        WriteLog 'WARNING: EntraClientId is set but EntraTenantId is empty -- skipping Entra token acquisition'
+        return $null
+    }
+
+    # Load MSAL DLLs (idempotent)
+    if (-not (Initialize-MsalLibraries)) {
+        return $null
+    }
+
+    try {
+        $authority = ('https://login.microsoftonline.com/{0}' -f $global:EntraTenantId)
+
+        # WAM broker options -- enable on Windows only
+        $brokerOpts = New-Object Microsoft.Identity.Client.Broker.BrokerOptions(
+            [Microsoft.Identity.Client.Broker.BrokerOptions+OperatingSystems]::Windows
+        )
+
+        # Build MSAL public client application
+        # WithBroker is an extension method -- call it as a static method in PS
+        $appBuilder = [Microsoft.Identity.Client.PublicClientApplicationBuilder]::Create($global:EntraClientId)
+        $appBuilder = $appBuilder.WithAuthority($authority)
+        $appBuilder = [Microsoft.Identity.Client.Broker.BrokerExtensions]::WithBroker($appBuilder, $brokerOpts)
+        $app = $appBuilder.Build()
+
+        # Acquire token silently using the OS account (PRT-based via WAM)
+        $scopes = [string[]]@('https://graph.microsoft.com/GroupMember.Read.All')
+        $osAccount = [Microsoft.Identity.Client.PublicClientApplication]::OperatingSystemAccount
+
+        $tokenResult = $app.AcquireTokenSilent($scopes, $osAccount).ExecuteAsync().GetAwaiter().GetResult()
+
+        $script:EntraTokenCache = $tokenResult
+        WriteLog 'INFO: Entra access token acquired via WAM broker'
+        return $tokenResult.AccessToken
+    }
+    catch {
+        $ex = $_.Exception
+        # .GetAwaiter().GetResult() normally unwraps AggregateException,
+        # but guard against edge cases in PS 5.1 async handling
+        if ($ex -is [System.AggregateException] -and $ex.InnerException) {
+            $ex = $ex.InnerException
+        }
+
+        $exType = $ex.GetType().FullName
+
+        if ($exType -eq 'Microsoft.Identity.Client.MsalUiRequiredException') {
+            WriteLog ('WARNING: Entra token requires user interaction (no PRT or conditional access policy): {0}' -f $ex.Message)
+        }
+        elseif ($exType -eq 'Microsoft.Identity.Client.MsalServiceException') {
+            WriteLog ('WARNING: Entra service error (HTTP {0}): {1}' -f $ex.StatusCode, $ex.Message)
+        }
+        else {
+            WriteLog ('ERROR: Entra token acquisition failed ({0}): {1}' -f $exType, $ex.Message)
+        }
+
+        return $null
+    }
+}
+
+function Get-EntraGroupMemberships {
+    <#
+        .SYNOPSIS
+            Fetches all Entra security group memberships for the current user via
+            Microsoft Graph and caches them as a hashtable for O(1) lookups.
+        .DESCRIPTION
+            Calls /me/transitiveMemberOf (or /me/memberOf based on config) to retrieve
+            all group objects, filters to #microsoft.graph.group, and stores display
+            names in $script:EntraGroupCache. Handles pagination and HTTP error codes.
+            All failures return $null to preserve the fallback-chain contract.
+    #>
+    [CmdletBinding()]
+    [OutputType([hashtable])]
+    param()
+
+    # Return cache if already populated for this EP run
+    if ($null -ne $script:EntraGroupCache) {
+        return $script:EntraGroupCache
+    }
+
+    $token = Get-EntraAccessToken
+    if ($null -eq $token) {
+        return $null
+    }
+
+    # Build Graph URL -- transitive (nested) vs direct membership
+    $endpoint = if ($global:EntraTransitiveGroups) { 'transitiveMemberOf' } else { 'memberOf' }
+    $graphUrl = ('https://graph.microsoft.com/v1.0/me/{0}?$select=displayName,id&$top=999' -f $endpoint)
+
+    $headers = @{
+        'Authorization' = ('Bearer {0}' -f $token)
+        'Accept'        = 'application/json'
+    }
+
+    $groups = @{}
+
+    try {
+        $url = $graphUrl
+        do {
+            $response = Invoke-RestMethod -Uri $url -Headers $headers -Method Get -UseBasicParsing
+
+            if ($response.value) {
+                foreach ($obj in $response.value) {
+                    $odataType = $obj.'@odata.type'
+                    if ($odataType -eq '#microsoft.graph.group' -and $obj.displayName) {
+                        $groups[$obj.displayName] = $true
+                    }
+                }
+            }
+
+            # Follow pagination link if more results exist
+            $url = $response.'@odata.nextLink'
+        } while ($url)
+    }
+    catch {
+        $ex = $_.Exception
+        $statusCode = $null
+
+        # Extract HTTP status code from WebException (PS 5.1 pattern)
+        if ($ex -is [System.Net.WebException] -and $ex.Response) {
+            $statusCode = [int]$ex.Response.StatusCode
+        }
+
+        if ($statusCode -eq 401) {
+            WriteLog 'WARNING: Graph API returned 401 -- Entra access token may have expired mid-request'
+        }
+        elseif ($statusCode -eq 403) {
+            WriteLog 'ERROR: Graph API returned 403 -- app registration may lack GroupMember.Read.All permission. Check API permissions in the Entra portal and grant admin consent.'
+        }
+        elseif ($statusCode -eq 429) {
+            $retryAfter = $null
+            try { $retryAfter = $ex.Response.Headers['Retry-After'] } catch {}
+            if ($retryAfter) {
+                WriteLog ('WARNING: Graph API throttled (429). Retry-After: {0}s. Will retry on next EP run.' -f $retryAfter)
+            }
+            else {
+                WriteLog 'WARNING: Graph API throttled (429). Will retry on next EP run.'
+            }
+        }
+        else {
+            WriteLog ('WARNING: Graph API call failed: {0}' -f $ex.Message)
+        }
+
+        return $null
+    }
+
+    $script:EntraGroupCache = $groups
+    WriteLog ('INFO: Cached {0} Entra group memberships for this run' -f $groups.Count)
+    return $groups
+}
 
 function Get-EndpointJoinState {
 	<#
@@ -746,10 +1021,6 @@ function Test-EntraGroupMembership {
 		.SYNOPSIS
 			Checks Entra ID security group membership via Microsoft Graph REST API.
 			Requires the endpoint to have an Azure AD PRT for token acquisition.
-		.DESCRIPTION
-			Phase 1: Stubbed — logs the attempt and returns $null (inconclusive).
-			Phase 2 will use the device PRT to acquire a Graph access token via WAM
-			and call /me/memberOf to resolve Entra-only security groups.
 		.OUTPUTS
 			$true if member, $false if not member, $null if check could not be performed.
 	#>
@@ -762,24 +1033,33 @@ function Test-EntraGroupMembership {
 		[PSCustomObject]$JoinState
 	)
 
-	# Phase 1 stub — Entra Graph check is not yet wired up.
-	# The function structure is here so the fallback chain is complete;
-	# implementation will use Invoke-RestMethod against Graph /me/memberOf
-	# with a WAM-acquired token once validated on the test VM.
+	# Guard: Entra not configured
+	if ([string]::IsNullOrEmpty($global:EntraClientId)) {
+		return $null
+	}
 
+	# Guard: no Entra context on this device
 	if (-not $JoinState.AzureAdJoined -and -not $JoinState.AzureAdPrt) {
 		return $null
 	}
 
-	WriteLog "INFO: Entra ID group check for '$GroupName' is not yet implemented (Phase 2). Falling through."
-	return $null
+	$groupCache = Get-EntraGroupMemberships
+	if ($null -eq $groupCache) {
+		return $null
+	}
+
+	if ($groupCache.ContainsKey($GroupName)) {
+		return $true
+	}
+
+	return $false
 }
 
 function Test-LocalGroupMembership {
 	<#
 		.SYNOPSIS
 			Checks if the current user is a member of a local Windows group.
-			Used as a final fallback — catches typos (user meant a local group)
+			Used as a final fallback -- catches typos (user meant a local group)
 			and handles standalone/workgroup machines.
 		.OUTPUTS
 			$true if member, $false if not member, $null if the local group does not exist.
