@@ -37,11 +37,11 @@ $ErrorActionPreference = 'Stop'
 # Default target: lib/msal relative to repo root (one level up from scripts/)
 if (-not $TargetDir) {
     $repoRoot = Split-Path -Parent $PSScriptRoot
-    $TargetDir = Join-Path $repoRoot "lib" "msal"
+    $TargetDir = Join-Path (Join-Path $repoRoot "lib") "msal"
 }
 
 # Idempotent — skip if already installed
-$checkFile = Join-Path $TargetDir "net462" "Microsoft.Identity.Client.dll"
+$checkFile = Join-Path (Join-Path $TargetDir "net462") "Microsoft.Identity.Client.dll"
 if ((Test-Path $checkFile) -and -not $Force) {
     Write-Host "MSAL DLLs already installed at $TargetDir" -ForegroundColor Green
     Write-Host "Use -Force to re-download."
