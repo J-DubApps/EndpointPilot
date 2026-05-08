@@ -180,3 +180,11 @@ JSON directive files are distributed via **NinjaOne File Transfer Automation** â
 - [ ] Intune deployment packages
 - [ ] Admin documentation and troubleshooting guides
 - [ ] Production pilot with NinjaOne tenant
+
+### Phase 4: JsonEditorTool Evolution (Post-Fundamentals)
+
+- [ ] Code review of existing WPF JsonEditorTool solution
+- [ ] ADMX ingestion for HKCU registry management (browse ADMX policies, generate REG-OPS directives)
+- [ ] Web-based JsonEditorTool (after WPF reaches feature-complete)
+
+See `docs/planningdocs/JsonEditorTool-Evolution-Roadmap.md` for full design rationale.
