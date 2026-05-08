@@ -145,7 +145,7 @@ try {
 
             Copy-Item -Path $srcPath -Destination $destPath -Force
             $sizeKB = [math]::Round((Get-Item $destPath).Length / 1KB)
-            Write-Host ("  -> {0} ({1} KB)" -f $ex.Dest, $sizeKB) -ForegroundColor Green
+            Write-Host ('  -> {0} ({1} KB)' -f $ex.Dest, $sizeKB) -ForegroundColor Green
         }
 
         Write-Host ""
@@ -166,7 +166,7 @@ try {
         $path = Join-Path $TargetDir ($f -replace '/', [IO.Path]::DirectorySeparatorChar)
         if (Test-Path $path) {
             $sizeKB = [math]::Round((Get-Item $path).Length / 1KB)
-            Write-Host ("  [OK]      {0} ({1} KB)" -f $f, $sizeKB) -ForegroundColor Green
+            Write-Host ('  [OK]      {0} ({1} KB)' -f $f, $sizeKB) -ForegroundColor Green
         }
         else {
             Write-Host "  [MISSING] $f" -ForegroundColor Red
