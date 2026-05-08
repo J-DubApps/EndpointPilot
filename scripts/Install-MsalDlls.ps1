@@ -86,14 +86,14 @@ try {
         $pkgLower = $pkg.Id.ToLower()
 
         # Query NuGet flat container for latest stable version
-        Write-Host "[$($pkg.Id)]" -ForegroundColor White
+        Write-Host ('[{0}]' -f $pkg.Id) -ForegroundColor White
         $indexUrl = "https://api.nuget.org/v3-flatcontainer/$pkgLower/index.json"
 
         try {
             $indexData = Invoke-RestMethod -Uri $indexUrl -UseBasicParsing
         }
         catch {
-            Write-Host "  ERROR: Failed to query NuGet for $($pkg.Id): $($_.Exception.Message)" -ForegroundColor Red
+            Write-Host ('  ERROR: Failed to query NuGet for {0}: {1}' -f $pkg.Id, $_.Exception.Message) -ForegroundColor Red
             $success = $false
             continue
         }
@@ -101,7 +101,7 @@ try {
         # Filter to stable versions (no prerelease dash)
         $stableVersions = $indexData.versions | Where-Object { $_ -notmatch '-' }
         if (-not $stableVersions -or $stableVersions.Count -eq 0) {
-            Write-Host "  ERROR: No stable versions found for $($pkg.Id)" -ForegroundColor Red
+            Write-Host ('  ERROR: No stable versions found for {0}' -f $pkg.Id) -ForegroundColor Red
             $success = $false
             continue
         }
@@ -118,7 +118,7 @@ try {
             Invoke-WebRequest -Uri $nupkgUrl -OutFile $zipPath -UseBasicParsing
         }
         catch {
-            Write-Host "  ERROR: Download failed: $($_.Exception.Message)" -ForegroundColor Red
+            Write-Host ('  ERROR: Download failed: {0}' -f $_.Exception.Message) -ForegroundColor Red
             $success = $false
             continue
         }
@@ -133,7 +133,7 @@ try {
             $destDir  = Split-Path $destPath -Parent
 
             if (-not (Test-Path $srcPath)) {
-                Write-Host "  WARNING: Expected file not found in package: $($ex.Source)" -ForegroundColor Yellow
+                Write-Host ('  WARNING: Expected file not found in package: {0}' -f $ex.Source) -ForegroundColor Yellow
                 Write-Host "           NuGet package structure may have changed." -ForegroundColor Yellow
                 $success = $false
                 continue
@@ -187,7 +187,7 @@ try {
 }
 catch {
     Write-Host ""
-    Write-Host "FATAL: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host ('FATAL: {0}' -f $_.Exception.Message) -ForegroundColor Red
     exit 1
 }
 finally {
