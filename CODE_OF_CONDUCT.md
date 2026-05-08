@@ -178,7 +178,7 @@ https://www.contributor-covenant.org/faq. Translations are available at https://
 
 ---
 
-**Last Updated**: July 2025  
-**Next Review**: January 2026
+**Last Updated**: May 2026  
+**Next Review**: July 2026
 
 Thank you for helping make the EndpointPilot Framework a welcoming space for all developers! 🚀
