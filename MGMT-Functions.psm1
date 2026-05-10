@@ -748,20 +748,36 @@ public static class MsalNativeLoader {
         WriteLog 'WARNING: msalruntime.dll not found -- WAM broker will not be available'
     }
 
-    # Register an assembly version redirect handler. Install-MsalDlls.ps1
-    # fetches unpinned latest versions, so the assembly version on disk may
-    # differ from the exact version compiled into MSAL references. Without
-    # this, the CLR throws FileNotFoundException on version mismatch.
+    # Register an assembly version redirect handler (compiled C#).
+    # Uses pure CLR code to avoid PowerShell runtime assembly loads inside
+    # the handler, which can cause StackOverflowException via recursion.
+    # Reentrancy guard prevents infinite loops when a resolved assembly
+    # itself triggers further resolution requests.
     if (-not $script:MsalAssemblyResolverRegistered) {
-        $resolveHandler = [System.ResolveEventHandler]{
-            param($sender, $eventArgs)
-            $requestedName = (New-Object System.Reflection.AssemblyName($eventArgs.Name)).Name
-            $found = [System.AppDomain]::CurrentDomain.GetAssemblies() | Where-Object {
-                $_.GetName().Name -eq $requestedName
+        if (-not ([System.Management.Automation.PSTypeName]'MsalAssemblyResolver').Type) {
+            Add-Type -TypeDefinition @"
+using System;
+using System.Reflection;
+public static class MsalAssemblyResolver {
+    [ThreadStatic] private static bool _resolving;
+    public static Assembly Resolve(object sender, ResolveEventArgs args) {
+        if (_resolving) return null;
+        _resolving = true;
+        try {
+            string name = new AssemblyName(args.Name).Name;
+            foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies()) {
+                if (string.Equals(asm.GetName().Name, name, StringComparison.OrdinalIgnoreCase))
+                    return asm;
             }
-            if ($found) { return $found[0] }
-            return $null
+            return null;
+        } finally {
+            _resolving = false;
         }
+    }
+}
+"@
+        }
+        $resolveHandler = [System.ResolveEventHandler]([MsalAssemblyResolver].GetMethod('Resolve').CreateDelegate([System.ResolveEventHandler]))
         [System.AppDomain]::CurrentDomain.add_AssemblyResolve($resolveHandler)
         $script:MsalAssemblyResolverRegistered = $true
     }
