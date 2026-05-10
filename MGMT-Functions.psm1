@@ -737,6 +737,24 @@ public static class MsalNativeLoader {
         WriteLog 'WARNING: msalruntime.dll not found -- WAM broker will not be available'
     }
 
+    # Register an assembly version redirect handler. Install-MsalDlls.ps1
+    # fetches unpinned latest versions, so the assembly version on disk may
+    # differ from the exact version compiled into MSAL references. Without
+    # this, the CLR throws FileNotFoundException on version mismatch.
+    if (-not $script:MsalAssemblyResolverRegistered) {
+        $resolveHandler = [System.ResolveEventHandler]{
+            param($sender, $eventArgs)
+            $requestedName = (New-Object System.Reflection.AssemblyName($eventArgs.Name)).Name
+            $found = [System.AppDomain]::CurrentDomain.GetAssemblies() | Where-Object {
+                $_.GetName().Name -eq $requestedName
+            }
+            if ($found) { return $found[0] }
+            return $null
+        }
+        [System.AppDomain]::CurrentDomain.add_AssemblyResolve($resolveHandler)
+        $script:MsalAssemblyResolverRegistered = $true
+    }
+
     # Load managed DLLs in dependency order (leaf deps first)
     $dllOrder = @(
         'System.Buffers.dll',
