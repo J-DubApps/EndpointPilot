@@ -60,7 +60,17 @@
         'ConvertTo-CanonicalJson',
         'Test-CertificateForSigning',
         'Invoke-SignatureVerification',
-        'Get-SignatureValidationConfig'
+        'Get-SignatureValidationConfig',
+
+        # Group Membership Functions
+        'Resolve-GroupMembership',
+        'Get-EndpointJoinState',
+
+        # Entra ID / MSAL Functions
+        'Initialize-MsalLibraries',
+        'Get-EntraAccessToken',
+        'Get-EntraGroupMemberships',
+        'Test-EntraGroupMembership'
     )
     
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.

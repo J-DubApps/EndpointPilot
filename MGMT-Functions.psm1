@@ -1737,7 +1737,7 @@ function Get-SignatureValidationConfig {
 #endregion FUNCTIONS
 
 # Export all functions and aliases
-Export-ModuleMember -Function InGroup, InGroupGP, Get-Permission, IsCurrentProcessArm64, Get-RegistryValue, Import-RegKey, Get-DsRegStatusInfo, Measure-DownloadSpeed, Measure-UploadSpeed, Get-LoggedInUser, Get-TextWithin, Get-WorkstationUsageStatus, Copy-File, Copy-Directory, Move-Files, Move-Directory, Send-SmtpMail, Test-JsonSignature, Get-SignerCertificate, ConvertTo-CanonicalJson, Test-CertificateForSigning, Invoke-SignatureVerification, Get-SignatureValidationConfig, Resolve-GroupMembership, Get-EndpointJoinState
+Export-ModuleMember -Function InGroup, InGroupGP, Get-Permission, IsCurrentProcessArm64, Get-RegistryValue, Import-RegKey, Get-DsRegStatusInfo, Measure-DownloadSpeed, Measure-UploadSpeed, Get-LoggedInUser, Get-TextWithin, Get-WorkstationUsageStatus, Copy-File, Copy-Directory, Move-Files, Move-Directory, Send-SmtpMail, Test-JsonSignature, Get-SignerCertificate, ConvertTo-CanonicalJson, Test-CertificateForSigning, Invoke-SignatureVerification, Get-SignatureValidationConfig, Resolve-GroupMembership, Get-EndpointJoinState, Initialize-MsalLibraries, Get-EntraAccessToken, Get-EntraGroupMemberships, Test-EntraGroupMembership
 Export-ModuleMember -Alias Get-Permissions
 
 ##
