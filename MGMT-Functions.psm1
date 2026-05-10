@@ -950,7 +950,7 @@ function Get-EntraGroupMemberships {
     try {
         $url = $graphUrl
         do {
-            $response = Invoke-RestMethod -Uri $url -Headers $headers -Method Get -UseBasicParsing
+            $response = Invoke-RestMethod -Uri $url -Headers $headers -Method Get
 
             if ($response.value) {
                 foreach ($obj in $response.value) {
