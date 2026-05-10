@@ -105,14 +105,14 @@ $packages = @(
         Id          = "System.Text.Encodings.Web"
         Version     = "6.0.0"
         Extractions = @(
-            @{ Source = "lib/net462/System.Text.Encodings.Web.dll"; Dest = "net462/System.Text.Encodings.Web.dll" }
+            @{ Source = "lib/net461/System.Text.Encodings.Web.dll"; Dest = "net462/System.Text.Encodings.Web.dll" }
         )
     },
     @{
         Id          = "System.Text.Json"
         Version     = "6.0.10"
         Extractions = @(
-            @{ Source = "lib/net462/System.Text.Json.dll"; Dest = "net462/System.Text.Json.dll" }
+            @{ Source = "lib/net461/System.Text.Json.dll"; Dest = "net462/System.Text.Json.dll" }
         )
     },
     @{
