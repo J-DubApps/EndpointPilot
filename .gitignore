@@ -172,7 +172,23 @@ DRIVE-OPS.json.bak
 /SystemAgent/bin/Debug/
 /SystemAgent/obj/Debug/
 /SystemAgent/EndpointPilotJsonEditor.Core/obj/Debug/
+/SystemAgent/obj/EndpointPilot.SystemAgent.csproj.nuget.dgspec.json
+/SystemAgent/obj/EndpointPilot.SystemAgent.csproj.nuget.g.props
+/SystemAgent/obj/project.assets.json
+/SystemAgent/obj/project.nuget.cache
 /SystemAgent/obj/Release/
+
+# SystemAgent Folders to ignore
+SystemAgent\.vs
+SystemAgent\.vs
+SystemAgent\bin\Debug
+SystemAgent\obj\Debug
+SystemAgent\EndpointPilotJsonEditor.Core\obj\Debug
+SystemAgent\obj\EndpointPilot.SystemAgent.csproj.nuget.dgspec.json
+SystemAgent\obj\EndpointPilot.SystemAgent.csproj.nuget.g.props
+SystemAgent\obj\project.assets.json
+SystemAgent\obj\project.nuget.cache
+SystemAgent\obj\Release
 
 # Allow .dll and .exe files in SystemAgent/bin folders (pre-built binaries)
 !SystemAgent/bin/win-x64/*.dll
