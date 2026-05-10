@@ -251,6 +251,17 @@ $LogFile = "$env:userprofile\LOGON-$env:computername.log"
 $configPath = "CONFIG.json"
 $config = Get-Content -Path $configPath | ConvertFrom-Json
 
+# Merge local overrides (CONFIG.local.json) if present -- gitignored, per-endpoint values
+$localConfigPath = "CONFIG.local.json"
+if (Test-Path -Path $localConfigPath) {
+    $localConfig = Get-Content -Path $localConfigPath | ConvertFrom-Json
+    foreach ($prop in $localConfig.PSObject.Properties) {
+        if ($prop.Name -eq '_comment') { continue }
+        $config | Add-Member -MemberType NoteProperty -Name $prop.Name -Value $prop.Value -Force
+    }
+    WriteLog "Merged local config overrides from CONFIG.local.json"
+}
+
 # Assign variables from config json
 $ClientName = $config.ClientName
 $OrgName = $config.OrgName #Read OrgName from Config

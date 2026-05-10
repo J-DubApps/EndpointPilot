@@ -1,0 +1,5 @@
+{
+  "_comment": "Copy this file to CONFIG.local.json and fill in your values. CONFIG.local.json is gitignored and will override matching fields in CONFIG.json at runtime.",
+  "EntraClientId": "your-entra-app-client-id-here",
+  "EntraTenantId": "your-entra-tenant-id-here"
+}

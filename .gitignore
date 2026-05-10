@@ -127,6 +127,9 @@ ai_docs/*
 LLM-Planning-Temp/*
 jsonbackup/*
 
+# Local config overrides (per-endpoint secrets like Entra app registration)
+CONFIG.local.json
+
 # Ignore json.bak files
 REG-OPS.json.bak
 FILE-OPS.json.bak
