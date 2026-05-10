@@ -94,5 +94,35 @@ namespace EndpointPilotJsonEditor.Core.Models
         /// </summary>
         [JsonProperty("SkipRoamOps")]
         public bool SkipRoamOps { get; set; } = false;
+
+        /// <summary>
+        /// Enable dry-run mode -- all operations are logged but no changes are made
+        /// </summary>
+        [JsonProperty("DryRun")]
+        public bool DryRun { get; set; } = false;
+
+        /// <summary>
+        /// When true, only Windows Enterprise editions are allowed
+        /// </summary>
+        [JsonProperty("EnterpriseOnly")]
+        public bool EnterpriseOnly { get; set; } = false;
+
+        /// <summary>
+        /// Entra ID app registration client ID for Graph API group membership checks
+        /// </summary>
+        [JsonProperty("EntraClientId")]
+        public string EntraClientId { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Entra ID tenant ID, required when EntraClientId is configured
+        /// </summary>
+        [JsonProperty("EntraTenantId")]
+        public string EntraTenantId { get; set; } = string.Empty;
+
+        /// <summary>
+        /// When true, resolve nested/transitive Entra group memberships
+        /// </summary>
+        [JsonProperty("EntraTransitiveGroups")]
+        public bool EntraTransitiveGroups { get; set; } = true;
     }
 }

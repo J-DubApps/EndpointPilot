@@ -128,7 +128,7 @@ namespace EndpointPilotJsonEditor.Core.Services
                     operation.Signature = Convert.ToBase64String(signature);
                     operation.Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
                     operation.SignerCertThumbprint = certificate.Thumbprint;
-                    operation.HashAlgorithm = "SHA256";
+                    operation.HashAlgorithm = "SHA-256";
                     operation.SignatureVersion = "1.0";
 
                     return true;

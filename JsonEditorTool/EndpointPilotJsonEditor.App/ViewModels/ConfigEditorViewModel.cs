@@ -293,6 +293,96 @@ namespace EndpointPilotJsonEditor.App.ViewModels
         }
 
         /// <summary>
+        /// Gets or sets whether dry-run mode is enabled
+        /// </summary>
+        public bool DryRun
+        {
+            get => _config.DryRun;
+            set
+            {
+                if (_config.DryRun != value)
+                {
+                    _config.DryRun = value;
+                    OnPropertyChanged();
+                    IsModified = true;
+                    ValidateAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets whether only Enterprise editions are allowed
+        /// </summary>
+        public bool EnterpriseOnly
+        {
+            get => _config.EnterpriseOnly;
+            set
+            {
+                if (_config.EnterpriseOnly != value)
+                {
+                    _config.EnterpriseOnly = value;
+                    OnPropertyChanged();
+                    IsModified = true;
+                    ValidateAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the Entra ID client ID
+        /// </summary>
+        public string EntraClientId
+        {
+            get => _config.EntraClientId;
+            set
+            {
+                if (_config.EntraClientId != value)
+                {
+                    _config.EntraClientId = value;
+                    OnPropertyChanged();
+                    IsModified = true;
+                    ValidateAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the Entra ID tenant ID
+        /// </summary>
+        public string EntraTenantId
+        {
+            get => _config.EntraTenantId;
+            set
+            {
+                if (_config.EntraTenantId != value)
+                {
+                    _config.EntraTenantId = value;
+                    OnPropertyChanged();
+                    IsModified = true;
+                    ValidateAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets whether to resolve transitive Entra group memberships
+        /// </summary>
+        public bool EntraTransitiveGroups
+        {
+            get => _config.EntraTransitiveGroups;
+            set
+            {
+                if (_config.EntraTransitiveGroups != value)
+                {
+                    _config.EntraTransitiveGroups = value;
+                    OnPropertyChanged();
+                    IsModified = true;
+                    ValidateAsync();
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets or sets whether the configuration has been modified
         /// </summary>
         public bool IsModified

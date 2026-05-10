@@ -52,11 +52,18 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" /> <!-- HttpsScriptRootEnabled -->
-                    <RowDefinition Height="Auto" /> <!-- HttpsScriptRootPath -->
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" /> <!-- NetworkScriptRootEnabled -->
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -123,6 +130,34 @@
                 <!-- Skip Roam Ops -->
                 <TextBlock Grid.Row="13" Grid.Column="0" Text="Skip Roam Operations:" Style="{StaticResource FieldLabelStyle}" />
                 <CheckBox Grid.Row="13" Grid.Column="1" IsChecked="{Binding SkipRoamOps}" Style="{StaticResource CheckBoxStyle}" />
+
+                <!-- Runtime Behavior Section -->
+                <TextBlock Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="2" Text="Runtime Behavior"
+                           FontWeight="Bold" FontSize="14" Margin="0,15,0,5" />
+
+                <!-- Dry Run -->
+                <TextBlock Grid.Row="15" Grid.Column="0" Text="Dry Run Mode:" Style="{StaticResource FieldLabelStyle}" />
+                <CheckBox Grid.Row="15" Grid.Column="1" IsChecked="{Binding DryRun}" Style="{StaticResource CheckBoxStyle}" />
+
+                <!-- Enterprise Only -->
+                <TextBlock Grid.Row="16" Grid.Column="0" Text="Enterprise Only:" Style="{StaticResource FieldLabelStyle}" />
+                <CheckBox Grid.Row="16" Grid.Column="1" IsChecked="{Binding EnterpriseOnly}" Style="{StaticResource CheckBoxStyle}" />
+
+                <!-- Entra ID Section -->
+                <TextBlock Grid.Row="17" Grid.Column="0" Grid.ColumnSpan="2" Text="Entra ID Integration"
+                           FontWeight="Bold" FontSize="14" Margin="0,15,0,5" />
+
+                <!-- Entra Client ID -->
+                <TextBlock Grid.Row="18" Grid.Column="0" Text="Entra Client ID:" Style="{StaticResource FieldLabelStyle}" />
+                <TextBox Grid.Row="18" Grid.Column="1" Text="{Binding EntraClientId, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource FieldValueStyle}" />
+
+                <!-- Entra Tenant ID -->
+                <TextBlock Grid.Row="19" Grid.Column="0" Text="Entra Tenant ID:" Style="{StaticResource FieldLabelStyle}" />
+                <TextBox Grid.Row="19" Grid.Column="1" Text="{Binding EntraTenantId, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource FieldValueStyle}" />
+
+                <!-- Entra Transitive Groups -->
+                <TextBlock Grid.Row="20" Grid.Column="0" Text="Transitive Group Membership:" Style="{StaticResource FieldLabelStyle}" />
+                <CheckBox Grid.Row="20" Grid.Column="1" IsChecked="{Binding EntraTransitiveGroups}" Style="{StaticResource CheckBoxStyle}" />
             </Grid>
         </ScrollViewer>
         
