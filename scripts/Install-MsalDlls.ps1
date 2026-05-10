@@ -81,10 +81,24 @@ $packages = @(
         )
     },
     @{
+        Id          = "System.Threading.Tasks.Extensions"
+        Version     = "4.5.4"
+        Extractions = @(
+            @{ Source = "lib/net461/System.Threading.Tasks.Extensions.dll"; Dest = "net462/System.Threading.Tasks.Extensions.dll" }
+        )
+    },
+    @{
         Id          = "System.Memory"
         Version     = "4.5.5"
         Extractions = @(
             @{ Source = "lib/net461/System.Memory.dll"; Dest = "net462/System.Memory.dll" }
+        )
+    },
+    @{
+        Id          = "System.ValueTuple"
+        Version     = "4.5.0"
+        Extractions = @(
+            @{ Source = "lib/net461/System.ValueTuple.dll"; Dest = "net462/System.ValueTuple.dll" }
         )
     },
     @{
@@ -106,6 +120,13 @@ $packages = @(
         Version     = "6.0.0"
         Extractions = @(
             @{ Source = "lib/net461/System.Text.Encodings.Web.dll"; Dest = "net462/System.Text.Encodings.Web.dll" }
+        )
+    },
+    @{
+        Id          = "Microsoft.Bcl.AsyncInterfaces"
+        Version     = "6.0.0"
+        Extractions = @(
+            @{ Source = "lib/net461/Microsoft.Bcl.AsyncInterfaces.dll"; Dest = "net462/Microsoft.Bcl.AsyncInterfaces.dll" }
         )
     },
     @{
@@ -244,10 +265,13 @@ try {
         "net462/System.Buffers.dll",
         "net462/System.Numerics.Vectors.dll",
         "net462/System.Runtime.CompilerServices.Unsafe.dll",
+        "net462/System.Threading.Tasks.Extensions.dll",
         "net462/System.Memory.dll",
+        "net462/System.ValueTuple.dll",
         "net462/System.Diagnostics.DiagnosticSource.dll",
         "net462/System.Formats.Asn1.dll",
         "net462/System.Text.Encodings.Web.dll",
+        "net462/Microsoft.Bcl.AsyncInterfaces.dll",
         "net462/System.Text.Json.dll",
         "net462/Microsoft.IdentityModel.Abstractions.dll",
         "net462/Microsoft.Identity.Client.dll",
