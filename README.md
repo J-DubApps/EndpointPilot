@@ -17,7 +17,7 @@ updated: 2025-08-19T15:58
 
 **EndpointPilot** (under development summer 2026) **is a PowerShell-based autonoumous Windows PC Endpoint** **_Configuration Management_** solution for PCs operating in **Intune\*\* **or a NinjaOne-managed context**. Configuration of Endpoints is simple and elegant, usig JSON files to direct operations like: file, registry, drive-mappings and other settings-management.  Configuration distributes directly ---> to deployed EP system agents: NinjaOne/Intune are **deployment + telemetry platforms**, while the config pipeline is independent.
 
-One of EndpointPilot's strength is there's no DB (no SQL) overhead: just pure JSON text files with a sensible schema for directing powerful & pre-tooled PowerShell scripts. Files are the source of truth, signed as the trust boundary, while transport of configs plumbing is simple.
+One of EndpointPilot's strength is there's no DB (no SQL) overhead: just pure JSON text files with a sensible schema for directing powerful & pre-tooled PowerShell scripts. Files are the source of truth, signed as the trust boundary, while transport of configs plumbing is simple. Secure pushing of EndpointPilot configurations is handled by Client Certificate-based authentication, while API key auth is suitable for evaluation (Cert-based authentication is recommended for production deployments).
 
 <br />
 <p align="center">
