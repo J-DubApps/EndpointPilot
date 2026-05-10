@@ -854,7 +854,7 @@ function Get-EntraAccessToken {
         # WithBroker is an extension method -- call it as a static method in PS
         $appBuilder = [Microsoft.Identity.Client.PublicClientApplicationBuilder]::Create($global:EntraClientId)
         $appBuilder = $appBuilder.WithAuthority($authority)
-        $appBuilder = $appBuilder.WithRedirectUri('https://login.microsoftonline.com/common/oauth2/nativeclient')
+        $appBuilder = $appBuilder.WithDefaultRedirectUri()
         $appBuilder = [Microsoft.Identity.Client.Broker.BrokerExtensions]::WithBroker($appBuilder, $brokerOpts)
         $app = $appBuilder.Build()
 
