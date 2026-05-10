@@ -714,9 +714,20 @@ function Initialize-MsalLibraries {
     }
 
     # Pre-load native WAM bridge DLL so managed code can P/Invoke it.
-    # PS 5.1 runs as x64 even on ARM64 (emulation), so always load win-x64.
-    $nativeDir = Join-Path (Join-Path (Join-Path $msalBase "runtimes") "win-x64") "native"
-    $nativeDll = Join-Path $nativeDir "msalruntime.dll"
+    # Choose the DLL matching the process architecture:
+    #   x64 (including PS 5.1 emulated on ARM64): runtimes/win-x64/native/msalruntime.dll
+    #   ARM64 (PS 7+ native on ARM64):            runtimes/win-arm64/native/msalruntime_arm64.dll
+    $procIsArm64 = $false
+    try { $procIsArm64 = [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64 } catch {}
+
+    if ($procIsArm64) {
+        $nativeDir = Join-Path (Join-Path (Join-Path $msalBase "runtimes") "win-arm64") "native"
+        $nativeDll = Join-Path $nativeDir "msalruntime_arm64.dll"
+    }
+    else {
+        $nativeDir = Join-Path (Join-Path (Join-Path $msalBase "runtimes") "win-x64") "native"
+        $nativeDll = Join-Path $nativeDir "msalruntime.dll"
+    }
     if (Test-Path $nativeDll) {
         if (-not ([System.Management.Automation.PSTypeName]'MsalNativeLoader').Type) {
             Add-Type -TypeDefinition @"

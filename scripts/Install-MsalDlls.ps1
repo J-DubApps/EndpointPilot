@@ -123,7 +123,7 @@ $packages = @(
         Id          = "Microsoft.Identity.Client.NativeInterop"
         Extractions = @(
             @{ Source = "runtimes/win-x64/native/msalruntime.dll"; Dest = "runtimes/win-x64/native/msalruntime.dll"; Optional = $false },
-            @{ Source = "runtimes/win-arm64/native/msalruntime.dll"; Dest = "runtimes/win-arm64/native/msalruntime.dll"; Optional = $true }
+            @{ Source = "runtimes/win-arm64/native/msalruntime_arm64.dll"; Dest = "runtimes/win-arm64/native/msalruntime_arm64.dll"; Optional = $false }
         )
     }
 )
@@ -220,10 +220,10 @@ try {
     Write-Host "Verification" -ForegroundColor Cyan
     Write-Host "---------------------------------------------" -ForegroundColor DarkGray
 
-    # PS 5.1 runs as x64 on all Windows (including ARM64 via emulation),
-    # so the x64 native DLL is always required. ARM64 native is a bonus.
     $arch = $env:PROCESSOR_ARCHITECTURE
-    Write-Host ('  CPU: {0}, PS process: x64' -f $arch)
+    $processArch = "x64"
+    try { $processArch = [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString() } catch {}
+    Write-Host ('  CPU: {0}, PS process: {1}' -f $arch, $processArch)
 
     $expectedFiles = @(
         "net462/System.Buffers.dll",
@@ -235,7 +235,8 @@ try {
         "net462/Microsoft.IdentityModel.Abstractions.dll",
         "net462/Microsoft.Identity.Client.dll",
         "net462/Microsoft.Identity.Client.Broker.dll",
-        "runtimes/win-x64/native/msalruntime.dll"
+        "runtimes/win-x64/native/msalruntime.dll",
+        "runtimes/win-arm64/native/msalruntime_arm64.dll"
     )
 
     foreach ($f in $expectedFiles) {
@@ -248,16 +249,6 @@ try {
             Write-Host "  [MISSING] $f" -ForegroundColor Red
             $success = $false
         }
-    }
-
-    # ARM64 native DLL status (non-fatal, bonus for future ARM64-native PS)
-    $arm64Path = Join-Path $TargetDir "runtimes\win-arm64\native\msalruntime.dll"
-    if (Test-Path $arm64Path) {
-        $sizeKB = [math]::Round((Get-Item $arm64Path).Length / 1KB)
-        Write-Host ('  [OK]      runtimes/win-arm64/native/msalruntime.dll ({0} KB)' -f $sizeKB) -ForegroundColor DarkGray
-    }
-    else {
-        Write-Host '  [--]      runtimes/win-arm64/native/msalruntime.dll (not in package)' -ForegroundColor DarkGray
     }
 
     Write-Host ""
