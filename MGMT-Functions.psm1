@@ -774,6 +774,8 @@ public static class MsalNativeLoader {
         'System.Memory.dll',
         'System.Diagnostics.DiagnosticSource.dll',
         'System.Formats.Asn1.dll',
+        'System.Text.Encodings.Web.dll',
+        'System.Text.Json.dll',
         'Microsoft.IdentityModel.Abstractions.dll',
         'Microsoft.Identity.Client.dll',
         'Microsoft.Identity.Client.Broker.dll'

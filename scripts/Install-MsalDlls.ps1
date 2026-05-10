@@ -102,6 +102,20 @@ $packages = @(
         )
     },
     @{
+        Id          = "System.Text.Encodings.Web"
+        Version     = "6.0.0"
+        Extractions = @(
+            @{ Source = "lib/net462/System.Text.Encodings.Web.dll"; Dest = "net462/System.Text.Encodings.Web.dll" }
+        )
+    },
+    @{
+        Id          = "System.Text.Json"
+        Version     = "6.0.10"
+        Extractions = @(
+            @{ Source = "lib/net462/System.Text.Json.dll"; Dest = "net462/System.Text.Json.dll" }
+        )
+    },
+    @{
         Id          = "Microsoft.IdentityModel.Abstractions"
         Extractions = @(
             @{ Source = "lib/net462/Microsoft.IdentityModel.Abstractions.dll"; Dest = "net462/Microsoft.IdentityModel.Abstractions.dll" }
@@ -232,6 +246,8 @@ try {
         "net462/System.Memory.dll",
         "net462/System.Diagnostics.DiagnosticSource.dll",
         "net462/System.Formats.Asn1.dll",
+        "net462/System.Text.Encodings.Web.dll",
+        "net462/System.Text.Json.dll",
         "net462/Microsoft.IdentityModel.Abstractions.dll",
         "net462/Microsoft.Identity.Client.dll",
         "net462/Microsoft.Identity.Client.Broker.dll",
