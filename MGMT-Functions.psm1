@@ -778,6 +778,7 @@ public static class MsalNativeLoader {
         'System.Text.Json.dll',
         'Microsoft.IdentityModel.Abstractions.dll',
         'Microsoft.Identity.Client.dll',
+        'Microsoft.Identity.Client.NativeInterop.dll',
         'Microsoft.Identity.Client.Broker.dll'
     )
 

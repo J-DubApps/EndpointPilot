@@ -136,6 +136,7 @@ $packages = @(
     @{
         Id          = "Microsoft.Identity.Client.NativeInterop"
         Extractions = @(
+            @{ Source = "lib/net462/Microsoft.Identity.Client.NativeInterop.dll"; Dest = "net462/Microsoft.Identity.Client.NativeInterop.dll" },
             @{ Source = "runtimes/win-x64/native/msalruntime.dll"; Dest = "runtimes/win-x64/native/msalruntime.dll"; Optional = $false },
             @{ Source = "runtimes/win-arm64/native/msalruntime_arm64.dll"; Dest = "runtimes/win-arm64/native/msalruntime_arm64.dll"; Optional = $false }
         )
@@ -251,6 +252,7 @@ try {
         "net462/Microsoft.IdentityModel.Abstractions.dll",
         "net462/Microsoft.Identity.Client.dll",
         "net462/Microsoft.Identity.Client.Broker.dll",
+        "net462/Microsoft.Identity.Client.NativeInterop.dll",
         "runtimes/win-x64/native/msalruntime.dll",
         "runtimes/win-arm64/native/msalruntime_arm64.dll"
     )
