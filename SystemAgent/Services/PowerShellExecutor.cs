@@ -1,8 +1,10 @@
 using System.Diagnostics;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
+using EndpointPilot.SystemAgent.Models;
 
 namespace EndpointPilot.SystemAgent.Services;
 
@@ -13,26 +15,59 @@ public class PowerShellExecutor : IPowerShellExecutor
 {
     private readonly ILogger<PowerShellExecutor> _logger;
     private readonly string _endpointPilotPath;
-    private readonly HashSet<string> _allowedScripts;
+    private readonly string _hashManifestPath;
+    private ScriptHashManifest? _hashManifest;
 
     public PowerShellExecutor(ILogger<PowerShellExecutor> logger)
     {
         _logger = logger;
         _endpointPilotPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "EndpointPilot");
-        
-        // Initialize allowed scripts - only EndpointPilot scripts from secure locations
-        _allowedScripts = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        _hashManifestPath = Path.Combine(_endpointPilotPath, "hashes.json");
+        LoadHashManifest();
+    }
+
+    private void LoadHashManifest()
+    {
+        try
         {
-            Path.Combine(_endpointPilotPath, "MAIN.PS1"),
-            Path.Combine(_endpointPilotPath, "MGMT-FileOps.ps1"),
-            Path.Combine(_endpointPilotPath, "MGMT-RegOps.ps1"),
-            Path.Combine(_endpointPilotPath, "MGMT-DriveOps.ps1"),
-            Path.Combine(_endpointPilotPath, "MGMT-RoamOps.ps1"),
-            Path.Combine(_endpointPilotPath, "MGMT-SchedTsk.ps1"),
-            Path.Combine(_endpointPilotPath, "MGMT-Telemetry.ps1"),
-            Path.Combine(_endpointPilotPath, "MGMT-USER-CUSTOM.ps1"),
-            Path.Combine(_endpointPilotPath, "MGMT-Maint.ps1")
-        };
+            if (!File.Exists(_hashManifestPath))
+            {
+                _logger.LogWarning(
+                    "Script hash manifest not found at {ManifestPath}. " +
+                    "Falling back to location-based validation only. " +
+                    "Run Generate-ScriptHashes.ps1 to enable hash verification.",
+                    _hashManifestPath);
+                _hashManifest = null;
+                return;
+            }
+
+            var json = File.ReadAllText(_hashManifestPath);
+            _hashManifest = Newtonsoft.Json.JsonConvert.DeserializeObject<ScriptHashManifest>(json);
+
+            if (_hashManifest?.Scripts == null || _hashManifest.Scripts.Count == 0)
+            {
+                _logger.LogWarning("Script hash manifest is empty or invalid. Falling back to location-based validation only.");
+                _hashManifest = null;
+                return;
+            }
+
+            _logger.LogInformation(
+                "Loaded script hash manifest with {Count} entries (generated {GeneratedAt})",
+                _hashManifest.Scripts.Count, _hashManifest.GeneratedAt);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading script hash manifest. Falling back to location-based validation only.");
+            _hashManifest = null;
+        }
+    }
+
+    private static async Task<string> ComputeFileHashAsync(string filePath)
+    {
+        using var sha256 = SHA256.Create();
+        await using var stream = File.OpenRead(filePath);
+        var hash = await sha256.ComputeHashAsync(stream);
+        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
     }
 
     public async Task<PowerShellExecutionResult> ExecuteAsSystemAsync(string scriptPath, Dictionary<string, object>? parameters = null, CancellationToken cancellationToken = default)
@@ -287,36 +322,41 @@ public class PowerShellExecutor : IPowerShellExecutor
     {
         try
         {
-            // Check if the script path is in our allowed list
-            if (!_allowedScripts.Contains(scriptPath))
-            {
-                _logger.LogWarning("Script not in allowed list: {ScriptPath}", scriptPath);
-                return false;
-            }
-
-            // Check if the file exists and is accessible
             if (!File.Exists(scriptPath))
             {
                 _logger.LogWarning("Script file does not exist: {ScriptPath}", scriptPath);
                 return false;
             }
 
-            // Check file permissions - ensure it's in a secure location
-            var fileInfo = new FileInfo(scriptPath);
-            if (!IsSecureLocation(fileInfo.DirectoryName))
+            if (!IsSecureLocation(Path.GetDirectoryName(scriptPath)))
             {
                 _logger.LogWarning("Script not in secure location: {ScriptPath}", scriptPath);
                 return false;
             }
 
-            // Basic content validation - check for obvious malicious patterns
-            var content = await File.ReadAllTextAsync(scriptPath);
-            if (ContainsMaliciousPatterns(content))
+            if (_hashManifest == null)
             {
-                _logger.LogWarning("Script contains potentially malicious patterns: {ScriptPath}", scriptPath);
+                _logger.LogDebug("No hash manifest loaded — accepting script from secure location: {ScriptPath}", scriptPath);
+                return true;
+            }
+
+            var fileName = Path.GetFileName(scriptPath);
+            if (!_hashManifest.Scripts.TryGetValue(fileName, out var expectedHash))
+            {
+                _logger.LogWarning("Script not found in hash manifest: {FileName}", fileName);
                 return false;
             }
 
+            var actualHash = await ComputeFileHashAsync(scriptPath);
+            if (!string.Equals(actualHash, expectedHash, StringComparison.OrdinalIgnoreCase))
+            {
+                _logger.LogWarning(
+                    "Script hash mismatch for {FileName}. Expected: {Expected}, Actual: {Actual}",
+                    fileName, expectedHash, actualHash);
+                return false;
+            }
+
+            _logger.LogDebug("Script hash verified: {FileName}", fileName);
             return true;
         }
         catch (Exception ex)
@@ -367,29 +407,6 @@ public class PowerShellExecutor : IPowerShellExecutor
         return normalizedPath.StartsWith(securePath, StringComparison.OrdinalIgnoreCase);
     }
 
-    private static bool ContainsMaliciousPatterns(string content)
-    {
-        // Basic pattern matching for obviously malicious content
-        var maliciousPatterns = new[]
-        {
-            "Invoke-Expression",
-            "IEX ",
-            "DownloadString",
-            "DownloadFile",
-            "Net.WebClient",
-            "System.Net.WebClient",
-            "Invoke-RestMethod",
-            "Invoke-WebRequest",
-            "Start-Process.*cmd.*",
-            "cmd.exe.*\\/c",
-            "powershell.*-EncodedCommand",
-            "FromBase64String",
-            "System.Convert::FromBase64String"
-        };
-
-        return maliciousPatterns.Any(pattern => 
-            content.Contains(pattern, StringComparison.OrdinalIgnoreCase));
-    }
 }
 
 /// <summary>
