@@ -43,7 +43,7 @@ if (-not (Test-Path $InstallPath)) {
     exit 1
 }
 
-$scriptFiles = Get-ChildItem -Path $InstallPath -Include "*.ps1", "*.psm1" -File
+$scriptFiles = Get-ChildItem -Path (Join-Path $InstallPath "*") -Include "*.ps1", "*.psm1" -File
 if ($scriptFiles.Count -eq 0) {
     Write-Warning "No .ps1 or .psm1 files found in: $InstallPath"
     exit 1
