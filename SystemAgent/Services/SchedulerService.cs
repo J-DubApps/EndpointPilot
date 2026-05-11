@@ -261,28 +261,3 @@ public class SchedulerService : ISchedulerService
         }
     }
 }
-
-/// <summary>
-/// Configuration model for EndpointPilot CONFIG.json
-/// </summary>
-public class EndpointPilotConfig
-{
-    public string OrgName { get; set; } = string.Empty;
-    public int Refresh_Interval { get; set; } = 30;
-    public string NetworkScriptRootPath { get; set; } = string.Empty;
-    public bool NetworkScriptRootEnabled { get; set; } = false;
-    public bool HttpsScriptRootEnabled { get; set; } = false;
-    public string HttpsScriptRootPath { get; set; } = string.Empty;
-    public bool CopyLogFileToNetwork { get; set; } = false;
-    public bool RoamFiles { get; set; } = false;
-    public string NetworkLogFile { get; set; } = string.Empty;
-    public string NetworkRoamFolder { get; set; } = string.Empty;
-    public bool SkipFileOps { get; set; } = false;
-    public bool SkipDriveOps { get; set; } = false;
-    public bool SkipRegOps { get; set; } = false;
-    public bool SkipRoamOps { get; set; } = false;
-    public bool SkipSchedTsk { get; set; } = false;
-    public bool SkipTelemetry { get; set; } = false;
-    public bool SkipUserCustom { get; set; } = false;
-    public bool SkipMaint { get; set; } = false;
-}
