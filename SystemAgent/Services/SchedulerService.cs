@@ -184,44 +184,6 @@ public class SchedulerService : ISchedulerService
         }
     }
 
-    /// <summary>
-    /// Legacy method maintained for backward compatibility
-    /// </summary>
-    public async Task ScheduleUserOperationsAsync(TimeSpan interval, CancellationToken cancellationToken = default)
-    {
-        _logger.LogInformation("Legacy ScheduleUserOperationsAsync called - redirecting to dual-context scheduling");
-        await ScheduleDualContextOperationsAsync(interval, cancellationToken);
-    }
-
-    /// <summary>
-    /// Legacy method maintained for backward compatibility
-    /// </summary>
-    public async Task ScheduleSystemOperationsAsync(TimeSpan interval, CancellationToken cancellationToken = default)
-    {
-        _logger.LogInformation("Legacy ScheduleSystemOperationsAsync called - dual-context already handles this");
-        // No-op - dual context execution handles both user and system operations
-        await Task.CompletedTask;
-    }
-
-    /// <summary>
-    /// Legacy method maintained for backward compatibility
-    /// </summary>
-    public async Task ExecuteUserOperationsNowAsync(CancellationToken cancellationToken = default)
-    {
-        _logger.LogInformation("Legacy ExecuteUserOperationsNowAsync called - executing dual-context");
-        await ExecuteDualContextOperationsNowAsync(cancellationToken);
-    }
-
-    /// <summary>
-    /// Legacy method maintained for backward compatibility
-    /// </summary>
-    public async Task ExecuteSystemOperationsNowAsync(CancellationToken cancellationToken = default)
-    {
-        _logger.LogInformation("Legacy ExecuteSystemOperationsNowAsync called - dual-context already handles this");
-        // The dual context execution already handles elevated operations
-        await Task.CompletedTask;
-    }
-
     public Dictionary<string, DateTime> GetNextExecutionTimes()
     {
         return new Dictionary<string, DateTime>(_nextExecutions);

@@ -18,37 +18,11 @@ public interface ISchedulerService
     Task StopAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Schedules user-mode operations to run at specified intervals
-    /// </summary>
-    /// <param name="interval">Interval between runs</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    Task ScheduleUserOperationsAsync(TimeSpan interval, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Schedules system-mode operations to run at specified intervals
-    /// </summary>
-    /// <param name="interval">Interval between runs</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    Task ScheduleSystemOperationsAsync(TimeSpan interval, CancellationToken cancellationToken = default);
-
-    /// <summary>
     /// Schedules dual-context operations (user + elevated) to run at specified intervals
     /// </summary>
     /// <param name="interval">Interval between runs</param>
     /// <param name="cancellationToken">Cancellation token</param>
     Task ScheduleDualContextOperationsAsync(TimeSpan interval, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Forces an immediate execution of user operations
-    /// </summary>
-    /// <param name="cancellationToken">Cancellation token</param>
-    Task ExecuteUserOperationsNowAsync(CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Forces an immediate execution of system operations
-    /// </summary>
-    /// <param name="cancellationToken">Cancellation token</param>
-    Task ExecuteSystemOperationsNowAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Forces an immediate execution of dual-context operations (user + elevated)
