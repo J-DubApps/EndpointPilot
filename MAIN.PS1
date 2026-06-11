@@ -123,85 +123,51 @@ Get-OperatingSystemApproved
 
 #Call Script Element / Component Modules -
 
-try {
-    .\MGMT-Telemetry.ps1
-    # .\MGMT-Telemetry.ps1 -param1 value1 -param2 value2
-}
-catch {
-    WriteLog "ERROR executing MGMT-Telemetry.ps1: $_" # Log full exception details
-}
+#region RUN_STATUS_ACCUMULATOR
+# Per-helper results collected here feed the EPilot_LastRunStatus / EPilot_RunSummary
+# NinjaOne custom fields at end-of-run. Values: Success, Skipped, or "Failed: <message>".
+$global:EPilotRunResults = [ordered]@{}
 
-If ($SkipFileOps -ne $true) {
-	   try {
-	       .\MGMT-FileOps.ps1
-	       # .\MGMT-FileOps.ps1 -param1 value1 -param2 value2
-	   }
-	   catch {
-	       WriteLog "ERROR executing MGMT-FileOps.ps1: $_" # Log full exception details
-	   }
-}
+function Invoke-EPilotHelper {
+	param(
+		[Parameter(Mandatory)]
+		[string]$Name,
 
-If ($SkipRegOps -ne $true) {
-	   try {
-	       .\MGMT-RegOps.ps1
-	       # .\MGMT-RegOps.ps1 -param1 value1 -param2 value2
-	   }
-	   catch {
-	       WriteLog "ERROR executing MGMT-RegOps.ps1: $_" # Log full exception details
-	   }
+		[switch]$Skip
+	)
+	$helperScript = ('.\MGMT-{0}.ps1' -f $Name)
+	if ($Skip) {
+		$global:EPilotRunResults[$Name] = 'Skipped'
+		WriteLog ('{0} skipped via CONFIG flag.' -f $helperScript)
+		return
+	}
+	try {
+		& $helperScript
+		$global:EPilotRunResults[$Name] = 'Success'
+	}
+	catch {
+		$global:EPilotRunResults[$Name] = ('Failed: {0}' -f $_.Exception.Message)
+		WriteLog "ERROR executing ${helperScript}: $_" # Log full exception details
+	}
 }
+#endregion RUN_STATUS_ACCUMULATOR
 
-If ($SkipDriveOps -ne $true) {
-	   try {
-	       .\MGMT-DriveOps.ps1
-	       # .\MGMT-DriveOps.ps1 -param1 value1 -param2 value2
-	   }
-	   catch {
-	       WriteLog "ERROR executing MGMT-DriveOps.ps1: $_" # Log full exception details
-	   }
-}
-
-If ($SkipRoamOps -ne $true) {
-	   try {
-	       .\MGMT-RoamOps.ps1
-	       # .\MGMT-RoamOps.ps1 -param1 value1 -param2 value2 # Corrected comment
-	   }
-	   catch {
-	       WriteLog "ERROR executing MGMT-RoamOps.ps1: $_" # Log full exception details
-	   }
-}
-
-
-try {
-    .\MGMT-USER-CUSTOM.ps1
-    # .\MGMT-USER-CUSTOM.ps1 -param1 value1 -param2 value2 # Corrected comment
-}
-catch {
-    WriteLog "ERROR executing MGMT-USER-CUSTOM.ps1: $_" # Log full exception details
-}
-
+Invoke-EPilotHelper -Name 'Telemetry'
+Invoke-EPilotHelper -Name 'FileOps' -Skip:($SkipFileOps -eq $true)
+Invoke-EPilotHelper -Name 'RegOps' -Skip:($SkipRegOps -eq $true)
+Invoke-EPilotHelper -Name 'DriveOps' -Skip:($SkipDriveOps -eq $true)
+Invoke-EPilotHelper -Name 'RoamOps' -Skip:($SkipRoamOps -eq $true)
+Invoke-EPilotHelper -Name 'USER-CUSTOM'
 
 # .\MGMT-HostFile.ps1
 # .\MGMT-HostFile.ps1 -param1 value1 -param2 value2
 
-try {
-    .\MGMT-SchedTsk.ps1
-    # .\MGMT-SchedTsk.ps1 -param1 value1 -param2 value2
-}
-catch {
-    WriteLog "ERROR executing MGMT-SchedTsk.ps1: $_" # Log full exception details
-}
+Invoke-EPilotHelper -Name 'SchedTsk'
 
 
 #region CLEANUP_AND_EXIT
 
-try {
-    .\MGMT-Maint.ps1
-    # .\MGMT-Maint.ps1 -param1 value1 -param2 value2
-}
-catch {
-    WriteLog "ERROR executing MGMT-Maint.ps1: $_" # Log full exception details
-}
+Invoke-EPilotHelper -Name 'Maint'
 
 #For VPN users, refresh the GPO once for User settings
 if ($global:DryRunMode) {
@@ -223,6 +189,34 @@ if ($global:DryRunMode) {
 Write-InformationalEvent("EndpointPilot run completed for " + $env:UserName)
 Start-Sleep -Milliseconds 100 #Wait
 WriteLog "EndPointPilot Run Complete"
+
+#region NINJAONE_REPORTING
+# Roll up per-helper results and report to NinjaOne custom fields.
+# Send-EPilotNinjaReport no-ops (with a log line) when no NinjaOne agent was
+# detected at launch, and only logs intended writes in dry-run mode.
+$failedCount = 0
+$ranCount = 0
+foreach ($helperName in $global:EPilotRunResults.Keys) {
+	$helperResult = $global:EPilotRunResults[$helperName]
+	if ($helperResult -like 'Failed*') { $failedCount++ }
+	if ($helperResult -ne 'Skipped') { $ranCount++ }
+}
+if ($failedCount -eq 0) {
+	$runStatus = 'Success'
+} elseif ($failedCount -lt $ranCount) {
+	$runStatus = 'PartialFailure'
+} else {
+	$runStatus = 'Failed'
+}
+WriteLog ('Run status rollup: {0} ({1} of {2} executed helpers failed).' -f $runStatus, $failedCount, $ranCount)
+
+try {
+	Send-EPilotNinjaReport -RunStatus $runStatus -RunSummary $global:EPilotRunResults
+}
+catch {
+	WriteLog "ERROR during NinjaOne custom field reporting: $_"
+}
+#endregion NINJAONE_REPORTING
 
 If ($CopyLogFileToNetwork -eq $true) {
 	if ($global:DryRunMode) {

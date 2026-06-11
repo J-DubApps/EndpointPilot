@@ -247,6 +247,10 @@ If ($psClassicDesktop -eq $true) {
 $HostName = $env:COMPUTERNAME
 $LogFile = "$env:userprofile\LOGON-$env:computername.log"
 
+# EndpointPilot release version -- reported to RMM via EPilot_Version custom field.
+# Keep in sync with the git release tag when cutting a release.
+$global:EPilotVersion = '1.0.0'
+
 # Load the configuration from CONFIG.json
 $configPath = "CONFIG.json"
 $config = Get-Content -Path $configPath | ConvertFrom-Json
@@ -344,7 +348,37 @@ if ($global:DryRunMode) {
 #Create Event Viewer entry for the start of the script
 Write-InformationalEvent("MS Logon Script started for " + $env:UserName)
 
+#region RMM_Agent_Detection
+# Detect NinjaOne / Intune management agents once per run. Helpers gate any
+# RMM-specific behavior (e.g. NinjaOne custom field reporting) on these globals,
+# so endpoints without an RMM agent skip that logic entirely.
+$rmmPresence = Get-RmmAgentPresence
+$global:NinjaOneAgentPresent = $rmmPresence.NinjaOneInstalled
+$global:NinjaCliPath = $rmmPresence.NinjaCliPath
+$global:NinjaRuntimeContext = $rmmPresence.NinjaRuntimeContext
+$global:IntuneAgentPresent = ($rmmPresence.IntuneEnrolled -or $rmmPresence.IntuneImeInstalled)
 
+if ($global:NinjaOneAgentPresent) {
+    WriteLog ('NinjaOne agent detected (service state: {0}).' -f $rmmPresence.NinjaOneServiceState)
+    if ($global:NinjaRuntimeContext) {
+        WriteLog 'Running inside NinjaOne script runtime -- Ninja-Property-Set cmdlets are available.'
+    } elseif (-not [string]::IsNullOrWhiteSpace($global:NinjaCliPath)) {
+        WriteLog ('NinjaOne CLI located at {0} -- custom field reporting available via CLI.' -f $global:NinjaCliPath)
+    } else {
+        WriteLog 'NinjaOne agent present but ninjarmm-cli.exe not found -- custom field writes limited to NinjaOne-launched runs.'
+    }
+} else {
+    WriteLog 'NinjaOne agent not detected on this endpoint -- NinjaOne custom field reporting will be skipped.'
+}
+
+if ($rmmPresence.IntuneEnrolled) {
+    WriteLog 'Intune MDM enrollment detected on this endpoint.'
+} elseif ($rmmPresence.IntuneImeInstalled) {
+    WriteLog 'Intune Management Extension service present (no MDM enrollment record found).'
+} else {
+    WriteLog 'Intune management not detected on this endpoint.'
+}
+#endregion RMM_Agent_Detection
 
 # Clean-up
 $RegistryRoot = $null

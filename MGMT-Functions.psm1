@@ -1043,6 +1043,284 @@ function Get-EndpointJoinState {
 	return $state
 }
 
+function Get-RmmAgentPresence {
+	<#
+		.SYNOPSIS
+			Detects whether NinjaOne and/or Intune management agents are present on this
+			endpoint. Result is cached for the duration of the EP run.
+		.DESCRIPTION
+			NinjaOne detection checks the NinjaRMMAgent service, then resolves the agent
+			install folder (registry Location value first, then well-known paths) to locate
+			ninjarmm-cli.exe -- the custom-field write path available when EndpointPilot
+			runs from its own scheduled task. It also notes whether the Ninja-Property-Set
+			cmdlet exists in-session, which only occurs when NinjaOne's script runtime
+			launched this process.
+
+			Intune detection checks the IntuneManagementExtension service plus MDM
+			enrollment entries under HKLM:\SOFTWARE\Microsoft\Enrollments with
+			ProviderID 'MS DM Server'.
+
+			All checks are cheap read-only service/registry/filesystem probes and are
+			safe in both user and SYSTEM contexts.
+		.OUTPUTS
+			PSCustomObject:
+				NinjaOneInstalled    -- NinjaRMMAgent service exists
+				NinjaOneServiceState -- service status string (Running/Stopped), or $null
+				NinjaCliPath         -- full path to ninjarmm-cli.exe, or $null if not found
+				NinjaRuntimeContext  -- $true when launched by NinjaOne (Ninja-Property-Set available)
+				IntuneEnrolled       -- MDM enrollment record present
+				IntuneImeInstalled   -- IntuneManagementExtension service exists
+	#>
+	[CmdletBinding()]
+	[OutputType([PSCustomObject])]
+	param()
+
+	if ($null -ne $script:RmmAgentPresenceCache) {
+		return $script:RmmAgentPresenceCache
+	}
+
+	$state = [PSCustomObject]@{
+		NinjaOneInstalled    = $false
+		NinjaOneServiceState = $null
+		NinjaCliPath         = $null
+		NinjaRuntimeContext  = $false
+		IntuneEnrolled       = $false
+		IntuneImeInstalled   = $false
+	}
+
+	#region NinjaOne detection
+	try {
+		$ninjaSvc = Get-Service -Name 'NinjaRMMAgent' -ErrorAction SilentlyContinue
+		if ($null -ne $ninjaSvc) {
+			$state.NinjaOneInstalled = $true
+			$state.NinjaOneServiceState = [string]$ninjaSvc.Status
+		}
+	}
+	catch {
+		WriteLog "DEBUG: NinjaOne service check failed: $_"
+	}
+
+	if ($state.NinjaOneInstalled) {
+		# Resolve ninjarmm-cli.exe -- the only custom-field write path when EndpointPilot
+		# runs from its own scheduled task rather than a NinjaOne-launched automation
+		$cliCandidates = @()
+		foreach ($ninjaRegPath in @('HKLM:\SOFTWARE\WOW6432Node\NinjaRMM LLC\NinjaRMMAgent', 'HKLM:\SOFTWARE\NinjaRMM LLC\NinjaRMMAgent')) {
+			try {
+				$ninjaLocation = (Get-ItemProperty -Path $ninjaRegPath -ErrorAction SilentlyContinue).Location
+				if (-not [string]::IsNullOrWhiteSpace($ninjaLocation)) {
+					$cliCandidates += (Join-Path $ninjaLocation 'ninjarmm-cli.exe')
+				}
+			}
+			catch {
+				# registry hive absent -- fall through to well-known install paths
+			}
+		}
+		$pf86 = ${env:ProgramFiles(x86)}
+		if (-not [string]::IsNullOrWhiteSpace($pf86)) {
+			$cliCandidates += (Join-Path $pf86 'NinjaRMMAgent\ninjarmm-cli.exe')
+		}
+		$cliCandidates += (Join-Path $env:ProgramFiles 'NinjaRMMAgent\ninjarmm-cli.exe')
+		$cliCandidates += (Join-Path $env:ProgramData 'NinjaRMMAgent\ninjarmm-cli.exe')
+
+		foreach ($cliCandidate in $cliCandidates) {
+			if (Test-Path -Path $cliCandidate -PathType Leaf) {
+				$state.NinjaCliPath = $cliCandidate
+				break
+			}
+		}
+	}
+
+	if (Get-Command -Name 'Ninja-Property-Set' -ErrorAction SilentlyContinue) {
+		$state.NinjaRuntimeContext = $true
+	}
+	#endregion NinjaOne detection
+
+	#region Intune detection
+	try {
+		$imeSvc = Get-Service -Name 'IntuneManagementExtension' -ErrorAction SilentlyContinue
+		if ($null -ne $imeSvc) {
+			$state.IntuneImeInstalled = $true
+		}
+	}
+	catch {
+		WriteLog "DEBUG: Intune IME service check failed: $_"
+	}
+
+	try {
+		$enrollmentsKey = 'HKLM:\SOFTWARE\Microsoft\Enrollments'
+		if (Test-Path -Path $enrollmentsKey) {
+			$enrollments = Get-ChildItem -Path $enrollmentsKey -ErrorAction SilentlyContinue
+			foreach ($enrollment in $enrollments) {
+				$providerId = (Get-ItemProperty -Path $enrollment.PSPath -ErrorAction SilentlyContinue).ProviderID
+				if ($providerId -eq 'MS DM Server') {
+					$state.IntuneEnrolled = $true
+					break
+				}
+			}
+		}
+	}
+	catch {
+		WriteLog "DEBUG: Intune MDM enrollment check failed: $_"
+	}
+	#endregion Intune detection
+
+	$script:RmmAgentPresenceCache = $state
+	return $state
+}
+
+function Set-NinjaCustomField {
+	<#
+		.SYNOPSIS
+			Writes a single NinjaOne custom field value using whichever write path
+			is available on this endpoint.
+		.DESCRIPTION
+			Write path cascade (decided by the globals set during RMM agent detection
+			in MGMT-SHARED.ps1):
+				1. Ninja-Property-Set cmdlet -- only exists when NinjaOne's script
+				   runtime launched this process
+				2. ninjarmm-cli.exe set -- available when the agent is installed and
+				   EndpointPilot is running from its own scheduled task
+				3. Neither -- logs and returns $false
+			In dry-run mode the intended write is logged and nothing is written.
+		.OUTPUTS
+			$true if the value was written (or would be, in dry-run), otherwise $false.
+	#>
+	[CmdletBinding()]
+	[OutputType([bool])]
+	param(
+		[Parameter(Mandatory)]
+		[string]$FieldName,
+
+		[Parameter(Mandatory)]
+		[AllowEmptyString()]
+		[string]$Value
+	)
+
+	$logValue = $Value
+	if ($logValue.Length -gt 80) {
+		$logValue = $logValue.Substring(0, 80) + '...'
+	}
+
+	if ($global:DryRunMode) {
+		WriteLog ('Would set NinjaOne custom field {0} = {1}' -f $FieldName, $logValue)
+		return $true
+	}
+
+	if ($global:NinjaRuntimeContext) {
+		try {
+			Ninja-Property-Set $FieldName $Value
+			WriteLog ('NinjaOne custom field {0} set via Ninja-Property-Set.' -f $FieldName)
+			return $true
+		}
+		catch {
+			WriteLog "WARNING: Ninja-Property-Set failed for field ${FieldName}: $_"
+		}
+	}
+
+	if (-not [string]::IsNullOrWhiteSpace($global:NinjaCliPath)) {
+		try {
+			& $global:NinjaCliPath set $FieldName $Value | Out-Null
+			if ($LASTEXITCODE -eq 0) {
+				WriteLog ('NinjaOne custom field {0} set via ninjarmm-cli.' -f $FieldName)
+				return $true
+			}
+			WriteLog ('WARNING: ninjarmm-cli exited with code {0} setting field {1}.' -f $LASTEXITCODE, $FieldName)
+		}
+		catch {
+			WriteLog "WARNING: ninjarmm-cli invocation failed for field ${FieldName}: $_"
+		}
+	}
+
+	WriteLog ('No NinjaOne write path available -- field {0} not set.' -f $FieldName)
+	return $false
+}
+
+function Send-EPilotNinjaReport {
+	<#
+		.SYNOPSIS
+			Reports end-of-run status to the EPilot_* NinjaOne custom fields.
+		.DESCRIPTION
+			Writes the six device-scope custom fields defined in
+			docs/planningdocs/NinjaOne-Distribution-Model.md:
+				EPilot_LastRunTime   -- Unix epoch seconds (NinjaOne DateTime fields
+				                        expect epoch values via cmdlet and CLI)
+				EPilot_LastRunStatus -- Success / PartialFailure / Failed
+				EPilot_Version       -- $global:EPilotVersion from MGMT-SHARED.ps1
+				EPilot_RunSummary    -- compressed JSON of per-helper results
+				EPilot_SignatureMode -- current signature enforcement mode
+				EPilot_ConfigHash    -- SHA-256 of the local CONFIG.json
+			Skips silently (with a log line) when no NinjaOne agent is present or
+			no write path exists. Each field write failure is logged individually
+			and does not abort the remaining writes.
+	#>
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory)]
+		[string]$RunStatus,
+
+		[Parameter(Mandatory)]
+		[System.Collections.IDictionary]$RunSummary
+	)
+
+	if ($global:NinjaOneAgentPresent -ne $true) {
+		WriteLog 'NinjaOne agent not present -- skipping custom field reporting.'
+		return
+	}
+	if (-not $global:NinjaRuntimeContext -and [string]::IsNullOrWhiteSpace($global:NinjaCliPath) -and -not $global:DryRunMode) {
+		WriteLog 'NinjaOne agent present but no custom field write path available -- skipping reporting.'
+		return
+	}
+
+	WriteLog 'Reporting run status to NinjaOne custom fields...'
+
+	$epochSeconds = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+
+	$summaryObject = [PSCustomObject]@{
+		timestamp = (Get-Date).ToUniversalTime().ToString('o')
+		computer  = $env:COMPUTERNAME
+		user      = $env:USERNAME
+		status    = $RunStatus
+		helpers   = $RunSummary
+	}
+	$summaryJson = $summaryObject | ConvertTo-Json -Compress -Depth 4
+	if ($summaryJson.Length -gt 9500) {
+		# EPilot_RunSummary is a MultiLine field capped at 10,000 chars
+		$summaryJson = $summaryJson.Substring(0, 9500)
+	}
+
+	$signatureMode = (Get-SignatureValidationConfig).EnforcementMode
+
+	$configHash = 'unknown'
+	try {
+		if (Test-Path -Path 'CONFIG.json') {
+			$configHash = (Get-FileHash -Path 'CONFIG.json' -Algorithm SHA256).Hash
+		}
+	}
+	catch {
+		WriteLog "WARNING: Could not hash CONFIG.json for EPilot_ConfigHash: $_"
+	}
+
+	$epilotVersion = if ([string]::IsNullOrWhiteSpace($global:EPilotVersion)) { 'unknown' } else { $global:EPilotVersion }
+
+	$fieldWrites = [ordered]@{
+		'EPilot_LastRunTime'   = [string]$epochSeconds
+		'EPilot_LastRunStatus' = $RunStatus
+		'EPilot_Version'       = $epilotVersion
+		'EPilot_RunSummary'    = $summaryJson
+		'EPilot_SignatureMode' = $signatureMode
+		'EPilot_ConfigHash'    = $configHash
+	}
+
+	$successCount = 0
+	foreach ($fieldName in $fieldWrites.Keys) {
+		if (Set-NinjaCustomField -FieldName $fieldName -Value $fieldWrites[$fieldName]) {
+			$successCount++
+		}
+	}
+
+	WriteLog ('NinjaOne custom field reporting complete: {0} of {1} fields written.' -f $successCount, $fieldWrites.Count)
+}
+
 function Test-ADGroupMembership {
 	<#
 		.SYNOPSIS
@@ -1789,7 +2067,7 @@ function Get-SignatureValidationConfig {
 #endregion FUNCTIONS
 
 # Export all functions and aliases
-Export-ModuleMember -Function InGroup, InGroupGP, Get-Permission, IsCurrentProcessArm64, Get-RegistryValue, Import-RegKey, Get-DsRegStatusInfo, Measure-DownloadSpeed, Measure-UploadSpeed, Get-LoggedInUser, Get-TextWithin, Get-WorkstationUsageStatus, Copy-File, Copy-Directory, Move-Files, Move-Directory, Send-SmtpMail, Test-JsonSignature, Get-SignerCertificate, ConvertTo-CanonicalJson, Test-CertificateForSigning, Invoke-SignatureVerification, Get-SignatureValidationConfig, Resolve-GroupMembership, Get-EndpointJoinState, Initialize-MsalLibraries, Get-EntraAccessToken, Get-EntraGroupMemberships, Test-EntraGroupMembership
+Export-ModuleMember -Function InGroup, InGroupGP, Get-Permission, IsCurrentProcessArm64, Get-RegistryValue, Import-RegKey, Get-DsRegStatusInfo, Measure-DownloadSpeed, Measure-UploadSpeed, Get-LoggedInUser, Get-TextWithin, Get-WorkstationUsageStatus, Copy-File, Copy-Directory, Move-Files, Move-Directory, Send-SmtpMail, Test-JsonSignature, Get-SignerCertificate, ConvertTo-CanonicalJson, Test-CertificateForSigning, Invoke-SignatureVerification, Get-SignatureValidationConfig, Resolve-GroupMembership, Get-EndpointJoinState, Get-RmmAgentPresence, Set-NinjaCustomField, Send-EPilotNinjaReport, Initialize-MsalLibraries, Get-EntraAccessToken, Get-EntraGroupMemberships, Test-EntraGroupMembership
 Export-ModuleMember -Alias Get-Permissions
 
 ##
