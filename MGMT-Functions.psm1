@@ -1235,6 +1235,232 @@ function Set-NinjaCustomField {
 	return $false
 }
 
+function Test-EPilotSystemContext {
+	<#
+		.SYNOPSIS
+			Returns $true when the current process is running as LocalSystem.
+	#>
+	[CmdletBinding()]
+	[OutputType([bool])]
+	param()
+
+	try {
+		return [System.Security.Principal.WindowsIdentity]::GetCurrent().IsSystem
+	}
+	catch {
+		# Fallback heuristic (same check MAIN.PS1 uses)
+		return ($env:USERPROFILE -like '*systemprofile')
+	}
+}
+
+function Get-EPilotReportSpoolPath {
+	<#
+		.SYNOPSIS
+			Returns the path of the run-report spool folder used to relay
+			user-context run results to the SYSTEM-context NinjaOne writer.
+	#>
+	[CmdletBinding()]
+	[OutputType([string])]
+	param()
+
+	if ([string]::IsNullOrWhiteSpace($env:ProgramData)) {
+		return ''
+	}
+	return (Join-Path $env:ProgramData 'EndpointPilot\Reporting')
+}
+
+function Initialize-EPilotReportSpool {
+	<#
+		.SYNOPSIS
+			SYSTEM-context only: ensures the report spool folder exists with ACLs
+			that let standard users create and update their own report file but
+			not tamper with files created by other users.
+	#>
+	[CmdletBinding()]
+	[OutputType([bool])]
+	param()
+
+	$spoolDir = Get-EPilotReportSpoolPath
+	if ([string]::IsNullOrWhiteSpace($spoolDir)) {
+		return $false
+	}
+	if ($global:DryRunMode) {
+		if (-not (Test-Path -Path $spoolDir)) {
+			WriteLog ('Would create report spool folder {0} with user-write ACLs.' -f $spoolDir)
+		}
+		return (Test-Path -Path $spoolDir)
+	}
+
+	try {
+		if (-not (Test-Path -Path $spoolDir)) {
+			New-Item -Path $spoolDir -ItemType Directory -Force | Out-Null
+			WriteLog ('Created report spool folder {0}.' -f $spoolDir)
+		}
+		$acl = Get-Acl -Path $spoolDir
+		$usersSid = New-Object System.Security.Principal.SecurityIdentifier([System.Security.Principal.WellKnownSidType]::BuiltinUsersSid, $null)
+		$creatorOwnerSid = New-Object System.Security.Principal.SecurityIdentifier([System.Security.Principal.WellKnownSidType]::CreatorOwnerSid, $null)
+		# Users: list folder and create new files only -- no modify rights on the folder
+		$usersRule = New-Object System.Security.AccessControl.FileSystemAccessRule($usersSid, 'ReadAndExecute, CreateFiles', 'ContainerInherit', 'None', 'Allow')
+		# Creator Owner: each user may rewrite the spool file they created (inherits to new files)
+		$ownerRule = New-Object System.Security.AccessControl.FileSystemAccessRule($creatorOwnerSid, 'Modify', 'ObjectInherit', 'InheritOnly', 'Allow')
+		$acl.AddAccessRule($usersRule)
+		$acl.AddAccessRule($ownerRule)
+		Set-Acl -Path $spoolDir -AclObject $acl
+		return $true
+	}
+	catch {
+		WriteLog "WARNING: Could not initialize report spool folder ${spoolDir}: $_"
+		return $false
+	}
+}
+
+function Save-EPilotReportSpool {
+	<#
+		.SYNOPSIS
+			User-context: writes this run's report payload to the spool folder
+			for the SYSTEM-context pass to relay into NinjaOne custom fields.
+	#>
+	[CmdletBinding()]
+	[OutputType([bool])]
+	param(
+		[Parameter(Mandatory)]
+		[PSCustomObject]$Payload
+	)
+
+	$spoolDir = Get-EPilotReportSpoolPath
+	if ([string]::IsNullOrWhiteSpace($spoolDir) -or -not (Test-Path -Path $spoolDir)) {
+		return $false
+	}
+	$safeUser = $env:USERNAME -replace '[\\/:*?"<>|]', '_'
+	$spoolFile = Join-Path $spoolDir ('EPilot-RunReport-{0}.json' -f $safeUser)
+
+	if ($global:DryRunMode) {
+		WriteLog ('Would spool user-context run report to {0}.' -f $spoolFile)
+		return $true
+	}
+	try {
+		$Payload | ConvertTo-Json -Depth 5 -Compress | Out-File -FilePath $spoolFile -Encoding ascii -Force
+		WriteLog ('User-context run report spooled to {0} for SYSTEM relay.' -f $spoolFile)
+		return $true
+	}
+	catch {
+		WriteLog "WARNING: Failed to spool run report to ${spoolFile}: $_"
+		return $false
+	}
+}
+
+function Limit-EPilotString {
+	<#
+		.SYNOPSIS
+			Strips control characters and caps the length of a string value.
+			Used to sanitize untrusted spool file content before SYSTEM consumes it.
+	#>
+	[CmdletBinding()]
+	[OutputType([string])]
+	param(
+		[AllowNull()]
+		[AllowEmptyString()]
+		[string]$Value,
+
+		[Parameter(Mandatory)]
+		[int]$MaxLength
+	)
+
+	if ($null -eq $Value) { return '' }
+	$Value = $Value -replace '[\x00-\x1F]', ''
+	if ($Value.Length -gt $MaxLength) {
+		return $Value.Substring(0, $MaxLength)
+	}
+	return $Value
+}
+
+function ConvertTo-EPilotSanitizedReport {
+	<#
+		.SYNOPSIS
+			Validates and sanitizes a deserialized spool payload. Spool files live in
+			a user-writable folder, so SYSTEM must treat their content as untrusted:
+			strict property allowlist, value-set validation, and length caps only.
+			Returns $null when the payload does not validate.
+	#>
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory)]
+		$Data
+	)
+
+	try {
+		$status = [string]$Data.status
+		if ($status -notmatch '^(Success|PartialFailure|Failed)$') {
+			$status = 'Unknown'
+		}
+		$clean = [PSCustomObject]@{
+			generatedAt   = [long]$Data.generatedAt
+			user          = Limit-EPilotString -Value ([string]$Data.user) -MaxLength 104
+			status        = $status
+			version       = Limit-EPilotString -Value ([string]$Data.version) -MaxLength 64
+			signatureMode = Limit-EPilotString -Value ([string]$Data.signatureMode) -MaxLength 32
+			configHash    = Limit-EPilotString -Value ([string]$Data.configHash) -MaxLength 128
+			helpers       = [ordered]@{}
+		}
+		$helperCount = 0
+		if ($null -ne $Data.helpers) {
+			foreach ($helperProp in $Data.helpers.PSObject.Properties) {
+				if ($helperCount -ge 32) { break }
+				$cleanName = Limit-EPilotString -Value ([string]$helperProp.Name) -MaxLength 64
+				$clean.helpers[$cleanName] = Limit-EPilotString -Value ([string]$helperProp.Value) -MaxLength 300
+				$helperCount++
+			}
+		}
+		return $clean
+	}
+	catch {
+		return $null
+	}
+}
+
+function Get-EPilotSpooledReports {
+	<#
+		.SYNOPSIS
+			SYSTEM-context: reads, sanitizes, and removes spooled user run reports.
+			Returns an array of sanitized payload objects (may be empty).
+			In dry-run mode files are read but left in place.
+	#>
+	[CmdletBinding()]
+	param()
+
+	$results = @()
+	$spoolDir = Get-EPilotReportSpoolPath
+	if ([string]::IsNullOrWhiteSpace($spoolDir) -or -not (Test-Path -Path $spoolDir)) {
+		return ,$results
+	}
+	$spoolFiles = Get-ChildItem -Path $spoolDir -Filter 'EPilot-RunReport-*.json' -File -ErrorAction SilentlyContinue
+	foreach ($spoolFile in $spoolFiles) {
+		try {
+			if ($spoolFile.Length -gt 65536) {
+				WriteLog ('WARNING: Oversized spool file {0} discarded.' -f $spoolFile.Name)
+			}
+			else {
+				$raw = Get-Content -Path $spoolFile.FullName -Raw
+				$parsed = $raw | ConvertFrom-Json
+				$clean = ConvertTo-EPilotSanitizedReport -Data $parsed
+				if ($null -ne $clean) {
+					$results += $clean
+				}
+				else {
+					WriteLog ('WARNING: Spool file {0} failed validation and was discarded.' -f $spoolFile.Name)
+				}
+			}
+		}
+		catch {
+			WriteLog ('WARNING: Could not parse spool file {0} -- discarded.' -f $spoolFile.Name)
+		}
+		if (-not $global:DryRunMode) {
+			Remove-Item -Path $spoolFile.FullName -Force -ErrorAction SilentlyContinue
+		}
+	}
+	return ,$results
+}
+
 function Send-EPilotNinjaReport {
 	<#
 		.SYNOPSIS
