@@ -188,6 +188,31 @@ if (-not (Test-Path -Path $agentInstallPath)) {
     New-Item -Path $agentInstallPath -ItemType Directory -Force | Out-Null
 }
 
+# Create the run-report spool folder. User-context EndpointPilot runs spool
+# their NinjaOne report payloads here for the SYSTEM-context pass to relay
+# (standard users cannot write NinjaOne custom fields directly).
+# ACL model: Users may list and create files only; CREATOR OWNER may modify
+# the file they created. See Send-EPilotNinjaReport in MGMT-Functions.psm1.
+Write-Host "Creating report spool folder..." -ForegroundColor Cyan
+WriteLog "Creating report spool folder..."
+$reportingPath = Join-Path -Path $baseInstallPath -ChildPath "Reporting"
+if (-not (Test-Path -Path $reportingPath)) {
+    New-Item -Path $reportingPath -ItemType Directory -Force | Out-Null
+}
+$spoolAcl = Get-Acl -Path $reportingPath
+$usersSid = New-Object System.Security.Principal.SecurityIdentifier([System.Security.Principal.WellKnownSidType]::BuiltinUsersSid, $null)
+$creatorOwnerSid = New-Object System.Security.Principal.SecurityIdentifier([System.Security.Principal.WellKnownSidType]::CreatorOwnerSid, $null)
+$spoolUsersRule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+    $usersSid, "ReadAndExecute, CreateFiles", "ContainerInherit", "None", "Allow"
+)
+$spoolOwnerRule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+    $creatorOwnerSid, "Modify", "ObjectInherit", "InheritOnly", "Allow"
+)
+$spoolAcl.AddAccessRule($spoolUsersRule)
+$spoolAcl.AddAccessRule($spoolOwnerRule)
+Set-Acl -Path $reportingPath -AclObject $spoolAcl
+WriteLog "Report spool folder ACLs configured (Users: create-only, CreatorOwner: modify-own)"
+
 # Install JsonEditorTool
 Write-Host "Installing JsonEditorTool..." -ForegroundColor Cyan
 WriteLog "Installing JsonEditorTool..."

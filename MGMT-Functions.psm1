@@ -1389,12 +1389,20 @@ function ConvertTo-EPilotSanitizedReport {
 	)
 
 	try {
+		# Reject forged timestamps: a payload claiming a future generatedAt could
+		# otherwise shadow other users' reports in the latest-report merge
+		$generatedAt = [long]$Data.generatedAt
+		$nowEpoch = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+		if ($generatedAt -le 0 -or $generatedAt -gt ($nowEpoch + 300)) {
+			return $null
+		}
+
 		$status = [string]$Data.status
 		if ($status -notmatch '^(Success|PartialFailure|Failed)$') {
 			$status = 'Unknown'
 		}
 		$clean = [PSCustomObject]@{
-			generatedAt   = [long]$Data.generatedAt
+			generatedAt   = $generatedAt
 			user          = Limit-EPilotString -Value ([string]$Data.user) -MaxLength 104
 			status        = $status
 			version       = Limit-EPilotString -Value ([string]$Data.version) -MaxLength 64
@@ -1464,15 +1472,27 @@ function Get-EPilotSpooledReports {
 function Send-EPilotNinjaReport {
 	<#
 		.SYNOPSIS
-			Reports end-of-run status to the EPilot_* NinjaOne custom fields.
+			Reports end-of-run status to the EPilot_* NinjaOne custom fields,
+			using a SYSTEM-relay spool model for user-context runs.
 		.DESCRIPTION
-			Writes the six device-scope custom fields defined in
-			docs/planningdocs/NinjaOne-Distribution-Model.md:
+			On corporate endpoints standard users cannot write NinjaOne custom
+			fields (ninjarmm-cli requires an elevated/SYSTEM caller), so:
+
+			USER context  -- the run report payload is spooled to
+			%PROGRAMDATA%\EndpointPilot\Reporting\ for the SYSTEM-context pass to
+			relay. Direct writes are only attempted as a best-effort fallback when
+			no spool folder exists (user-mode-only installs with no System Agent).
+
+			SYSTEM context -- ensures the spool folder exists (with ACLs allowing
+			users to create/update only their own report file), sweeps and
+			sanitizes any spooled user reports, then writes the six device-scope
+			custom fields defined in docs/planningdocs/NinjaOne-Distribution-Model.md:
 				EPilot_LastRunTime   -- Unix epoch seconds (NinjaOne DateTime fields
 				                        expect epoch values via cmdlet and CLI)
-				EPilot_LastRunStatus -- Success / PartialFailure / Failed
+				EPilot_LastRunStatus -- worst of SYSTEM run + latest user run
+				                        (Success / PartialFailure / Failed)
 				EPilot_Version       -- $global:EPilotVersion from MGMT-SHARED.ps1
-				EPilot_RunSummary    -- compressed JSON of per-helper results
+				EPilot_RunSummary    -- compressed JSON with systemRun + userRun sections
 				EPilot_SignatureMode -- current signature enforcement mode
 				EPilot_ConfigHash    -- SHA-256 of the local CONFIG.json
 			Skips silently (with a log line) when no NinjaOne agent is present or
@@ -1492,28 +1512,8 @@ function Send-EPilotNinjaReport {
 		WriteLog 'NinjaOne agent not present -- skipping custom field reporting.'
 		return
 	}
-	if (-not $global:NinjaRuntimeContext -and [string]::IsNullOrWhiteSpace($global:NinjaCliPath) -and -not $global:DryRunMode) {
-		WriteLog 'NinjaOne agent present but no custom field write path available -- skipping reporting.'
-		return
-	}
-
-	WriteLog 'Reporting run status to NinjaOne custom fields...'
 
 	$epochSeconds = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
-
-	$summaryObject = [PSCustomObject]@{
-		timestamp = (Get-Date).ToUniversalTime().ToString('o')
-		computer  = $env:COMPUTERNAME
-		user      = $env:USERNAME
-		status    = $RunStatus
-		helpers   = $RunSummary
-	}
-	$summaryJson = $summaryObject | ConvertTo-Json -Compress -Depth 4
-	if ($summaryJson.Length -gt 9500) {
-		# EPilot_RunSummary is a MultiLine field capped at 10,000 chars
-		$summaryJson = $summaryJson.Substring(0, 9500)
-	}
-
 	$signatureMode = (Get-SignatureValidationConfig).EnforcementMode
 
 	$configHash = 'unknown'
@@ -1528,9 +1528,110 @@ function Send-EPilotNinjaReport {
 
 	$epilotVersion = if ([string]::IsNullOrWhiteSpace($global:EPilotVersion)) { 'unknown' } else { $global:EPilotVersion }
 
+	#region USER_CONTEXT -- spool for SYSTEM relay
+	if (-not (Test-EPilotSystemContext)) {
+		$payload = [PSCustomObject]@{
+			schemaVersion = 1
+			generatedAt   = $epochSeconds
+			user          = $env:USERNAME
+			status        = $RunStatus
+			version       = $epilotVersion
+			signatureMode = $signatureMode
+			configHash    = $configHash
+			helpers       = $RunSummary
+		}
+
+		$spoolDir = Get-EPilotReportSpoolPath
+		if (-not [string]::IsNullOrWhiteSpace($spoolDir) -and (Test-Path -Path $spoolDir)) {
+			[void](Save-EPilotReportSpool -Payload $payload)
+			return
+		}
+
+		# No spool folder means no system-mode install on this endpoint.
+		# Best-effort direct write (works on dev/test boxes where the user is admin).
+		WriteLog 'No report spool folder found (no system-mode install) -- attempting best-effort direct write from user context.'
+		if (-not $global:NinjaRuntimeContext -and [string]::IsNullOrWhiteSpace($global:NinjaCliPath) -and -not $global:DryRunMode) {
+			WriteLog 'No NinjaOne write path available from user context -- run report not delivered.'
+			return
+		}
+		$summaryObject = [PSCustomObject]@{
+			timestamp = (Get-Date).ToUniversalTime().ToString('o')
+			computer  = $env:COMPUTERNAME
+			user      = $env:USERNAME
+			context   = 'user'
+			status    = $RunStatus
+			helpers   = $RunSummary
+		}
+		$summaryJson = $summaryObject | ConvertTo-Json -Compress -Depth 4
+		if ($summaryJson.Length -gt 9500) {
+			$summaryJson = $summaryJson.Substring(0, 9500)
+		}
+		$fieldWrites = [ordered]@{
+			'EPilot_LastRunTime'   = [string]$epochSeconds
+			'EPilot_LastRunStatus' = $RunStatus
+			'EPilot_Version'       = $epilotVersion
+			'EPilot_RunSummary'    = $summaryJson
+			'EPilot_SignatureMode' = $signatureMode
+			'EPilot_ConfigHash'    = $configHash
+		}
+		$successCount = 0
+		foreach ($fieldName in $fieldWrites.Keys) {
+			if (Set-NinjaCustomField -FieldName $fieldName -Value $fieldWrites[$fieldName]) {
+				$successCount++
+			}
+		}
+		WriteLog ('NinjaOne custom field reporting complete (user-context direct): {0} of {1} fields written.' -f $successCount, $fieldWrites.Count)
+		return
+	}
+	#endregion USER_CONTEXT
+
+	#region SYSTEM_CONTEXT -- authoritative writer + spool sweep
+	if (-not $global:NinjaRuntimeContext -and [string]::IsNullOrWhiteSpace($global:NinjaCliPath) -and -not $global:DryRunMode) {
+		WriteLog 'No NinjaOne write path available from SYSTEM context -- leaving spooled user reports for a later sweep.'
+		return
+	}
+
+	WriteLog 'Reporting run status to NinjaOne custom fields (SYSTEM context)...'
+
+	[void](Initialize-EPilotReportSpool)
+	$userReports = Get-EPilotSpooledReports
+	$latestUser = $userReports | Sort-Object -Property generatedAt | Select-Object -Last 1
+	if ($null -ne $latestUser) {
+		WriteLog ('Merging spooled user-context run report from user {0} (status: {1}).' -f $latestUser.user, $latestUser.status)
+	}
+
+	# Combined status = worst of the SYSTEM run and the latest user run
+	$combinedStatus = $RunStatus
+	if ($null -ne $latestUser) {
+		if ($latestUser.status -eq 'Failed' -or $RunStatus -eq 'Failed') {
+			$combinedStatus = 'Failed'
+		}
+		elseif ($latestUser.status -ne 'Success' -or $RunStatus -ne 'Success') {
+			$combinedStatus = 'PartialFailure'
+		}
+		else {
+			$combinedStatus = 'Success'
+		}
+	}
+
+	$summaryObject = [PSCustomObject]@{
+		timestamp = (Get-Date).ToUniversalTime().ToString('o')
+		computer  = $env:COMPUTERNAME
+		systemRun = [PSCustomObject]@{
+			status  = $RunStatus
+			helpers = $RunSummary
+		}
+		userRun   = $latestUser
+	}
+	$summaryJson = $summaryObject | ConvertTo-Json -Compress -Depth 6
+	if ($summaryJson.Length -gt 9500) {
+		# EPilot_RunSummary is a MultiLine field capped at 10,000 chars
+		$summaryJson = $summaryJson.Substring(0, 9500)
+	}
+
 	$fieldWrites = [ordered]@{
 		'EPilot_LastRunTime'   = [string]$epochSeconds
-		'EPilot_LastRunStatus' = $RunStatus
+		'EPilot_LastRunStatus' = $combinedStatus
 		'EPilot_Version'       = $epilotVersion
 		'EPilot_RunSummary'    = $summaryJson
 		'EPilot_SignatureMode' = $signatureMode
@@ -1545,6 +1646,7 @@ function Send-EPilotNinjaReport {
 	}
 
 	WriteLog ('NinjaOne custom field reporting complete: {0} of {1} fields written.' -f $successCount, $fieldWrites.Count)
+	#endregion SYSTEM_CONTEXT
 }
 
 function Test-ADGroupMembership {

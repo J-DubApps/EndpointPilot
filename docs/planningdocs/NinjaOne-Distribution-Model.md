@@ -128,36 +128,51 @@ if ($override) {
 }
 ```
 
-### 3. Status Reporting Back to NinjaOne
+### 3. Status Reporting Back to NinjaOne (IMPLEMENTED — June 2026)
 
-EndpointPilot needs to report execution results back so admins can monitor fleet health from the NinjaOne dashboard.
+EndpointPilot reports execution results back so admins can monitor fleet health from the NinjaOne dashboard. This is implemented in `Send-EPilotNinjaReport` (MGMT-Functions.psm1), called from MAIN.PS1 post-execution.
 
 **Custom fields to create in NinjaOne:**
 
-| Field Name             | Type                     | Scope  | Purpose                                                                     |
-| ---------------------- | ------------------------ | ------ | --------------------------------------------------------------------------- |
-| `EPilot_LastRunTime`   | DateTime                 | Device | Timestamp of last EndpointPilot execution                                   |
-| `EPilot_LastRunStatus` | Text (200 chars)         | Device | "Success", "PartialFailure", "Failed", "SignatureError"                     |
-| `EPilot_Version`       | Text (200 chars)         | Device | Installed EndpointPilot version string                                      |
-| `EPilot_RunSummary`    | MultiLine (10,000 chars) | Device | JSON summary of last run (operations attempted, succeeded, failed, skipped) |
-| `EPilot_SignatureMode` | Text (200 chars)         | Device | Current signature enforcement mode (strict/warn/disabled)                   |
-| `EPilot_ConfigHash`    | Text (200 chars)         | Device | Hash of currently deployed CONFIG.json (for drift detection)                |
+| Field Name             | Type                     | Scope  | Purpose                                                                                                                   |
+| ---------------------- | ------------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------- |
+| `EPilot_LastRunTime`   | DateTime                 | Device | Timestamp of last execution, written as **Unix epoch seconds** (NinjaOne DateTime fields expect epoch via cmdlet and CLI) |
+| `EPilot_LastRunStatus` | Text (200 chars)         | Device | Worst of the SYSTEM run + latest user run: "Success", "PartialFailure", "Failed"                                          |
+| `EPilot_Version`       | Text (200 chars)         | Device | Installed EndpointPilot version (`$global:EPilotVersion` in MGMT-SHARED.ps1)                                              |
+| `EPilot_RunSummary`    | MultiLine (10,000 chars) | Device | JSON with `systemRun` and `userRun` sections, each holding per-helper results (Success / Skipped / Failed: reason)        |
+| `EPilot_SignatureMode` | Text (200 chars)         | Device | Current signature enforcement mode (strict/warn/disabled)                                                                 |
+| `EPilot_ConfigHash`    | Text (200 chars)         | Device | SHA-256 of currently deployed CONFIG.json (for drift detection)                                                           |
 
-**PowerShell reporting snippet** (to be added to MAIN.PS1 post-execution):
+#### Agent Detection at Launch
 
-```powershell
-# Report status back to NinjaOne (only when running under NinjaOne agent)
-if (Get-Command "Ninja-Property-Set" -ErrorAction SilentlyContinue) {
-    Ninja-Property-Set "EPilot_LastRunTime" (Get-Date -Format "o")
-    Ninja-Property-Set "EPilot_LastRunStatus" $runStatus
-    Ninja-Property-Set "EPilot_Version" $epilotVersion
-    Ninja-Property-Set "EPilot_RunSummary" ($runSummary | ConvertTo-Json -Compress)
-    Ninja-Property-Set "EPilot_SignatureMode" $signatureConfig.EnforcementMode
-    Ninja-Property-Set "EPilot_ConfigHash" $configHash
-}
+`Get-RmmAgentPresence` (called from MGMT-SHARED.ps1 at the start of every run) detects the NinjaOne agent (service + `ninjarmm-cli.exe` location) and Intune (IME service + MDM enrollment). On endpoints without a NinjaOne agent, all custom field logic is skipped entirely.
+
+#### SYSTEM-Relay Spool Model
+
+**Constraint (observed in corporate test environment):** standard users cannot write NinjaOne custom fields — `Ninja-Property-Set` only exists when NinjaOne launches the script, and `ninjarmm-cli set` requires an elevated/SYSTEM caller. EndpointPilot therefore assumes user-context data can never be written directly:
+
+```
+USER-context run                          SYSTEM-context run (System Agent schedule)
+----------------                          ------------------------------------------
+MAIN.PS1 completes                        MAIN.PS1 completes
+  |                                         |
+  v                                         v
+Spool report payload (JSON) to            1. Ensure spool folder exists + ACLs
+%PROGRAMDATA%\EndpointPilot\Reporting\    2. Sweep + sanitize spooled user reports
+EPilot-RunReport-<user>.json              3. Merge: status = worst(system, user)
+                                          4. Write all six EPilot_* fields
+                                             (Ninja-Property-Set if Ninja-launched,
+                                              else ninjarmm-cli set)
 ```
 
-**Exit codes** for NinjaOne policy condition monitoring:
+Key properties of the spool:
+
+- **Folder ACLs** (set by `Install-SystemAgent.ps1` / `Install-EndpointPilotAdmin.ps1`, self-healed by the SYSTEM pass via `Initialize-EPilotReportSpool`): Users get list + create-files only; CREATOR OWNER gets Modify — each user can refresh their own report file but cannot tamper with others'.
+- **Untrusted input handling**: the SYSTEM sweep treats spool content as untrusted user input — 64 KB size cap, strict property allowlist, status value-set validation, control character stripping, per-value length caps, and rejection of payloads with future-dated timestamps (prevents one user shadowing another's report in the latest-report merge).
+- **Fallback for user-mode-only installs**: when no spool folder exists (no system-mode install on the endpoint), the user-context run attempts a best-effort direct write — this keeps dev/test boxes (where the user is admin) working.
+- **Dry-run aware**: in dry-run mode, intended writes are logged, spool files are read but not deleted, and no folders are created.
+
+**Exit codes** for NinjaOne policy condition monitoring (PLANNED — ENDPOINT-PILOT.PS1 currently always exits 0):
 
 | Exit Code | Meaning                                        | NinjaOne Action  |
 | --------- | ---------------------------------------------- | ---------------- |
@@ -230,7 +245,7 @@ $configHash = [BitConverter]::ToString($hashBytes) -replace '-', ''
 ### Responding to a Failed Run
 
 1. **NinjaOne alert** fires (exit code != 0)
-2. **Check** `EPilot_RunSummary` custom field for the device — shows which operations failed and why
+2. **Check** `EPilot_RunSummary` custom field for the device — the `systemRun` and `userRun` sections show which helpers failed (and why) in each execution context
 3. **Check** `EPilot_SignatureMode` — if "strict" and signature failures occurred, verify signing certificate status
 4. **Remediate** by fixing the JSON directive and re-pushing, or by running an ad-hoc script on the affected device
 
@@ -240,7 +255,7 @@ $configHash = [BitConverter]::ToString($hashBytes) -replace '-', ''
 
 ### Custom Fields to Create
 
-- [ ] `EPilot_LastRunTime` — DateTime, Device scope, Automation read/write enabled
+- [ ] `EPilot_LastRunTime` — DateTime, Device scope, Automation read/write enabled (value arrives as Unix epoch seconds)
 - [ ] `EPilot_LastRunStatus` — Text, Device scope, Automation read/write enabled
 - [ ] `EPilot_Version` — Text, Device scope, Automation read/write enabled
 - [ ] `EPilot_RunSummary` — MultiLine, Device scope, Automation read/write enabled
